@@ -1288,6 +1288,7 @@ select.minput option{background:#080808;color:#efefef;}
 
     <button class="btn-analizar" onclick="analizarP()">🎯 ANALIZAR PARTIDO</button>
     <button class="btn-sec" onclick="goP1()">← VOLVER AL PASO 1</button>
+    <button onclick="reiniciarAnalisis()" style="width:100%;background:none;border:1px solid rgba(200,0,0,.15);color:var(--rojo2);border-radius:8px;padding:9px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px;margin-top:6px;">🔄 REINICIAR ANÁLISIS COMPLETO</button>
     <div class="spacer"></div>
   </div>
 
@@ -2210,11 +2211,34 @@ select.minput option{background:#080808;color:#efefef;}
       <div class="regla-item"><div class="regla-num">5</div>Registrar ANTES de entrar. Sin excepciones.</div>
       <div class="regla-item"><div class="regla-num">6</div>No usar capital de bono en P1. Tratar como no propio hasta liberar rollover.</div>
     </div>
+    <div class="stitle">💾 Backup y Datos</div>
+    <div class="card">
+      <div style="font-size:11px;color:#666;margin-bottom:12px;line-height:1.6;">
+        Exporta un respaldo completo de toda tu memoria: picks, historial, equipos, snapshots, configuración y ligas. El archivo incluye fecha y es compatible con versiones futuras de la app.
+      </div>
+      <!-- Info de uso de storage -->
+      <div id="backup-storage-info" style="background:rgba(0,0,0,.3);border-radius:6px;padding:8px 10px;margin-bottom:12px;font-size:10px;color:#666;display:flex;justify-content:space-between;align-items:center;">
+        <span>Calculando uso de memoria...</span>
+      </div>
+      <!-- Botones principales -->
+      <button onclick="exportarBackup()" style="width:100%;background:rgba(0,217,110,.1);border:1px solid rgba(0,217,110,.3);color:var(--verde);border-radius:8px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.5px;margin-bottom:8px;">
+        ⬇️ EXPORTAR BACKUP COMPLETO
+      </button>
+      <label style="width:100%;display:block;">
+        <div style="width:100%;background:rgba(0,184,224,.1);border:1px solid rgba(0,184,224,.3);color:var(--azul);border-radius:8px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-align:center;margin-bottom:8px;">
+          ⬆️ IMPORTAR BACKUP
+        </div>
+        <input type="file" id="backup-file-input" accept=".json" style="display:none;" onchange="importarBackup(this)">
+      </label>
+      <!-- Info seguridad -->
+      <div style="font-size:10px;color:#444;border-top:1px solid var(--borde);padding-top:8px;line-height:1.6;">
+        ⚠️ La importación es segura — nunca borra datos existentes sin confirmación explícita. Siempre exporta antes de importar.
+      </div>
+    </div>
+
     <div class="spacer"></div>
   </div>
 </div>
-
-</div><!-- end content -->
 
 <!-- BOTTOM NAV -->
 <div class="bnav">
@@ -2224,6 +2248,37 @@ select.minput option{background:#080808;color:#efefef;}
   <button class="bnav-btn" id="nav-historial" onclick="ir('historial')"><div class="bnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:22px;height:22px;"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg></div><div class="bnav-label">Historial</div></button>
   <button class="bnav-btn" id="nav-estrategias" onclick="ir('estrategias')"><div class="bnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:22px;height:22px;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="bnav-label">Estrategias</div></button>
   <button class="bnav-btn" id="nav-demo" onclick="ir('demo')"><div class="bnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:22px;height:22px;"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div><div class="bnav-label">Demo</div></button>
+</div>
+
+<!-- MODAL BACKUP IMPORTAR -->
+<div class="modal-bg" id="modal-backup-import" style="display:none;align-items:center;padding:20px;">
+  <div class="modal" style="max-height:85vh;overflow-y:auto;">
+    <div style="display:flex;align-items:center;margin-bottom:14px;">
+      <button onclick="document.getElementById('modal-backup-import').style.display='none'" style="background:none;border:none;color:var(--texto2);font-size:20px;cursor:pointer;padding:0 10px 0 0;line-height:1;">←</button>
+      <div class="modal-title" style="color:var(--azul);margin:0;flex:1;text-align:center;padding-right:30px;">⬆️ IMPORTAR BACKUP</div>
+    </div>
+
+    <!-- Resumen del backup a importar -->
+    <div id="backup-preview" style="background:rgba(0,184,224,.05);border:1px solid rgba(0,184,224,.15);border-radius:8px;padding:12px;margin-bottom:14px;">
+      <div style="font-size:11px;color:var(--azul);font-weight:700;letter-spacing:.5px;margin-bottom:8px;">CONTENIDO DEL BACKUP</div>
+      <div id="backup-preview-content" style="font-size:11px;color:#aaa;line-height:1.8;"></div>
+    </div>
+
+    <!-- Opciones de importación -->
+    <div style="font-size:11px;color:#888;margin-bottom:10px;font-weight:700;letter-spacing:.5px;">¿QUÉ HACER CON LOS DATOS ACTUALES?</div>
+
+    <button onclick="confirmarImport('merge')" style="width:100%;background:rgba(0,217,110,.1);border:1px solid rgba(0,217,110,.3);color:var(--verde);border-radius:8px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px;text-align:left;">
+      ✅ FUSIONAR — Añadir picks del backup sin borrar los actuales
+      <div style="font-size:10px;color:#666;font-weight:400;margin-top:3px;">Los picks duplicados (mismo ID) se ignoran. Memoria de equipos se combina.</div>
+    </button>
+
+    <button onclick="confirmarImport('replace')" style="width:100%;background:rgba(240,20,20,.08);border:1px solid rgba(240,20,20,.2);color:var(--rojo2);border-radius:8px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px;text-align:left;">
+      ⚠️ REEMPLAZAR — Usar solo los datos del backup
+      <div style="font-size:10px;color:#666;font-weight:400;margin-top:3px;">Se pierden los datos actuales. Solo úsalo si estás restaurando desde cero.</div>
+    </button>
+
+    <button onclick="document.getElementById('modal-backup-import').style.display='none'" style="width:100%;background:none;border:none;color:var(--texto3);font-family:'Rajdhani',sans-serif;font-size:12px;cursor:pointer;padding:8px;">Cancelar</button>
+  </div>
 </div>
 
 <!-- MODAL NUEVA ESTRATEGIA -->
@@ -2574,6 +2629,7 @@ function ir(pg){
   if(pg==='live')renderLive();
   if(pg==='nuevo')goP1();
   if(pg==='demo'){if(!DB.demo)DB.demo={cap:100000,regs:[]};renderDemo();renderDemoStats();}
+  if(pg==='perfil')setTimeout(actualizarInfoStorage,100);
 }
 
 // E: Restaurar análisis completo al volver a la app
@@ -4321,7 +4377,224 @@ function aplicarMemoria(){
 }
 function ignorarMemoria(){document.getElementById('team-mem-banner').style.display='none';_memAvgs=null;}
 
-// ===== LIGAS PERSONALIZADAS =====
+// ===== SISTEMA DE BACKUP =====
+// Versión del esquema — incrementar si cambia estructura
+const BACKUP_VERSION = '1.0';
+
+// Recopilar TODO el localStorage relevante
+function recopilarBackupCompleto(){
+  const snap = {};
+  const prefijos = ['tdata_','team_','nm_','ligas_usadas','cce-mis-ligas','cce4'];
+  
+  // Iterar todas las claves del localStorage
+  for(let i=0; i<localStorage.length; i++){
+    const key = localStorage.key(i);
+    if(!key) continue;
+    // Incluir si empieza con algún prefijo conocido
+    const incluir = prefijos.some(p=>key.startsWith(p)) || prefijos.includes(key);
+    // Excluir claves temporales/sesión
+    const excluir = ['cce-last-pg','cce-analisis-activo','pwa-banner-dismissed'].includes(key);
+    if(incluir && !excluir){
+      try{snap[key]=JSON.parse(localStorage.getItem(key));}
+      catch(e){snap[key]=localStorage.getItem(key);}
+    }
+  }
+  return snap;
+}
+
+function exportarBackup(){
+  try{
+    const snap = recopilarBackupCompleto();
+    const backup = {
+      version: BACKUP_VERSION,
+      app: 'CColoColo',
+      fecha: new Date().toISOString(),
+      fechaLegible: new Date().toLocaleString('es-CL'),
+      resumen: {
+        picks: DB.regs?.length || 0,
+        capital: DB.cfg?.cap || 0,
+        equiposMemoria: Object.keys(snap).filter(k=>k.startsWith('tdata_')).length,
+        clavesTotal: Object.keys(snap).length
+      },
+      datos: snap
+    };
+
+    const json = JSON.stringify(backup, null, 2);
+    const blob = new Blob([json], {type:'application/json'});
+    const url  = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const fecha = new Date().toISOString().split('T')[0];
+    a.download = `cce-backup-${fecha}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    // Feedback
+    const msg = `✅ Backup exportado\n${backup.resumen.picks} picks · ${backup.resumen.equiposMemoria} equipos en memoria\nArchivo: cce-backup-${fecha}.json`;
+    alert(msg);
+    actualizarInfoStorage();
+  }catch(err){
+    alert('❌ Error al exportar: '+err.message);
+  }
+}
+
+// Estado temporal del backup cargado
+let _backupPendiente = null;
+
+function importarBackup(input){
+  const file = input.files[0];
+  if(!file){return;}
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try{
+      const backup = JSON.parse(e.target.result);
+      
+      // Validaciones básicas
+      if(!backup.datos){throw new Error('Archivo no válido: falta campo "datos"');}
+      if(!backup.app || backup.app !== 'CColoColo'){
+        if(!confirm('⚠️ Este backup no es de CColoColo. ¿Continuar de todas formas?')) return;
+      }
+      
+      _backupPendiente = backup;
+      
+      // Mostrar preview
+      const pre = backup.resumen || {};
+      const picks = backup.datos?.cce4?.regs?.length || pre.picks || '?';
+      const equipos = Object.keys(backup.datos).filter(k=>k.startsWith('tdata_')).length;
+      const nm = Object.keys(backup.datos).filter(k=>k.startsWith('nm_')).length;
+      const ligas = backup.datos?.ligas_usadas?.length || 0;
+      
+      document.getElementById('backup-preview-content').innerHTML = `
+        <div>📅 Fecha del backup: <strong>${backup.fechaLegible || backup.fecha || '—'}</strong></div>
+        <div>📋 Picks registrados: <strong>${picks}</strong></div>
+        <div>💰 Capital guardado: <strong>$${(backup.datos?.cce4?.cfg?.cap||0).toLocaleString('es-CL')} CLP</strong></div>
+        <div>🧠 Equipos en memoria: <strong>${equipos}</strong></div>
+        <div>🔢 Memoria numérica: <strong>${nm} campos</strong></div>
+        <div>⚽ Ligas: <strong>${ligas}</strong></div>
+        <div>📦 Claves totales: <strong>${Object.keys(backup.datos).length}</strong></div>
+        <div>🔖 Versión: <strong>${backup.version || '?'}</strong></div>
+      `;
+      
+      document.getElementById('modal-backup-import').style.display='flex';
+    }catch(err){
+      alert('❌ Error al leer el backup: '+err.message);
+    }
+  };
+  reader.readAsText(file);
+  // Reset input para permitir reimportar mismo archivo
+  input.value='';
+}
+
+function confirmarImport(modo){
+  if(!_backupPendiente){return;}
+  document.getElementById('modal-backup-import').style.display='none';
+  
+  try{
+    const datos = _backupPendiente.datos;
+    
+    if(modo === 'replace'){
+      // REEMPLAZAR: confirmar extra por ser destructivo
+      if(!confirm('⚠️ REEMPLAZAR borrará TODOS los datos actuales y los sustituirá por el backup.\n\n¿Estás completamente seguro?')){
+        _backupPendiente=null;return;
+      }
+      // Restaurar todas las claves del backup
+      Object.entries(datos).forEach(([key,val])=>{
+        try{localStorage.setItem(key, typeof val==='string'?val:JSON.stringify(val));}catch(e){}
+      });
+      // Recargar DB desde localStorage
+      try{const s=localStorage.getItem('cce4');if(s)DB=JSON.parse(s);}catch(e){}
+      
+    } else {
+      // FUSIONAR: no destructivo — picks nuevos sin duplicar, memoria se combina
+      // 1. Fusionar picks (cce4.regs)
+      const dbBackup = datos['cce4'];
+      if(dbBackup?.regs?.length){
+        const idsActuales = new Set((DB.regs||[]).map(r=>r.id));
+        const nuevos = dbBackup.regs.filter(r=>!idsActuales.has(r.id));
+        if(nuevos.length){
+          DB.regs = [...DB.regs, ...nuevos].sort((a,b)=>b.id-a.id);
+        }
+        // Fusionar equipos en eqs (sin sobrescribir)
+        if(dbBackup.eqs){
+          Object.entries(dbBackup.eqs).forEach(([liga,eqs])=>{
+            if(!DB.eqs[liga]) DB.eqs[liga]=[];
+            const setActual=new Set(DB.eqs[liga]);
+            eqs.forEach(e=>{if(!setActual.has(e))DB.eqs[liga].push(e);});
+          });
+        }
+        // Guardar DB fusionado
+        sDB();
+      }
+      
+      // 2. Restaurar claves de memoria de equipos (tdata_, team_, nm_) solo si no existen
+      Object.entries(datos).forEach(([key,val])=>{
+        if(key==='cce4') return; // ya procesado arriba
+        if(!localStorage.getItem(key)){
+          try{localStorage.setItem(key, typeof val==='string'?val:JSON.stringify(val));}catch(e){}
+        }
+      });
+      
+      // 3. Fusionar ligas usadas
+      if(datos['ligas_usadas']){
+        let ligasAct=[];try{ligasAct=JSON.parse(localStorage.getItem('ligas_usadas')||'[]');}catch(e){}
+        const setL=new Set(ligasAct);
+        datos['ligas_usadas'].forEach(l=>{if(!setL.has(l)){setL.add(l);ligasAct.push(l);}});
+        localStorage.setItem('ligas_usadas',JSON.stringify(ligasAct));
+      }
+      
+      // 4. Fusionar ligas personalizadas
+      if(datos['cce-mis-ligas']){
+        let misL=[];try{misL=JSON.parse(localStorage.getItem('cce-mis-ligas')||'[]');}catch(e){}
+        const setML=new Set(misL);
+        datos['cce-mis-ligas'].forEach(l=>{if(!setML.has(l)){setML.add(l);misL.push(l);}});
+        localStorage.setItem('cce-mis-ligas',JSON.stringify(misL));
+      }
+    }
+    
+    _backupPendiente = null;
+    
+    // Refrescar UI
+    ligasCargarGuardadas();
+    renderInicio();
+    renderHist();
+    renderStakePreview();
+    actualizarInfoStorage();
+    
+    const modoTxt = modo==='replace'?'reemplazado':'fusionado';
+    alert(`✅ Backup ${modoTxt} correctamente.\n\nLos datos están disponibles en la app.`);
+    
+  }catch(err){
+    _backupPendiente=null;
+    alert('❌ Error durante la importación: '+err.message);
+  }
+}
+
+function actualizarInfoStorage(){
+  const el = document.getElementById('backup-storage-info');
+  if(!el) return;
+  try{
+    const snap = recopilarBackupCompleto();
+    const bytes = new Blob([JSON.stringify(snap)]).size;
+    const kb = (bytes/1024).toFixed(1);
+    const mb = (bytes/1024/1024).toFixed(2);
+    const MAX_KB = 5120; // 5MB conservador
+    const pct = Math.min(100,(bytes/(MAX_KB*1024)*100)).toFixed(1);
+    const color = pct>80?'var(--rojo2)':pct>60?'var(--dorado2)':'var(--verde)';
+    el.innerHTML = `
+      <div>
+        <span style="font-weight:700;color:${color};">${kb} KB</span>
+        <span style="color:#555;"> de ~5 MB (${pct}%)</span>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border-radius:3px;height:4px;width:100px;overflow:hidden;margin-top:4px;">
+        <div style="width:${pct}%;height:100%;background:${color};border-radius:3px;"></div>
+      </div>
+    `;
+  }catch(e){el.innerHTML='<span style="color:#444;">No disponible</span>';}
+}
+
+// Llamar al entrar en perfil — integrado en ir() directamente
 function renderStakePreview(){
   const cap=parseFloat(document.getElementById('cfg-cap')?.value)||DB.cfg.cap;
   const stk=parseFloat(document.getElementById('cfg-stk')?.value)||5;
