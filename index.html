@@ -2990,6 +2990,143 @@ function analizarP(){
 }
 
 
+function renderRes(){
+  // Mostrar p3, ocultar p1 y p2
+  ['p1','p2','p3'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display=i===2?'block':'none';
+  });
+  setSteps(3);
+  const cnt=document.getElementById('cnt');
+  if(cnt) cnt.scrollTop=0;
+
+  if(!AA){return;}
+  const{partido,liga,ests,tips,alertas,calLive,scanResult,mercadoOptimo,datos:d}=AA;
+  const CAP=DB.cfg.cap;
+  const cuota=AA.cuota||0;
+  const pi=cuota>0?(1/cuota)*100:0;
+  const pr=probEst();
+  const edge=cuota>0&&pr>0?pr-pi:null;
+  const hayValue=edge!==null&&edge>=5;
+
+  let h='';
+
+  // Cabecera partido
+  h+=`<div class="res-hdr fu"><div class="res-partido">${partido}</div><div class="res-meta">${liga}</div>`;
+  if(calLive) h+=`<div style="margin-top:8px;"><div class="live-badge"><div class="live-dot"></div>CALIFICA PARA LIVE</div></div>`;
+  h+=`</div>`;
+
+  // Tips y alertas
+  if(tips.length||alertas.length){
+    h+=`<div class="tips-card fu"><div class="tips-title">💡 TIPS DEL ENCUENTRO</div>`;
+    tips.forEach(t=>h+=`<div class="tip-item"><span class="tip-dot">›</span>${t}</div>`);
+    alertas.forEach(a=>h+=`<div class="tip-item" style="color:var(--rojo3)"><span class="tip-dot" style="color:var(--rojo3)">⚠</span>${a}</div>`);
+    h+=`</div>`;
+  }
+
+  // Mercado óptimo (C)
+  if(mercadoOptimo&&mercadoOptimo.prob>=65){
+    const col=mercadoOptimo.prob>=80?'var(--verde)':mercadoOptimo.prob>=70?'var(--dorado2)':'var(--azul)';
+    h+=`<div style="background:rgba(8,8,8,.95);border:2px solid ${col};border-radius:12px;padding:14px;margin-bottom:12px;" class="fu">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:${col};">🎯 MERCADO ÓPTIMO DETECTADO</div>
+        <div style="font-size:10px;color:${col};background:rgba(0,0,0,.4);padding:2px 8px;border-radius:4px;font-weight:700;">${mercadoOptimo.tipo}</div>
+      </div>
+      <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:8px;">${mercadoOptimo.icono} ${mercadoOptimo.nom}</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <div style="flex:1;background:rgba(0,0,0,.4);border-radius:6px;padding:8px;text-align:center;">
+          <div style="font-size:9px;color:#555;margin-bottom:2px;">PROB. ESTIMADA</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;color:${col};">${mercadoOptimo.prob.toFixed(0)}%</div>
+        </div>
+        ${mercadoOptimo.edgeRef!==null?`<div style="flex:1;background:rgba(0,0,0,.4);border-radius:6px;padding:8px;text-align:center;">
+          <div style="font-size:9px;color:#555;margin-bottom:2px;">EDGE VS CUOTA</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;color:${mercadoOptimo.edgeRef>=5?'var(--verde)':'var(--rojo2)'};">${mercadoOptimo.edgeRef>0?'+':''}${mercadoOptimo.edgeRef.toFixed(1)}%</div>
+        </div>`:''}
+        <div style="flex:1;background:rgba(0,0,0,.4);border-radius:6px;padding:8px;text-align:center;">
+          <div style="font-size:9px;color:#555;margin-bottom:2px;">STAKE SUG.</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;color:var(--dorado2);">$${Math.round(CAP*0.03).toLocaleString('es-CL')}</div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // Estrategias detectadas
+  const pre=ests.filter(e=>e.tipo.includes('PRE'));
+  const live=ests.filter(e=>e.tipo.includes('LIVE'));
+  const hayEstrategias=pre.length||live.length;
+
+  if(!hayEstrategias){
+    if(hayValue){
+      h+=`<div style="background:rgba(0,217,110,.06);border:2px solid rgba(0,217,110,.3);border-radius:12px;padding:16px;margin-bottom:12px;" class="fu">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="font-size:20px;">💡</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--verde);">VALUE DETECTADO — FUERA DE ESTRATEGIAS</div>
+        </div>
+        <div style="font-size:11px;color:#888;margin-bottom:12px;">No cumple L1-P2, pero hay ventaja estadística real en el mercado ingresado.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
+          <div style="background:rgba(0,0,0,.4);border-radius:8px;padding:8px;text-align:center;"><div style="font-size:9px;color:#555;margin-bottom:2px;">PROB. IMPLÍCITA</div><div style="font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;color:var(--texto2);">${pi.toFixed(1)}%</div></div>
+          <div style="background:rgba(0,0,0,.4);border-radius:8px;padding:8px;text-align:center;"><div style="font-size:9px;color:#555;margin-bottom:2px;">PROB. REAL EST.</div><div style="font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;color:var(--verde);">${pr.toFixed(1)}%</div></div>
+          <div style="background:rgba(0,0,0,.4);border-radius:8px;padding:8px;text-align:center;"><div style="font-size:9px;color:#555;margin-bottom:2px;">EDGE</div><div style="font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;color:var(--verde);">+${edge.toFixed(1)}%</div></div>
+        </div>
+        <div style="font-size:11px;color:var(--dorado2);background:rgba(217,160,48,.06);border-radius:6px;padding:8px 10px;">⚠️ Stake reducido (1.5%): <strong>$${Math.round(CAP*0.015).toLocaleString('es-CL')} CLP</strong> — Registrar como "Análisis propio"</div>
+      </div>`;
+    } else {
+      h+=`<div class="no-cal fu"><div class="no-cal-icon">❌</div><div class="no-cal-title">ESTE PARTIDO NO CALIFICA</div><div class="no-cal-text">No cumple criterios de ninguna estrategia (L1-P2)${edge!==null?` · Edge: ${edge.toFixed(1)}%`:''}.<br><br><strong>No apostar en este encuentro.</strong></div></div>`;
+    }
+  } else {
+    if(pre.length){h+=`<div class="divider">📋 Pre-partido</div>`;pre.forEach((e,i)=>h+=mkEc(e,'pre'+i,CAP));}
+    if(live.length){h+=`<div class="divider" style="color:var(--rojo2)">🔴 Live — se activa durante el partido</div>`;live.forEach((e,i)=>h+=mkEc(e,'liv'+i,CAP));}
+    if(ests.length>1){
+      const st=ests.reduce((a,e)=>a+e.stake,0);
+      h+=`<div class="stake-res fu"><div class="card-title" style="margin-bottom:8px;">📊 DISTRIBUCIÓN DE STAKE</div><div class="stake-grid"><div><div class="sg-lbl">Estrategias</div><div class="sg-val" style="color:var(--rojo2)">${ests.length}</div></div><div><div class="sg-lbl">% Total</div><div class="sg-val" style="color:var(--dorado2)">${st}%</div></div><div><div class="sg-lbl">Total CLP</div><div class="sg-val" style="color:var(--verde)">$${Math.round(CAP*st/100).toLocaleString('es-CL')}</div></div></div></div>`;
+    }
+    // Escáner adicional si hay value en otro mercado
+    if(hayValue&&scanResult&&scanResult.length){
+      const mejorScan=scanResult[0];
+      h+=`<div style="background:rgba(0,184,224,.05);border:1px solid rgba(0,184,224,.2);border-radius:8px;padding:10px 12px;margin-top:8px;" class="fu">
+        <div style="font-size:10px;color:var(--azul);font-weight:700;letter-spacing:.5px;margin-bottom:4px;">💡 TAMBIÉN — VALUE EN MERCADO INGRESADO</div>
+        <div style="font-size:12px;color:#aaa;">${mejorScan.nom} · Cuota ${cuota} · Edge <span style="color:var(--verde);">+${edge.toFixed(1)}%</span></div>
+      </div>`;
+    }
+  }
+
+  // Escáner completo (A)
+  if(scanResult&&scanResult.length>0){
+    h+=`<div style="background:rgba(8,8,8,.95);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:12px;margin-top:10px;" class="fu">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#aaa;">🔍 ESCÁNER DE MERCADOS</div>
+        <div style="font-size:9px;color:#444;">Prob. real estimada ≥ 65%</div>
+      </div>`;
+    const tipos=[...new Set(scanResult.map(m=>m.tipo))];
+    tipos.forEach(tipo=>{
+      const grupo=scanResult.filter(m=>m.tipo===tipo);
+      h+=`<div style="font-size:9px;color:#555;font-weight:700;letter-spacing:.5px;margin-bottom:5px;margin-top:8px;">${tipo.toUpperCase()}</div>`;
+      grupo.forEach(m=>{
+        const col=m.prob>=80?'var(--verde)':m.prob>=70?'var(--dorado2)':'var(--azul)';
+        h+=`<div style="margin-bottom:7px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <div style="font-size:11px;color:#ccc;">${m.icono} ${m.nom}</div>
+            <span style="font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:${col};">${m.prob.toFixed(0)}%</span>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border-radius:3px;height:4px;overflow:hidden;">
+            <div style="width:${Math.min(100,m.prob)}%;height:100%;background:${col};border-radius:3px;"></div>
+          </div>
+        </div>`;
+      });
+    });
+    h+=`</div>`;
+  }
+
+  // Botones de acción
+  if(calLive) h+=`<button class="btn-verde" onclick="ir('live')">🔴 IR A SEGUIMIENTO LIVE →</button>`;
+  h+=`<button class="btn-verde" onclick="abrirModalReg()">📝 REGISTRAR APUESTA</button>`;
+  h+=`<button class="btn-sec" onclick="goP2()">← VOLVER A MÉTRICAS</button>`;
+  h+=`<button onclick="reiniciarAnalisis()" style="width:100%;background:none;border:1px solid rgba(200,0,0,.2);color:var(--rojo2);border-radius:8px;padding:10px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px;margin-top:6px;">🔄 NUEVO ANÁLISIS</button>`;
+  h+=`<div class="spacer"></div>`;
+
+  document.getElementById('p3').innerHTML=h;
+}
+
 function mkEc(e,uid,cap){
   const clp=Math.round(cap*(e.stake/100));
   const fc=e.conf>=75?'fill-a':e.conf>=60?'fill-m':'fill-b';
@@ -3714,10 +3851,29 @@ function renderInicio(){
   const hoy=new Date().toLocaleDateString('es-CL');
   document.getElementById('hm-pic').textContent=DB.regs.filter(r=>r.fecha===hoy).length;
   const mes=new Date().getMonth();
-  const rm=DB.regs.filter(r=>{const p=r.fecha?.split('/');return p&&parseInt(p[1])-1===mes&&r.res!=='pendiente';});
+  const anio=new Date().getFullYear();
+  // Filtro robusto: acepta DD/MM/YYYY y DD-MM-YYYY
+  const rmTodos=DB.regs.filter(r=>{
+    if(!r.fecha)return false;
+    const p=r.fecha.split(/[\/\-]/);
+    if(p.length<3)return false;
+    return parseInt(p[1])-1===mes&&parseInt(p[2])===anio;
+  });
+  const rm=rmTodos.filter(r=>r.res!=='pendiente');
   const gm=rm.reduce((a,r)=>a+(r.gan||0),0),sm=rm.reduce((a,r)=>a+(r.stake||0),0);
-  const roi=sm?((gm/sm)*100).toFixed(1)+'%':'—';
-  const re=document.getElementById('hm-roi');re.textContent=roi;re.style.color=gm>0?'var(--verde)':gm<0?'var(--rojo2)':'var(--texto)';
+  const re=document.getElementById('hm-roi');
+  if(sm>0){
+    const roi=((gm/sm)*100).toFixed(1)+'%';
+    re.textContent=roi;
+    re.style.color=gm>0?'var(--verde)':gm<0?'var(--rojo2)':'var(--texto)';
+  } else if(rmTodos.length>0){
+    // Hay picks del mes pero todos pendientes
+    re.textContent=rmTodos.length+' pend.';
+    re.style.color='var(--dorado2)';
+  } else {
+    re.textContent='—';
+    re.style.color='var(--texto)';
+  }
   const ult=DB.regs.slice(0,3);const el=document.getElementById('hm-ult');
   if(!ult.length){
     el.innerHTML=`<div style="margin:0 16px;"><div class="empty"><div class="empty-icon">📊</div><div class="empty-title">Sin análisis aún</div><div class="empty-sub">Agrega tu primer partido para comenzar</div></div></div>`;
