@@ -2228,8 +2228,27 @@ select.minput option{background:#080808;color:#efefef;}
   </div>
   <div class="pad">
 
-    <div class="nota" style="margin-bottom:14px;">
+    <div class="nota" style="margin-bottom:12px;">
       Selecciona una liga para ver qué mercados y estrategias aplican mejor. Úsalo para orientar tu análisis pre-partido.
+    </div>
+
+    <!-- Leyenda Tier -->
+    <div style="background:rgba(8,8,8,.95);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:10px 12px;margin-bottom:12px;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:.8px;color:#555;margin-bottom:8px;">¿QUÉ SIGNIFICA CADA TIER?</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:flex-start;gap:8px;">
+          <span style="background:rgba(200,0,0,.15);color:var(--rojo2);border:1px solid rgba(200,0,0,.25);border-radius:4px;font-size:9px;font-weight:700;padding:2px 6px;flex-shrink:0;">A</span>
+          <span style="font-size:11px;color:#888;"><strong style="color:#bbb;">Alta información · Mercados eficientes</strong> — Mucho volumen de apuestas, datos públicos abundantes (xG, córneres, BTTS). Las cuotas son más ajustadas pero los patrones son consistentes y confiables.</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;">
+          <span style="background:rgba(217,160,48,.12);color:var(--dorado2);border:1px solid rgba(217,160,48,.2);border-radius:4px;font-size:9px;font-weight:700;padding:2px 6px;flex-shrink:0;">B</span>
+          <span style="font-size:11px;color:#888;"><strong style="color:#bbb;">Información media · Balance riesgo/oportunidad</strong> — Datos disponibles pero menos completos. Las casas ajustan más lento. Mayor potencial de edge con análisis correcto.</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;">
+          <span style="background:rgba(0,217,110,.08);color:var(--verde);border:1px solid rgba(0,217,110,.15);border-radius:4px;font-size:9px;font-weight:700;padding:2px 6px;flex-shrink:0;">C</span>
+          <span style="font-size:11px;color:#888;"><strong style="color:#bbb;">Poca información pública · Máximo edge potencial</strong> — Ligas locales o de segunda línea. Las casas ajustan tarde o mal. Mayor varianza pero edge positivo frecuente con P1/P3. Ideal para value betting.</span>
+        </div>
+      </div>
     </div>
 
     <!-- Filtro por tier -->
@@ -2668,75 +2687,186 @@ select.minput option{background:#080808;color:#efefef;}
 
 <!-- MODAL EDITAR PICK -->
 <div class="modal-bg" id="modal-edit-pick" style="display:none;">
-  <div class="modal" style="max-height:88vh;overflow-y:auto;">
-    <div style="display:flex;align-items:center;margin-bottom:10px;">
+  <div class="modal" style="max-height:92vh;overflow-y:auto;padding-bottom:20px;">
+    <div style="display:flex;align-items:center;margin-bottom:12px;">
       <button onclick="cerrarEditPick()" style="background:none;border:none;color:var(--texto2);font-size:20px;cursor:pointer;padding:0 10px 0 0;line-height:1;">←</button>
       <div class="modal-title" style="color:var(--dorado2);margin:0;flex:1;text-align:center;padding-right:30px;">✏️ EDITAR PICK</div>
     </div>
-    <div id="ep-partido" style="text-align:center;font-size:14px;font-weight:700;margin-bottom:4px;"></div>
-    <div id="ep-meta" style="text-align:center;font-size:11px;color:var(--texto3);margin-bottom:4px;"></div>
-    <div id="ep-est" style="text-align:center;font-size:11px;color:var(--azul);margin-bottom:12px;"></div>
-    <div style="display:flex;justify-content:center;gap:10px;margin-bottom:14px;font-size:12px;">
-      <div style="text-align:center;"><div id="ep-res-actual" style="font-weight:700;"></div><div style="font-size:10px;color:#555;">Estado actual</div></div>
-      <div style="text-align:center;"><div id="ep-gan-cal" style="color:var(--verde);font-weight:700;"></div><div style="font-size:10px;color:#555;">Si gana</div></div>
-      <div style="text-align:center;"><div id="ep-per-cal" style="color:var(--rojo2);font-weight:700;"></div><div style="font-size:10px;color:#555;">Si pierde</div></div>
+
+    <!-- Campos editables -->
+    <div class="form-row" style="margin-bottom:8px;">
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Equipo Local</label>
+        <input type="text" class="form-input" id="ep-local" placeholder="Local">
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Equipo Visitante</label>
+        <input type="text" class="form-input" id="ep-visita" placeholder="Visitante">
+      </div>
     </div>
-    <div style="font-size:11px;color:#555;text-align:center;margin-bottom:10px;letter-spacing:.5px;">CAMBIAR RESULTADO A:</div>
-    <div class="modal-btns" style="flex-wrap:wrap;gap:8px;">
-      <button class="btn-modal ganada" onclick="editPickRes('ganada')" style="flex:1;min-width:120px;">✅ GANADA</button>
-      <button class="btn-modal perdida" onclick="editPickRes('perdida')" style="flex:1;min-width:120px;">❌ PERDIDA</button>
-      <button class="btn-modal cashout" onclick="editPickRes('cashout')" style="flex:1;min-width:120px;">💰 CASHOUT</button>
-      <button class="btn-modal pendiente" onclick="editPickRes('pendiente')" style="flex:1;min-width:120px;">⏳ PENDIENTE</button>
+
+    <div class="form-row" style="margin-bottom:8px;">
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Liga</label>
+        <input type="text" class="form-input" id="ep-liga" placeholder="Liga">
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Fecha</label>
+        <input type="date" class="form-input" id="ep-fecha">
+      </div>
     </div>
-    <div style="border-top:1px solid var(--borde);margin-top:14px;padding-top:12px;">
+
+    <div class="form-row" style="margin-bottom:8px;">
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Cuota</label>
+        <input type="number" class="form-input" id="ep-cuota" step="0.01" min="1" placeholder="1.80">
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Stake (CLP)</label>
+        <input type="number" class="form-input" id="ep-stake" placeholder="1168">
+      </div>
+    </div>
+
+    <div class="form-row" style="margin-bottom:8px;">
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Casa</label>
+        <select class="form-select" id="ep-casa">
+          <option value="Betsson">Betsson</option>
+          <option value="Betano">Betano</option>
+          <option value="Tonibet">Tonibet</option>
+          <option value="Otra">Otra</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Estrategia</label>
+        <select class="form-select" id="ep-est-sel">
+          <option value="">— Sin estrategia —</option>
+          <option value="P1">P1 — Value Ligas Menores</option>
+          <option value="P2">P2 — BTTS + Over 2.5</option>
+          <option value="P3">P3 — Value + Edge Detectado</option>
+          <option value="L1">L1 — Córneres (Live)</option>
+          <option value="L2">L2 — Hándicap xG (Live)</option>
+          <option value="L3">L3 — Post Expulsión (Live)</option>
+          <option value="Propio">Análisis propio</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:8px;">
+      <label class="form-label">Mercado / Selección apostada</label>
+      <input type="text" class="form-input" id="ep-mercado" placeholder="Ej: Over 2.5 · BTTS Sí">
+    </div>
+
+    <div class="form-group" style="margin-bottom:12px;">
+      <label class="form-label">Notas</label>
+      <input type="text" class="form-input" id="ep-nota" placeholder="Observaciones...">
+    </div>
+
+    <!-- Guardar cambios de campos -->
+    <button onclick="guardarCamposPick()" style="width:100%;background:rgba(217,160,48,.1);border:1px solid rgba(217,160,48,.3);color:var(--dorado2);border-radius:8px;padding:10px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.5px;margin-bottom:14px;">💾 GUARDAR CAMBIOS</button>
+
+    <!-- Cambiar resultado -->
+    <div style="font-size:10px;color:#555;text-align:center;margin-bottom:8px;letter-spacing:.5px;">CAMBIAR RESULTADO:</div>
+    <div style="display:flex;justify-content:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+      <div style="text-align:center;"><div id="ep-res-actual" style="font-weight:700;font-size:12px;"></div><div style="font-size:9px;color:#555;">Actual</div></div>
+      <div style="text-align:center;"><div id="ep-gan-cal" style="color:var(--verde);font-weight:700;font-size:11px;"></div><div style="font-size:9px;color:#555;">Si gana</div></div>
+      <div style="text-align:center;"><div id="ep-per-cal" style="color:var(--rojo2);font-weight:700;font-size:11px;"></div><div style="font-size:9px;color:#555;">Si pierde</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px;">
+      <button class="btn-modal ganada" onclick="editPickRes('ganada')">✅ GANADA</button>
+      <button class="btn-modal perdida" onclick="editPickRes('perdida')">❌ PERDIDA</button>
+      <button class="btn-modal cashout" onclick="editPickRes('cashout')">💰 CASHOUT</button>
+      <button class="btn-modal pendiente" onclick="editPickRes('pendiente')">⏳ PENDIENTE</button>
+    </div>
+
+    <div style="border-top:1px solid var(--borde);padding-top:12px;">
       <button onclick="eliminarPick()" style="width:100%;background:rgba(200,0,0,.08);border:1px solid rgba(200,0,0,.2);color:var(--rojo2);border-radius:8px;padding:10px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.5px;">🗑 ELIMINAR PICK</button>
     </div>
-    <button onclick="cerrarEditPick()" style="width:100%;margin-top:10px;background:none;border:none;color:var(--texto3);font-family:'Rajdhani',sans-serif;font-size:12px;cursor:pointer;padding:8px;">Cancelar</button>
+    <button onclick="cerrarEditPick()" style="width:100%;margin-top:8px;background:none;border:none;color:var(--texto3);font-family:'Rajdhani',sans-serif;font-size:12px;cursor:pointer;padding:8px;">Cancelar</button>
   </div>
 </div>
 
 <!-- MODAL REGISTRO -->
 <div class="modal-bg" id="modal-reg">
-  <div class="modal">
+  <div class="modal" style="max-height:90vh;overflow-y:auto;">
     <div style="display:flex;align-items:center;margin-bottom:10px;">
       <button onclick="cModal('modal-reg')" style="background:none;border:none;color:var(--texto2);font-size:20px;cursor:pointer;padding:0 10px 0 0;line-height:1;">←</button>
       <div class="modal-title" style="color:var(--verde);margin:0;flex:1;text-align:center;padding-right:30px;">📝 REGISTRAR APUESTA</div>
     </div>
-    <div id="mr-partido" style="text-align:center;font-size:14px;font-weight:700;margin-bottom:3px;"></div>
+    <div id="mr-partido" style="text-align:center;font-size:13px;font-weight:700;margin-bottom:8px;color:var(--texto2);"></div>
 
-    <!-- Estrategia — editable -->
-    <div class="form-group" style="margin-bottom:10px;">
-      <label class="form-label">Estrategia</label>
-      <select class="form-select" id="mr-est-sel" style="font-size:12px;padding:7px 10px;">
-        <option value="">— Sin estrategia / Análisis propio —</option>
-        <option value="L1">L1 — Córneres Over</option>
-        <option value="L2">L2 — Hándicap xG</option>
-        <option value="L3">L3 — Post Expulsión</option>
-        <option value="P1">P1 — Value Ligas</option>
-        <option value="P2">P2 — BTTS + Over 2.5</option>
-        <option value="Combinada">Combinada de estrategias</option>
-        <option value="Propio">Análisis propio</option>
-      </select>
+    <!-- Tabs Individual / Combinada -->
+    <div style="display:flex;gap:0;margin-bottom:12px;border-radius:7px;overflow:hidden;border:1px solid rgba(255,255,255,.08);">
+      <button id="mr-tab-ind" onclick="mrTab('individual')" style="flex:1;padding:8px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px;background:rgba(0,217,110,.12);color:var(--verde);border:none;">🎯 INDIVIDUAL</button>
+      <button id="mr-tab-com" onclick="mrTab('combinada')" style="flex:1;padding:8px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px;background:transparent;color:#555;border:none;">🔗 COMBINADA</button>
     </div>
 
-    <!-- Casa — editable -->
-    <div class="form-group" style="margin-bottom:10px;">
-      <label class="form-label">Casa de apuesta</label>
-      <select class="form-select" id="mr-casa-sel" style="font-size:12px;padding:7px 10px;">
-        <option value="Betsson">Betsson</option>
-        <option value="Betano">Betano</option>
-        <option value="Tonibet">Tonibet</option>
-        <option value="Otra">Otra</option>
-      </select>
+    <!-- SECCIÓN INDIVIDUAL -->
+    <div id="mr-sec-individual">
+      <div class="form-group" style="margin-bottom:8px;">
+        <label class="form-label">Estrategia</label>
+        <select class="form-select" id="mr-est-sel" style="font-size:12px;padding:7px 10px;">
+          <option value="">— Sin estrategia / Análisis propio —</option>
+          <option value="P1">P1 — Value Ligas Menores</option>
+          <option value="P2">P2 — BTTS + Over 2.5</option>
+          <option value="P3">P3 — Value + Edge Detectado</option>
+          <option value="L1">L1 — Córneres Over (Live)</option>
+          <option value="L2">L2 — Hándicap xG (Live)</option>
+          <option value="L3">L3 — Post Expulsión (Live)</option>
+          <option value="Propio">Análisis propio</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:8px;">
+        <label class="form-label">Mercado apostado</label>
+        <input type="text" class="form-input" id="mr-mercado" style="font-size:12px;padding:7px 10px;" placeholder="Ej: Over 2.5 · Córneres Over 9.5">
+      </div>
+      <div class="form-group" style="margin-bottom:8px;">
+        <label class="form-label">Casa de apuesta</label>
+        <select class="form-select" id="mr-casa-sel" style="font-size:12px;padding:7px 10px;">
+          <option value="Betsson">Betsson</option>
+          <option value="Betano">Betano</option>
+          <option value="Tonibet">Tonibet</option>
+          <option value="Otra">Otra</option>
+        </select>
+      </div>
+      <div class="form-row" style="margin-bottom:8px;">
+        <div class="form-group" style="margin:0;"><label class="form-label">Cuota</label><input type="number" class="form-input" id="mr-cuota" step="0.01" placeholder="1.80"></div>
+        <div class="form-group" style="margin:0;"><label class="form-label">Stake CLP</label><input type="number" class="form-input" id="mr-stake" placeholder="1168"></div>
+      </div>
+      <!-- Fix 2: Enviar a Live siempre visible -->
+      <div id="mr-live-btn-wrap" style="margin-bottom:10px;">
+        <button onclick="cModal('modal-reg');ir('live')" style="width:100%;background:rgba(200,0,0,.08);border:1px solid rgba(200,0,0,.2);color:var(--rojo2);border-radius:7px;padding:8px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">🔴 IR A SEGUIMIENTO LIVE AHORA →</button>
+      </div>
+      <div class="modal-btns">
+        <button class="btn-modal ganada" onclick="saveReg('ganada')">✅ GANADA</button>
+        <button class="btn-modal perdida" onclick="saveReg('perdida')">❌ PERDIDA</button>
+        <button class="btn-modal cashout" onclick="saveReg('cashout')">💰 CASHOUT</button>
+        <button class="btn-modal pendiente" onclick="saveReg('pendiente')">⏳ PENDIENTE</button>
+      </div>
     </div>
 
-    <div class="form-group"><label class="form-label">Cuota apostada</label><input type="number" class="form-input" id="mr-cuota" step="0.01" placeholder="1.80"></div>
-    <div class="form-group"><label class="form-label">Stake en CLP</label><input type="number" class="form-input" id="mr-stake" placeholder="1168"></div>
-    <div class="modal-btns">
-      <button class="btn-modal ganada" onclick="saveReg('ganada')">✅ GANADA</button>
-      <button class="btn-modal perdida" onclick="saveReg('perdida')">❌ PERDIDA</button>
-      <button class="btn-modal cashout" onclick="saveReg('cashout')">💰 CASHOUT</button>
-      <button class="btn-modal pendiente" onclick="saveReg('pendiente')">⏳ PENDIENTE</button>
+    <!-- SECCIÓN COMBINADA DESDE ANÁLISIS -->
+    <div id="mr-sec-combinada" style="display:none;">
+      <div style="font-size:10px;color:#666;margin-bottom:10px;line-height:1.6;">
+        Registra este partido junto a otras selecciones en una combinada. Las selecciones adicionales se agregan manualmente.
+      </div>
+      <div id="mr-sels-wrap"></div>
+      <button onclick="mrAddSel()" style="width:100%;background:none;border:1px dashed rgba(0,184,224,.25);color:var(--azul);border-radius:7px;padding:8px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;cursor:pointer;margin-bottom:10px;">+ AGREGAR SELECCIÓN</button>
+      <div class="form-row" style="margin-bottom:8px;">
+        <div class="form-group" style="margin:0;"><label class="form-label">Stake CLP</label><input type="number" class="form-input" id="mr-stake-com" placeholder="1168"></div>
+        <div class="form-group" style="margin:0;"><label class="form-label">Casa</label>
+          <select class="form-select" id="mr-casa-com" style="font-size:12px;">
+            <option value="Betsson">Betsson</option><option value="Betano">Betano</option><option value="Tonibet">Tonibet</option><option value="Otra">Otra</option>
+          </select>
+        </div>
+      </div>
+      <div id="mr-cuota-total-wrap" style="text-align:center;margin-bottom:10px;font-size:11px;color:#666;">Cuota total: <span id="mr-cuota-total" style="font-weight:700;color:var(--dorado2);">—</span></div>
+      <div class="modal-btns">
+        <button class="btn-modal ganada" onclick="saveRegCom('ganada')">✅ GANADA</button>
+        <button class="btn-modal perdida" onclick="saveRegCom('perdida')">❌ PERDIDA</button>
+        <button class="btn-modal cashout" onclick="saveRegCom('cashout')">💰 CASHOUT</button>
+        <button class="btn-modal pendiente" onclick="saveRegCom('pendiente')">⏳ PENDIENTE</button>
+      </div>
     </div>
   </div>
 </div>
@@ -3473,11 +3603,111 @@ function getTablaValue(id){
 // Inicializar al cargar
 tablaCargarGuardadas();
 
-// Fix 3: abrirModalReg preselecciona casa y estrategia del análisis
-function abrirModalReg(){
-  if(!AA)return;
-  document.getElementById('mr-partido').textContent=AA.partido;
+// ===== REGISTRO DESDE ANÁLISIS =====
+let _mrSels = []; // selecciones de la combinada en modal-reg
 
+function mrTab(tipo){
+  const ind = document.getElementById('mr-sec-individual');
+  const com = document.getElementById('mr-sec-combinada');
+  const tI  = document.getElementById('mr-tab-ind');
+  const tC  = document.getElementById('mr-tab-com');
+  if(!ind||!com) return;
+  const esInd = tipo==='individual';
+  ind.style.display = esInd?'block':'none';
+  com.style.display = esInd?'none':'block';
+  tI.style.background = esInd?'rgba(0,217,110,.12)':'transparent';
+  tI.style.color = esInd?'var(--verde)':'#555';
+  tC.style.background = !esInd?'rgba(0,184,224,.12)':'transparent';
+  tC.style.color = !esInd?'var(--azul)':'#555';
+  if(!esInd && _mrSels.length===0) mrInitSels();
+}
+
+function mrInitSels(){
+  // Partir con el partido analizado como primera selección
+  if(AA){
+    _mrSels=[{local:AA.local||'',visita:AA.visita||'',partido:AA.partido||'',mercado:AA.mercado||'',cuota:AA.cuota||''}];
+  } else {
+    _mrSels=[{local:'',visita:'',partido:'',mercado:'',cuota:''}];
+  }
+  _mrSels.push({local:'',visita:'',partido:'',mercado:'',cuota:''});
+  mrRenderSels();
+}
+
+function mrAddSel(){
+  _mrSels.push({local:'',visita:'',partido:'',mercado:'',cuota:''});
+  mrRenderSels();
+}
+
+function mrRenderSels(){
+  const w=document.getElementById('mr-sels-wrap');
+  if(!w) return;
+  w.innerHTML=_mrSels.map((s,i)=>`
+    <div style="background:rgba(8,8,8,.95);border:1px solid rgba(0,184,224,.1);border-radius:8px;padding:9px;margin-bottom:7px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div style="font-size:9px;font-weight:700;color:var(--azul);letter-spacing:.5px;">SEL. ${i+1}${i===0&&AA?' (este partido)':''}</div>
+        ${_mrSels.length>2?`<button onclick="_mrSels.splice(${i},1);mrRenderSels()" style="background:none;border:none;color:var(--rojo2);font-size:12px;cursor:pointer;">✕</button>`:''}
+      </div>
+      <div class="form-row" style="margin-bottom:5px;">
+        <input type="text" class="form-input" value="${s.local||''}" placeholder="🏠 Local"
+          oninput="_mrSels[${i}].local=this.value;_mrSels[${i}].partido=(this.value+' vs '+(_mrSels[${i}].visita||'')).trim()" style="font-size:11px;padding:6px 8px;">
+        <input type="text" class="form-input" value="${s.visita||''}" placeholder="✈️ Visitante"
+          oninput="_mrSels[${i}].visita=this.value;_mrSels[${i}].partido=((_mrSels[${i}].local||'')+' vs '+this.value).trim()" style="font-size:11px;padding:6px 8px;">
+      </div>
+      <div class="form-row">
+        <input type="text" class="form-input" value="${s.mercado||''}" placeholder="Mercado"
+          oninput="_mrSels[${i}].mercado=this.value" style="font-size:11px;padding:6px 8px;">
+        <input type="number" class="form-input" value="${s.cuota||''}" placeholder="Cuota" step="0.01" min="1"
+          oninput="_mrSels[${i}].cuota=this.value;mrCalcCom()" style="font-size:11px;padding:6px 8px;max-width:80px;">
+      </div>
+    </div>`).join('');
+  mrCalcCom();
+}
+
+function mrCalcCom(){
+  const total=_mrSels.reduce((a,s)=>a*(parseFloat(s.cuota)||1),1);
+  const el=document.getElementById('mr-cuota-total');
+  if(el) el.textContent=total>1?total.toFixed(2):'—';
+}
+
+function saveRegCom(res){
+  const sels=_mrSels.filter(s=>(s.local||s.partido)&&s.cuota);
+  if(sels.length<2){alert('⚠️ Necesitas al menos 2 selecciones con equipos y cuota');return;}
+  const stake=parseFloat(document.getElementById('mr-stake-com')?.value)||0;
+  if(!stake){alert('⚠️ Ingresa el stake');return;}
+  const casa=document.getElementById('mr-casa-com')?.value||'';
+  const cuota=Math.round(sels.reduce((a,s)=>a*(parseFloat(s.cuota)||1),1)*100)/100;
+  let gan=0;
+  if(res==='ganada') gan=Math.round(stake*(cuota-1));
+  else if(res==='perdida') gan=-stake;
+  else if(res==='cashout'){const m=parseFloat(prompt('Monto cashout (CLP):','0'))||0;gan=m-stake;}
+  const ligas=[...new Set(sels.map(s=>s.liga||AA?.liga||'').filter(Boolean))].join(' / ')||'Combinada';
+  const reg={
+    id:Date.now(),tipo:'combinada',
+    fecha:new Date().toLocaleDateString('es-CL'),
+    partido:`Combinada x${sels.length}`,liga:ligas,
+    ests:['Combinada'],casa,cuota,stake,res,gan,
+    selecciones:sels.map(s=>{
+      const loc=s.local||'', vis=s.visita||'';
+      return {partido:loc&&vis?`${loc} vs ${vis}`:(s.partido||'—'),local:loc||null,visita:vis||null,mercado:s.mercado||'—',cuota:parseFloat(s.cuota)||0};
+    }),
+    calLive:false
+  };
+  DB.regs.unshift(reg);
+  if(res!=='pendiente') DB.cfg.cap+=gan;
+  sDB();
+  cModal('modal-reg');
+  _mrSels=[];
+  renderInicio();
+  renderHist();
+  alert('✅ Combinada registrada: '+res.toUpperCase()+(gan!==0?'\n'+(gan>0?'+':'')+gan.toLocaleString('es-CL')+' CLP':''));
+}
+
+function abrirModalReg(){
+  if(!AA) return;
+  _mrSels=[];
+  document.getElementById('mr-partido').textContent=AA.partido;
+  // Ir a tab individual por defecto
+  mrTab('individual');
   // Preseleccionar estrategia detectada
   const estSel=document.getElementById('mr-est-sel');
   if(estSel){
@@ -3486,14 +3716,15 @@ function abrirModalReg(){
     else if(ests.length>1) estSel.value='Combinada';
     else estSel.value='';
   }
-
-  // Preseleccionar casa del análisis
+  // Preseleccionar casa
   const casaSel=document.getElementById('mr-casa-sel');
-  if(casaSel&&AA.casa){
-    casaSel.value=AA.casa;
-    if(!casaSel.value) casaSel.value='Betsson'; // fallback
+  if(casaSel&&AA.casa) casaSel.value=AA.casa;
+  // Preseleccionar mercado del análisis
+  const mercEl=document.getElementById('mr-mercado');
+  if(mercEl&&AA.mercado){
+    const mercLabels={over25:'Over 2.5 Goles',btts:'BTTS Sí',over15:'Over 1.5 Goles',corneres:'Córneres Over 9.5',handicap:'Hándicap Asiático',bttsover:'BTTS + Over 2.5'};
+    mercEl.value=mercLabels[AA.mercado]||AA.mercado||'';
   }
-
   document.getElementById('mr-cuota').value=AA.cuota||'';
   document.getElementById('mr-stake').value=Math.round(DB.cfg.cap*DB.cfg.stk/100);
   aModal('modal-reg');
@@ -3506,6 +3737,7 @@ function saveReg(res){
   // Leer casa y estrategia editados en el modal
   const casaMod=document.getElementById('mr-casa-sel')?.value||AA.casa||'';
   const estMod=document.getElementById('mr-est-sel')?.value||'';
+  const mercadoMod=document.getElementById('mr-mercado')?.value.trim()||AA.mercado||'';
   let gan=0;
   if(res==='ganada')gan=Math.round(stake*cuota-stake);
   else if(res==='perdida')gan=-stake;
@@ -3542,6 +3774,7 @@ function saveReg(res){
     visita:AA.visita||null, // nuevo — retrocompatible
     ests:estMod?[estMod]:AA.ests.map(e=>e.cod||e),
     casa:casaMod||AA.casa, cuota, stake, res, gan,
+    mercado:mercadoMod,
     calLive:AA.calLive,
     condiciones
   };
@@ -3783,18 +4016,109 @@ function abrirEditPick(idx){
   const r = DB.regs[idx];
   if(!r) return;
   _editIdx = idx;
+
+  // Cabecera informativa
   document.getElementById('ep-partido').textContent = getNombrePartido(r);
-  document.getElementById('ep-meta').textContent = `${r.liga} · ${r.fecha} · Cuota: ${r.cuota||'—'} · Stake: $${(r.stake||0).toLocaleString('es-CL')} CLP`;
+  document.getElementById('ep-meta').textContent = `${r.liga||'—'} · ${r.fecha||'—'} · Cuota: ${r.cuota||'—'} · Stake: $${(r.stake||0).toLocaleString('es-CL')} CLP`;
   document.getElementById('ep-est').textContent = (r.ests||[]).join(', ') || '—';
-  // Mostrar ganancia calculada con cada resultado posible
-  const stake = r.stake||0; const cuota = r.cuota||1;
-  document.getElementById('ep-gan-cal').textContent = `+$${Math.round(stake*(cuota-1)).toLocaleString('es-CL')} CLP`;
-  document.getElementById('ep-per-cal').textContent = `-$${stake.toLocaleString('es-CL')} CLP`;
+
+  // Precargar campos editables
+  const set=(id,val)=>{const e=document.getElementById(id);if(e)e.value=val||'';};
+  set('ep-local',  r.local  || (r.partido||'').split(' vs ')[0]?.trim() || '');
+  set('ep-visita', r.visita || (r.partido||'').split(' vs ')[1]?.trim() || '');
+  set('ep-liga',   r.liga   || '');
+  set('ep-cuota',  r.cuota  || '');
+  set('ep-stake',  r.stake  || '');
+  set('ep-mercado',r.mercado|| '');
+  set('ep-nota',   r.nota   || '');
+
+  // Fecha: convertir DD/MM/YYYY → YYYY-MM-DD para input[type=date]
+  if(r.fecha){
+    const p=r.fecha.split('/');
+    if(p.length===3) set('ep-fecha',`${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`);
+  }
+
+  // Selects: casa y estrategia
+  const casaEl=document.getElementById('ep-casa');
+  if(casaEl) casaEl.value=r.casa||'Betsson';
+  const estEl=document.getElementById('ep-est-sel');
+  if(estEl) estEl.value=(r.ests&&r.ests[0])||'';
+
+  // Ganancias calculadas
+  const stake=r.stake||0; const cuota=r.cuota||1;
+  document.getElementById('ep-gan-cal').textContent=`+$${Math.round(stake*(cuota-1)).toLocaleString('es-CL')} CLP`;
+  document.getElementById('ep-per-cal').textContent=`-$${stake.toLocaleString('es-CL')} CLP`;
+
   // Estado actual
-  const resActual = document.getElementById('ep-res-actual');
-  resActual.textContent = r.res==='pendiente'?'⏳ Pendiente':r.res==='ganada'?'✅ Ganada':r.res==='perdida'?'❌ Perdida':'💰 Cashout';
-  resActual.className = `r-${r.res}`;
+  const resActual=document.getElementById('ep-res-actual');
+  resActual.textContent=r.res==='pendiente'?'⏳ Pendiente':r.res==='ganada'?'✅ Ganada':r.res==='perdida'?'❌ Perdida':'💰 Cashout';
+  resActual.className=`r-${r.res}`;
+
   document.getElementById('modal-edit-pick').style.display='flex';
+}
+
+function guardarCamposPick(){
+  if(_editIdx===null) return;
+  const r = DB.regs[_editIdx];
+  if(!r) return;
+
+  // Leer campos
+  const local  = document.getElementById('ep-local')?.value.trim()||'';
+  const visita = document.getElementById('ep-visita')?.value.trim()||'';
+  const liga   = document.getElementById('ep-liga')?.value.trim()||r.liga||'';
+  const cuota  = parseFloat(document.getElementById('ep-cuota')?.value)||r.cuota||0;
+  const stakeNuevo = parseFloat(document.getElementById('ep-stake')?.value)||r.stake||0;
+  const casa   = document.getElementById('ep-casa')?.value||r.casa||'';
+  const est    = document.getElementById('ep-est-sel')?.value||'';
+  const mercado= document.getElementById('ep-mercado')?.value.trim()||'';
+  const nota   = document.getElementById('ep-nota')?.value.trim()||'';
+
+  // Fecha: convertir YYYY-MM-DD → DD/MM/YYYY
+  let fecha = r.fecha;
+  const fechaRaw = document.getElementById('ep-fecha')?.value;
+  if(fechaRaw){
+    const p=fechaRaw.split('-');
+    if(p.length===3) fecha=`${p[2]}/${p[1]}/${p[0]}`;
+  }
+
+  // Recalcular ganancia si cambió cuota o stake y el pick ya tiene resultado
+  let gan = r.gan;
+  if((cuota!==r.cuota||stakeNuevo!==r.stake)&&r.res!=='pendiente'){
+    // Revertir ganancia anterior del capital
+    DB.cfg.cap -= (r.gan||0);
+    // Calcular nueva
+    if(r.res==='ganada')     gan=Math.round(stakeNuevo*(cuota-1));
+    else if(r.res==='perdida') gan=-stakeNuevo;
+    else if(r.res==='cashout') gan=Math.round(stakeNuevo*(cuota-1)*0.5);
+    DB.cfg.cap += gan;
+  }
+
+  // Aplicar al registro — retrocompatible
+  r.local   = local  || null;
+  r.visita  = visita || null;
+  r.partido = local&&visita ? local+' vs '+visita : local||visita||r.partido||'—';
+  r.liga    = liga;
+  r.fecha   = fecha;
+  r.cuota   = cuota;
+  r.stake   = stakeNuevo;
+  r.gan     = gan;
+  r.casa    = casa;
+  r.ests    = est ? [est] : (r.ests||[]);
+  r.mercado = mercado || r.mercado;
+  r.nota    = nota || r.nota;
+
+  sDB();
+  cerrarEditPick();
+  renderHist();
+  renderInicio();
+  // Feedback breve
+  setTimeout(()=>{
+    const banner=document.createElement('div');
+    banner.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:999;background:rgba(0,217,110,.15);border:1px solid rgba(0,217,110,.3);color:var(--verde);border-radius:8px;padding:9px 18px;font-family:Rajdhani,sans-serif;font-size:13px;font-weight:700;pointer-events:none;';
+    banner.textContent='✅ Pick actualizado';
+    document.body.appendChild(banner);
+    setTimeout(()=>banner.remove(),2000);
+  },100);
 }
 
 function editPickRes(nuevoRes){
@@ -5398,19 +5722,19 @@ function renderLigas(){
       <div class="liga-body" id="${tid}">
         <div style="font-size:11px;color:#888;margin-bottom:10px;padding-top:8px;">${l.desc}</div>
         <div class="liga-section">
-          <div class="liga-section-title">Pre-partido — P1 · Qué buscar</div>
+          <div class="liga-section-title">🎯 Pre-partido — P1 · Qué buscar</div>
           <div class="liga-tags">${tagsP1}</div>
         </div>
         <div class="liga-section">
-          <div class="liga-section-title">Pre-partido — P2 · Mercados</div>
+          <div class="liga-section-title">📊 Pre-partido — P2 · Mercados</div>
           <div class="liga-tags">${tagsP2}</div>
         </div>
         ${tagsP3?`<div class="liga-section">
-          <div class="liga-section-title">Value · P3 · Edge</div>
+          <div class="liga-section-title">💎 Value / Edge — P3</div>
           <div class="liga-tags">${tagsP3}</div>
         </div>`:''}
         <div class="liga-section">
-          <div class="liga-section-title">Compatibilidad de estrategias Live</div>
+          <div class="liga-section-title">🔴 Live — Estrategias en partido</div>
           <div class="liga-compat-row">${compatRows}</div>
         </div>
         <button class="btn-sec" style="margin-top:10px;width:100%;" onclick="irDemoEst('');ir('demo');event.stopPropagation();">🧪 Practicar en Demo con esta liga →</button>
