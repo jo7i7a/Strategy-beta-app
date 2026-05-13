@@ -3735,12 +3735,13 @@ function savePickManual(res){
     else if(res==='cashout'){const m=parseFloat(prompt('Monto recibido por cashout (CLP):','0'))||0;gan=m-stake;}
 
     reg={id:Date.now(),tipo:'individual',fecha,partido,liga,
-      local:local||null,   // nuevo — retrocompatible
-      visita:visita||null, // nuevo — retrocompatible
+      local:local||null,
+      visita:visita||null,
       ests:est?[est]:[],casa,cuota,stake,res,gan,mercado,nota,calLive:tipo==='live',
       condiciones: {mercado: mercado||null, tipop: tipo||null, origen:'manual'}
     };
 
+  } else {
     // Combinada — acepta local+visita o partido legacy
     const sels=_pmSels.filter(s=>(s.local||s.partido)&&s.cuota);
     if(sels.length<2){alert('⚠️ Agrega al menos 2 selecciones con equipos y cuota');return;}
