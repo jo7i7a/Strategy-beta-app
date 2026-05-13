@@ -133,16 +133,38 @@ body::before{
 
 /* ===== FORMS ===== */
 .form-group{margin-bottom:10px;}
-.form-label{display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#666;margin-bottom:5px;}
+.form-label{display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#777;margin-bottom:5px;}
 .form-input,.form-select{
-  width:100%;background:rgba(6,6,6,.9);
-  border:1px solid rgba(255,255,255,.07);
+  width:100%;background:rgba(10,10,10,.95);
+  border:1px solid rgba(255,255,255,.14);
   border-radius:8px;padding:10px 12px;
   color:var(--texto);font-family:'Rajdhani',sans-serif;
   font-size:14px;font-weight:600;
-  transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;
+  transition:border-color .18s,box-shadow .18s,background .18s;
+  -webkit-appearance:none;
 }
-.form-input:focus,.form-select:focus{outline:none;border-color:rgba(200,0,0,.5);box-shadow:0 0 0 2px rgba(200,0,0,.08);}
+/* Vacío: borde sutil */
+.form-input:placeholder-shown,.form-select:invalid{
+  border-color:rgba(255,255,255,.1);
+  background:rgba(8,8,8,.9);
+}
+/* Lleno: borde más luminoso */
+.form-input:not(:placeholder-shown){
+  border-color:rgba(255,255,255,.28);
+  background:rgba(14,14,14,.98);
+}
+/* Select con valor seleccionado */
+.form-select.has-value{
+  border-color:rgba(255,255,255,.28);
+  background:rgba(14,14,14,.98);
+}
+/* Foco: acento rojo */
+.form-input:focus,.form-select:focus{
+  outline:none;
+  border-color:rgba(200,0,0,.7);
+  box-shadow:0 0 0 3px rgba(200,0,0,.12);
+  background:rgba(16,16,16,1);
+}
 .form-select option{background:#111;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 
@@ -179,17 +201,34 @@ body::before{
 .mteam-lbl::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.04);}
 .minputs{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
 .minput-wrap{position:relative;}
-.minput-lbl{font-size:9px;color:#444;margin-bottom:3px;font-weight:600;letter-spacing:.3px;}
+.minput-lbl{font-size:9px;color:#555;margin-bottom:3px;font-weight:600;letter-spacing:.3px;}
 .minput{
-  width:100%;background:rgba(4,4,4,.95);
-  border:1px solid rgba(255,255,255,.06);
+  width:100%;background:rgba(6,6,6,.95);
+  border:1px solid rgba(255,255,255,.11);
   border-radius:6px;padding:7px 26px 7px 9px;
   color:var(--texto);font-family:'Rajdhani',sans-serif;
-  font-size:13px;font-weight:700;transition:border-color .15s;
+  font-size:13px;font-weight:700;
+  transition:border-color .18s,box-shadow .18s,background .18s;
 }
-.minput:focus{outline:none;border-color:rgba(200,0,0,.4);}
+/* Vacío */
+.minput:placeholder-shown{
+  border-color:rgba(255,255,255,.08);
+  background:rgba(4,4,4,.95);
+}
+/* Lleno */
+.minput:not(:placeholder-shown){
+  border-color:rgba(255,255,255,.22);
+  background:rgba(12,12,12,.98);
+}
+/* Foco */
+.minput:focus{
+  outline:none;
+  border-color:rgba(200,0,0,.6);
+  box-shadow:0 0 0 2px rgba(200,0,0,.1);
+  background:rgba(16,16,16,1);
+}
 .minput-sfx{position:absolute;right:7px;bottom:7px;font-size:11px;color:#444;font-weight:700;pointer-events:none;}
-select.minput{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23444' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;padding-right:22px !important;}
+select.minput{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23555' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;padding-right:22px !important;}
 select.minput option{background:#080808;color:#efefef;}
 
 /* ===== TIPS ===== */
@@ -487,7 +526,35 @@ select.minput option{background:#080808;color:#efefef;}
 .btn-modal.cashout{border-color:rgba(0,184,224,.35);color:var(--azul);}
 .btn-modal.pendiente{border-color:rgba(217,160,48,.35);color:var(--dorado2);}
 
-/* ===== ESTRATEGIAS ===== */
+/* ===== LIGAS FAVORITAS ===== */
+.liga-card{background:rgba(10,10,10,.98);border-radius:10px;margin-bottom:10px;overflow:hidden;cursor:pointer;border-left:3px solid transparent;}
+.liga-card.tier-A{border-left-color:var(--rojo2);}
+.liga-card.tier-B{border-left-color:var(--dorado2);}
+.liga-card.tier-C{border-left-color:var(--verde);}
+.liga-card-header{display:flex;align-items:center;gap:10px;padding:12px;}
+.liga-tier{font-size:9px;font-weight:700;padding:3px 7px;border-radius:4px;letter-spacing:.5px;flex-shrink:0;}
+.liga-tier-A{background:rgba(200,0,0,.15);color:var(--rojo2);border:1px solid rgba(200,0,0,.25);}
+.liga-tier-B{background:rgba(217,160,48,.12);color:var(--dorado2);border:1px solid rgba(217,160,48,.2);}
+.liga-tier-C{background:rgba(0,217,110,.08);color:var(--verde);border:1px solid rgba(0,217,110,.15);}
+.liga-info{flex:1;min-width:0;}
+.liga-nombre{font-size:13px;font-weight:700;color:#eee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.liga-pais{font-size:10px;color:#555;margin-top:1px;}
+.liga-compat{display:flex;gap:4px;flex-shrink:0;}
+.liga-compat-tag{font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;letter-spacing:.3px;}
+.lct-on{background:rgba(0,217,110,.1);color:var(--verde);border:1px solid rgba(0,217,110,.2);}
+.lct-off{background:rgba(255,255,255,.03);color:#333;border:1px solid rgba(255,255,255,.05);}
+.liga-body{display:none;padding:0 12px 12px;border-top:1px solid rgba(255,255,255,.04);}
+.liga-body.open{display:block;}
+.liga-section{margin-top:10px;}
+.liga-section-title{font-size:9px;font-weight:700;letter-spacing:.8px;color:#555;text-transform:uppercase;margin-bottom:6px;}
+.liga-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.liga-tag{font-size:10px;background:rgba(255,255,255,.05);color:#aaa;border-radius:4px;padding:3px 7px;border:1px solid rgba(255,255,255,.07);}
+.liga-compat-row{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+.liga-compat-item{display:flex;align-items:flex-start;gap:8px;}
+.liga-compat-badge{font-size:10px;font-weight:700;width:24px;flex-shrink:0;padding:2px 0;text-align:center;border-radius:3px;}
+.lcb-on{color:var(--verde);}
+.lcb-off{color:#333;}
+.liga-compat-txt{font-size:11px;color:#777;line-height:1.5;}
 .est-card{background:rgba(12,12,12,.98);border:1px solid rgba(255,255,255,.06);border-radius:10px;margin-bottom:10px;overflow:hidden;cursor:pointer;}
 .est-header{display:flex;align-items:center;gap:10px;padding:12px;}
 .est-chev{font-size:12px;color:#444;transition:transform .2s;flex-shrink:0;}
@@ -2152,6 +2219,42 @@ select.minput option{background:#080808;color:#efefef;}
   </div>
 </div>
 
+<!-- ===== LIGAS FAVORITAS ===== -->
+<div class="pg" id="pg-ligas">
+  <div class="pghdr">
+    <button class="btn-back" onclick="ir('inicio')">←</button>
+    <div class="pghdr-title">LIGAS</div>
+    <div style="margin-left:auto;font-size:9px;color:#444;letter-spacing:.5px;">ENFOQUE · ANÁLISIS</div>
+  </div>
+  <div class="pad">
+
+    <div class="nota" style="margin-bottom:14px;">
+      Selecciona una liga para ver qué mercados y estrategias aplican mejor. Úsalo para orientar tu análisis pre-partido.
+    </div>
+
+    <!-- Filtro por tier -->
+    <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;">
+      <button onclick="ligasFiltrar('todos')" id="lf-todos" style="flex:1;min-width:60px;padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.12);background:rgba(200,0,0,.15);color:var(--rojo2);font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px;">TODAS</button>
+      <button onclick="ligasFiltrar('A')" id="lf-A" style="flex:1;min-width:60px;padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.08);background:transparent;color:#888;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px;">🔴 TIER A</button>
+      <button onclick="ligasFiltrar('B')" id="lf-B" style="flex:1;min-width:60px;padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.08);background:transparent;color:#888;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px;">🟡 TIER B</button>
+      <button onclick="ligasFiltrar('C')" id="lf-C" style="flex:1;min-width:60px;padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.08);background:transparent;color:#888;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px;">🟢 TIER C</button>
+    </div>
+
+    <div id="ligas-lista"></div>
+
+    <!-- Acceso rápido a Demo -->
+    <div style="margin-top:16px;padding:12px;background:rgba(0,184,224,.05);border:1px solid rgba(0,184,224,.12);border-radius:8px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--azul);">🧪 MODO DEMO</div>
+        <div style="font-size:10px;color:#555;margin-top:2px;">Practica estas ligas sin arriesgar banca</div>
+      </div>
+      <button onclick="ir('demo')" style="background:rgba(0,184,224,.15);border:1px solid rgba(0,184,224,.3);color:var(--azul);border-radius:7px;padding:7px 14px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">IR A DEMO →</button>
+    </div>
+
+    <div class="spacer"></div>
+  </div>
+</div>
+
 <!-- ===== CALENDARIO ===== -->
 <div class="pg" id="pg-calendario">
   <div class="pghdr">
@@ -2265,7 +2368,7 @@ select.minput option{background:#080808;color:#efefef;}
   <button class="bnav-center" onclick="ir('nuevo')"><div class="bnav-fab" style="padding:4px;background:rgba(0,20,80,.95);border:2px solid rgba(0,80,220,.4);"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwMDAgQDAwMEBAQFBgoGBgUFBgwICQcKDgwPDg4MDQ0PERYTDxAVEQ0NExoTFRcYGRkZDxIbHRsYHRYYGRj/2wBDAQQEBAYFBgsGBgsYEA0QGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBj/wAARCACWAJYDASIAAhEBAxEB/8QAHQAAAQQDAQEAAAAAAAAAAAAAAAEGBwgCBQkDBP/EAEoQAAECAwYDBQYBCgIHCQAAAAECAwQFEQAGEhMhMQciQQgyUWFxFBUWIzNCgQkYJCUmUnKRwdJToRdiY4OSlMI0NTdDRFeC0eH/xAAbAQEAAgMBAQAAAAAAAAAAAAAABQYCAwQBB//EADYRAAEDAgUABwcDBAMAAAAAAAEAAgMEEQUSITFRBhNBcZGx8BQiYYGhwdEzQlIVIzLhU3KS/9oADAMBAAIRAxEAPwC7brovGAwyCwWucleta6dLC3RMGhI0Aocaokuq1ScGh03sry0TABEjGQ4nVwpGVUdNRvrYWtt9oQUEMExTQOOgYSSO9zdf62IkzQ1D/DpBLqhgzR3debbeyodElbMsdBdW8cQWjQDFy9fSxjQmH9gcAM1IoHaVNTqOf0sNrbg2vZ5qA7GLNW1kZhSDoObprWxFi1+zaTn/AD8/bL5aYfX1srbRkripk6c1D3KEIFCMRxdfSw0TLkn398/H9PF82lN/TcWG0uwbiomaqzYRejaCcyhJqOXppWxEiWi0/wDERVVpXPkgc2ow77dbBaMwfE8QrA21zFpQqo4PPaypDqXzHuGsqOoarUYSKAYPW2hvPPJtJ2ROJTJVx8nR9ZDLpbKKd4qbwnl8SK+dsJJGxtLnbD12LJrS42C3rjRvEsPsHIDPIQsVrXXpZoyS8Dl67+ziWB4NMlQdhQvXRsZawPWoVbQv8UY+ZNKRJLvqhlFtVPZonEKnZRCUCtLN2Xw02kD8pnEDDRLsQjHmtpqlVDUUNBUVBr62iJsRa97HQ6tBudD3fddTKcgEP0PYpvW6Jg0JGgFDjVEl1WqTg0Om9jNDUP8ADpBLqhgzR3debbe0bOcV4hYbgoe6ykx6lBsKZiavOK6gAIqSbP6WRcXESlMPNIBMFOVjlTmZq01FRicoKGnhWnjaQgrIpyRGb2+B/C53xOZq4L7EOiStmWOgureOILRoBi5evpbFr9m0nP8An5+2Xy0w+vrbJtbcG17PNQHYxZq2sjMKQdBzdNa2RomXJPv75+P6eL5tKb+m4t1LWhtoyVxUydOah7lCEChGI4uvpZEtFp/4iKqtK58kDm1GHfbrZW0uwbiomaqzYRejaCcyhJqOXppWwkOpfMe4ayo6hqtRhIoBg9bESFozB8TxCsDbXMWlCqjg89rDrZvEsPsqyAzyELFa116WUpdfiBGwSsEuRq42DhBA73L1r/nZHQ5MFBcjOS0jRwJOVU9NOuliIfX8RpEOwCwWTjJXzVrp0sWV9SZgkNyIZDqDVwpGVUeo31sWIh3KaAN3aKdP1Ms4uXp3vOyrykNhyAoZqaZiUmqgfv0Olh5tElAdlpMQtw4VBXPQDX7bC20QbImsPVcW5QqaJqBi30GuliI+UWM12nvmlQmvNi6abbWEZTjWOdYRGg/KCzhNPt0Gm9bGBDkP76WSI0DEGa6VGg5d9rDbaJo2Y6OJZfaOFCEnCFAajQ67mxEjRzkn4k5afSzOX+Lu/hYbLri1InQwwI+kV0SK15aEa7VsM/rxJ95j2fK7mDkrXfvb7Cw24uaOKgY5GSw1zIWkFJJBoNTodLEQkul4tOj9TdFHu4aaa770sEuofDcv1lZ+opOqaffqdbCXFORBky00ghyh6mtAKg4tt7CnFwb4lUMnMhHNFOnUjFvzDTSxFEHEqX3ek18ZY7dt72J6JCnYnJWQ2gBQAWB0JJO2hodLayOvfAzCDjoGFfdYcSn5btaFym4NO7UV/wDy27mlyJhefiHHTKL9ohpI2sQ0Ph1eiEN6EincSVFRxbkbeNnfePh1dZ27jEugoLLLdUsvQ9MyH61BG9TuFVr662rRpKmV0r4QGtJ0HPZ8r73Uj1sbQ0P1PktdwylkmbuRDTqUILs/eKm33HCFLbwqopKRslOx01odbPmjWRmu0980qEk82LppttZgXAk89uVMZnL49pMQhwIioKJaBLblaJcSU7pWBgOE+dK2kDAhyH99LJEaBiDNdKjQcu+1pfDm5adrS3KRuPj/AL3XJUG8hIN0IynGsc6wiNB+UFnCafboNN62Ro5yT8SctPpZnL/F3fwsrbaJo2Y6OJZfaOFCEnCFAajQ67myM/rxJ95j2fK7mDkrXfvb7C3ctKGy64tSJ0MMCPpFdEiteWhGu1bCS6Xi06P1N0Ue7hpprvvSw24uaOKgY5GSw1zIWkFJJBoNTodLCXFORBky00ghyh6mtAKg4tt7EQS6l8Ny8VlR+oRqmn36nWw4XGlAXeGJo/Vy+bm6b+VhTioOIEph05kI5QKdIqRi31Gmlh1xUlUGZan2hDvMtSxjoRp0sRD2BlIN3KKeJ+bl8xw9O952LD6UyRAeltYhbhwrCueg3+2xYiTKF2jn19ozuSlMFKa+dlLQlx9/FWZnc2VSlMeve8rDTapKouzJXtCHBhSEEroRr91hLaoOIM2iFZkI5UpaBqRi20OmliILQe/aTFTDz5NN6ctMX4eFsXECcNKm9cr2cEZfexYebfpvbJTanIgTlC6QQ5izU1oBQjDtvbCKaXNW1RsCotMNoKFNnlKiATsNDuLEVKZv+UPlkYtKIjhNGjKKgCmco16f4J8LeUX+UclMZBohXeE0YEIIIKZyiugp/g2rdF9mPj88+so4UXiIKidGkHr/ABW+L81rtBEmnCm8J8spP91iKzyvyjkoVKBLjwmjcoJCa++kV0Nf8Gwx+UclEPLFwKOE0aW1hQJM6RXX/c2rD+az2g//AGovDXwyk/3WPzWu0EDQ8Kbw18MpP91iKz0B+UblMubWhnhNGqCzUlU6R4U6M2wgPyi8mlzq3GeE0aorFDinSP6M2rJ+a12ghvwpvCPVpI/6rH5rPaDG/Ci8I9Wk/wB1iKzbH5ReTw8zXHI4TxxcWVEgzpFNf9zYX+UXky5uJieE0bmgg099IpoKf4NqyfmtdoKlf9FF4aeOUn+6wOyz2gyKjhReGnjlJ/usRWbjPyi8njYxuJd4TxoWgAAJnSKaGv8Ag29I38opK5rlh3hNGpwVpgnKOvqz5WrB+az2g+nCi8J9Gk/3W+hjswdoBB/8KLxH0aQf+qxFd/hR2v4XjXxSlHDpNwIiTGNDq0xqpkl8N5TSl6oDYrXDTcb2sqHQ8PhulMPJnVrtzd38PG3Pzsu8EOLl0u0vIZ1ea4E6k8uZZi0ORsUhKW2yuHWlNSFEiqiBt1t0EC0OQ3uVAIjQMJeppUanm32sRIHRLj7hw5mdy5taUx6d3ysgdF2z7PT2jO58VcFKaedbZIcRBsmVRFVxblQl0CoGLbU66WGlokoLUyrELcOJBTz0G3WxFipsXa/SK+0Z3Jh7lKa+diw2gyRRemSvaEOcqEo56HfrYsRK2HGlE3iOJo/SzKK5uu3lYAdS+XJgayo/TB1TT7NBrZGi7MCUTxOQ2jVsqGVU9deullBdffMFGpy5cjRtwjCCB3ebr/WxEEOl4OtH9TdUju4aa6b71sOJdcWlclOGBH1QiiRWvNUHXalhRdQ+IBtNZUdC7SooRUnH62HVuwa0w8qTmwa9XFgZlCTQ83TSliJHEpdSPhoBFPrZYwfw1r+NlWGFt4JKlKY4H5pQMJI+7U6b0tBt6+1Jcfh/xJm90RKJ057A8GHo6GS0+2tYSCQElaVDCVFJ8xZWe1pwUabMTBzScwsUvRYiZW6rQ6nRNRv526fY57Ahh1Wj2mK9swU4hLOTlNBPvmmqqc2LrzbbWEBlLeXMEpM1NcpShVQP2ajS0ERfa64Kwbft0NHT2LmJFTkytwJrsdFlI287MC8nbhkyVl+7lwI+Njk9yImcWmHaBGxLbeIn0xC2bMPqHGwYfLzWLqyFu7grbNJaQSm8KA4+fpY04zh60w+dtBJL53Snl44+Qu3ok81j4CgegWIpt91hXWqEEnbfw2NDbnZf3tDcY+K0YJTFzh6Fh4g5aJRIWVMh2v2nCS456EkeVm9H8IuLtzZWzel66k4lyYajq3oNQMRL66pU8hpRch6jUFYTUW724PYWleATsFzHELn+20kLqkELS8XJhQyo/TSaFNPs0GtgpWXsxoD3N1SKYcNNeXfe3PG5fbI4qXfgGpbeNUDfCWoAAEwq1EADaj7e581JUbTZIe3LcGKhkQU/ureCUwxFFph8qMFDvRWJCt/9W3LLhVTGdG37luZXwv7bd6tEtDi1JVJaJgR9VKKJFa81QddqWHEpdSPhsBFPrZYwV/drX8bQQ12xOB7TaWYKezWHh16uIflL6lVOh1APS3jF9sbgtKkH4fi59GFXfCZYrWm1C4pNOttHsVRtkPgtpqYh+4Kf1hhbeGShKY4H5pQMJI+7U6b0snyixlNU980oVU5sXXXba0VcJeOl2+KsynLV0pNNICNgENOKTH4FKfbcKgpSUoUaUUlIOv3C0rYEIh/b2zWakVLVakE6Hk9LaJI3RuyvFitjHteMzTcIRlJbLcfQzU1y1KFVA/ZqNLI1ltAi8NFOk/KxjEaddvOyoQ2+0Y2NIRMU1LbROEkju8vX+tkZQiYAuTw5LiDRsKOVUddDvrbBZpEBbRJvGcTJ+lmc3N128rFhsrmBKJ6MhpGrZUMqp9eulixENum8Siw+n2cNc4KDWtdOtgOmPfMjWnA01yh0bnBtptrZXXReIBhgGHLXOSvWtdOlhboj2xI2wW3GqAunUHBodN9bESKdLTwu8E1aVyZ33ajFttbxj5i1dWBfSsB2GQ0uJdcWaUSASrbyTb3zQ0x8PEEuqGDOHd15tt7NDinGuXb4F3thASt92Vv4XE6BONOX19bZMbmcG8rF7srSVQa70gXxJ4sphphHLhETN+IjoyMCAtTLYQ4+4vCSAaBJ0rb2+EuEMQgOtcUp3DpUAQiKuq4VfjgfIs4uHMIuDRfSapTRcFdWODavBTpbYH+TirMD2LUjDoNLW8EucQHWAtx+O5Vs2a0Ei5K2zl0uD0OcT3E68MWKd2CusUn0q6+BbBlPBuFjkwsnudfC9kaUOOpE5m8PKobA22pxxawylSghKEKUauDam5FtQ5Lwd02mzs+cPOGV6GZ+zxGZk8WI1KYKChZghxlxBHMp1iIqEhRxYSEnGCgdDQ89dKYIS4vN9h6Fluo2iWQNDRbt9G6gR7tBTqDlrkDcuVSy4EI6nCtF3IINRLifBcWtSn1f8SfSzXkF6Z9Jp4Lx3YvFMYCZKJUYyEiVNvKNdcZBqqvUKqDa1fFHsFtiBdmPCeePrfQKmTTtwHM8m4gAUPksU/1halt57n3hufeV+R3kk0dJ5ox34aLbLbgH7w/eSeigSD0NouDFXR6PYCD4qRloQ/VriCpdd4tQc+WTxH4b3YvO8rvzKGbVKI9Xmp6GohZ81tm3gRwAmnMHeI12HFbowQc2aT6GrKyPUWYkulU0au7AxMyYIbjGi/CPYwvOaC1IOoJopK0qSUmhFBUaiuLkHQ7UtYadkcsYkiJAPB+2yhppnRPMcoBI+Cfqbp8FnU40cZ5wyD9j90HSoeuF8i28uvw34V3nvK1duQcUp3MJxGNuiBbN2jCsOvJaWtLa3FvkpxFGGoSdTaHzDUPlZ48KZgqS8c7mzNB/7PPIJZqaaF9CT/kTbKWJ7Wkh5v8AL8LyOWN7gMo+v5Up9lG9T92u0VKAjRubQzsvdQTQEqRmIB9Ftp/nboWGw1D/ABECS6oY8k93Xl33tzWurS6Pawgm2xySu9uSANOVMYUU/wCG3SkMqYiFXgUoFokqyQObXl32tXsYAMjXjtCl8NNmOZwUIaEe0Z44S241Uhoag4NRrvrYabF4QX3yYcs8oCNa1162QtGPfE8QrLaa5i0RUnBvrtrYcbN4VB9hWQGeUhYrWuvS0QpJCFm8ZMO+PZwzzgo1r062LDyxeMCHYBhyzzkr1rXTpYsRZPLRMAESMZDidXCkZVR01G+tha232hBQQwTFNA46BhJI73N1/rZHcpoA3dop0/Uyzi5ene87KvKQ2HIChmppmJSaqB+/Q6WIjGhMP7A4AZqRQO0qanUc/paN+PbkTAdmC+qHnVe8ky5TrTo5ylAWj7jtsbSR8osZrtPfNKhNebF0022s1uJEpTeHgpeyUzUfrGKlEWzDpVoo/KUUaDTvC2yEhsjSeQsJRdhA4XPnhrOZtEXQ4opcmUQtxN01ut1XUjDGwxJH4VsyYO9c4ZcIddbiE12dQK/zFDZ0cEf0++04u4Dzz+7M0lrY/ecMMXmx6lbKbRywrEUq/eAP87XaNreseLcH14KnSud1TCDypJlU/gZq+1CuQrrMU4oIbSgYwtRNAkU1BJIG3W0wtcPuKEvvZKIOWXpyrstw7ee20tC2krA+YksrFHApRUetddUmhtXWQzmOkE4Zm0sWyiLh6lpbrQdCSUlNcJB1133HTW1rrvXjmMNcaazJi8spvLEwuc6lcMwWGkkNhYZWhvGoEa6gYiFJ0rah9OamWB8TGgZCDvrrtxYW7Ne0q09EY2TMke4nMCPhp9793C2F5uIXEHg3L4a8l2ltTe7LS0szCQR5UW2Qo0S7DuarZBJwlPMgEpOHez9u5f7gJ2n5E1IbxyaXvTVtOISWdJSmKaPUw7qSCoebaq+IFo7WuZXv4ITRF/oKWSiKjYBbjkEy6sJhOXEjMcUTzJUEkkCiaUNaE2r9PrqXQiuzvJL1SMswd7ZfFuMzmEZiVLz2AsNNxaEk8nPgBodS6VaAikRgtQ6SIseblptff6qaxCIMeHNFrqVONvZVunwqu1G33unOpsqCciGIRmTxag6mGzHDjUHDzKTomgIqDupW1q6REvpUlNnPeTjXxCvDwtk9zpheeaPMwFWnkvKQ6iKbQsOMLWpQKy6g4kE1opIRXUGuvhHPeUkYjFISlS086U7BQNDT+Vr9gdQMhhO41+SpeNwOD2yjY6fNNOIhsJIAtsLnQjjvEa77TYqtc1hEp9S+gC31xMJzHSzr4NSZEf2gboNOpBYZmbUY8SNA2xV9ZPlRs2mJ5AGOJ4XFTNOYLYTFIiO1zMVoHKu+bhH/AD5t0iCXkRKo95VZXUkNVqKHQcnrbnTwlhvijtL3ciokApi557wexfuhan1V/lboslTpfLT3/c3RR7uGmmu+9qzi2hY3gKwYdqHO5KCl1+IEbBKwS5GrjYOEEDvcvWv+dkdDkwUFyM5LSNHAk5VT0066WUl1L4bl4rKj9QjVNPv1OthwuNKAu8MTR+rl83N038rRCkkPqTMEhuRDIdQauFIyqj1G+tiw9gZSDdyinifm5fMcPTvedixErzaJKA7LSYhbhwqCuegGv22Ftog2RNYeq4tyhU0TUDFvoNdLY5Qu0c+vtGdyUpgpTXzspaEuPv4qzM7myqUpj173lYiXAhyH99LJEaBiDNdKjQcu+1hDTM1aMbMgW3G6pDQ5QtI12OprUiyFoPftJiph58mm9OWmL8PC3k4uHm60zB2JahVNcoaWoEqoa1qSPGliLmHEmJ4O9p9TqmlJ+HJ+HsulMbCXcVPRTSv87ajiVdpFzuMF4LvsEKhIeMUuDcGzkM581hY8i2tBtO3bPuqhV/ZZxHl7CBDTRoQMbgWF4YhsVQo0/eb0/wB3aKbzAX24HSK+DSgubXZS3d2cJrzLhtVQMQfEAY2CfFCPG1xppw9sc3Ise/1fxVWqKdzTJFbY3Hd68kxYJwIimlKdcaSFpJcbFVIGIcyQOo3HmBa3MrvjcmElEPlXylrrKG0oTEREelTrgAoFLKjjKj1J1ranrFdLOCSSqazuYCClEDERkRhxFDQ7qfFRJASPMkWiukmAQYqGSTzdW1l+La99ltwXF58NLo4Yc5dbm+ncrSS3iFdyfXvTd27UYmbRTbJiYp1gKDMKzUJqpZFFKUSAlArXUkgC0NcZrsQV2LwQswg5SiXSKMabhzEsmjLcTVfy1gmqcSUhQPdqCNDZ68ELtTO7xva5eCDELHuzFuGbUVhaXGGmQUlChopOJ1RJGlajpaQrz3dkt8LpR12560h+BjG8CwFAKQd0rSeikmhB8R4Vt8m9oiwyvc2mcXRjS/8AIc8dy+kNhlraRrp25XnW3B4/KpxFS5TZJppbd3eS9COxcmjmlsPtLKsl1JSpJ2Ukg6gigNPWyzbh5fDha877/c993QRmJbmMAkPOw2hy8xskKQkmgO6RU0PQ+DU+ZvWYWYQcal6KhmEMYijC+EoFE5gOqiE0Ti1qlKRU0t9Aw6vYHNniNwqvXUTnsMUgsVtYiHGulnnw7hzJbr30vooYVQcqMpg1nrFRpyhTzSyH1W0KIRcRAtPlJBWgEpA69bPq+cvN3LmSLh43QRMOTN5zhP8A6x5ACGif9kzhT/EtVrZJKJAGg7+XrT5quRRFlyRt5pzdk26LU44wxc3iAUQspl6ylYoAHXSEJFT1whz+VrmpcU5EGTLTSBHKHqa0AqDi23tD3Z2udDyThGluLLcNHTZ33k64siobAwNII/hJV/8AM2mBDyYhHw6mlByZ4Na05q4fw8bVyvm62ckbDRTtHF1cQulU4qDiBKYdOZCOUCnSKkYt9RppYdcVJVBmWp9oQ7zLUsY6EadLAdEuPuHDmZ3Lm1pTHp3fKyB0XbPs9PaM7nxVwUpp51txrqSvpTJEB6W1iFuHCsK56Df7bFkU2LtfpFfaM7kw9ylNfOxYiVptUlUXZkr2hDgwpCCV0I1+6wltUHEGbRCsyEcqUtA1IxbaHTSw2HGlE3iOJo/SzKK5uu3lYAdS+XJgayo/TB1TT7NBrYiFNqciBOULpBDmLNdaAUIw7b2op21IiGjuP0mcabKGxIG9CANn3j0tetQdLwdaP6m6pHdw01033raivbSME5x/k4gQlLRkCBygjXPe8bctX+mrR0PF8TaDwU1P9DFzrvwN34fiPxCeu9Op9Doi2IGGlpikQbLho2uKcK04ATuEg0ofCtvhk3BqU+4bw3rvZfSFgLrSeP8AdbcylTJj1TN86hMMnEkFNCCVE6V8jR7Xxe4dcZI27N8I/iVKbrOQsrh5dOpZMGXjEILJNVQwSgpdxBRprppXqLfDLJ5w5vJwanfCJF7FSFiFn3vaQzaeskNxLZTgUh8tJOWo6qBpTUeBFuIht/h3+foK7tnqTEC4uzXGcZP8Bm1y+7rp/wBtPeWth+BcvmE8uTE3ZvaZnde9ccZczNFwZZfg30glTbrBVTEMJpRVDQ+VWrK+H8wnnGZXDmSLTExxmT0vbedqhBDa1BTqgK0ASgqO/gK2l2QX7uDcNrhncKFvZCTeGlN41T6dTyHacTCNKKVpS21iTiWAFaqA6Dx01Monty+G/aFZ4qwXEOS3khHpvELflcuh4gRLcPE5mJYzEJSSgKGgOvSwtbp9de5Iquqb1gLSfddku3c3dlvYaEi29ubaryguDtzbwTibXYuNxDdnV55a0677HEyww0PHFr6qYd7GakGtMQofTUMe5lz42/l+ZddKRpa9ujXCkKdUQllIBUpa6agJSCT16dbShcmL4bcKOJUx4lw3EyU3iYaZijJ5RL2XvbHnHgQlL4WkJaCQo1JJ8fKzW4VcXXbpcT7szS8hbek0uU+ytMNCNJcaQ+kpWvElIW5QkGiidAaW8IbcX0XRDLVdVMYQX2aC0uGU5rG4Ayi+ttNNyL6WXx3huJw3hpJPHbt8UUR80kwq5Cx8AYJuOAUUrEI4VkuKBBokiqht42++I4Q3QuvMJJJr/cSIqQXmmjLUQiEg5aqJZgEu6Ne0PZiSkk74Rp6a21t4ro8M5FKJ5Nk8VoGevqqqRwElZcU6tZWSkxWYgBtIFKgGp1p4Wdd9n+HHGG/Ep4ixPEuU3aCoSFbnUpmTL3tTK2RRWQEIKXQoDTUePkAA4F+//a1Pmk90Ne/Jrd2QXvYWFsu179m+l1rYm4V77sSDiI/Pp4yqMuW5CoVDLh85Eal9VErS7VKkjCQoVBOtNKW8rgQxvNdSeXwvJEQUguxJChqJjkNORDrrzncZZaChiUaitSAKj8HlMOJ1xuJCOL0NHXpgrsNXiVLYeVOTRp042oatVqDaVEE0rTpiHgbNa78ZcSH4WXq4MTHiJKA3MIqGnEtvGzDv+xZ6QAph0FGNOiBzYaanwocjlB0Omvb32XK18z4nCaMiS7L2bs0hmYjSxIJdzb5L4L+SuKg+GsDxAuPeZua3Yiooy95wwJhYuCiAKht1ClLFCNlJPh4i1i+x9EuR3ZwehHHXFxsROYpSX3CSdA2TVW+wtXG9c9updHs5t8Kbv3ng7zzOOnAm8yj5ehYhGEoSEoabUtKStRwpJIFN/K1iuxyW1dmpbcNQTAzmLySNDSjdaHbatttP+rpwovpCwjC7kfvsCRYlvYSLDyF91YFDiINkyqIquLcqEugVAxbanXSw0tElBamVYhbhxIKeeg262EZSWy3H0M1NctShVQP2ajSyNZbQIvDRTpPysYxGnXbztIr52kbQZIovTJXtCHOVCUc9Dv1sWEBbRJvGcTJ+lmc3N128rFiIaLswJRPE5DaNWyoZVT1166WUF198wUanLlyNG3CMIIHd5uv9bI26bxKLD6fZw1zgoNa1062A6Y98yNacDTXKHRucG2m2tiJVF1D4gG01lR0LtKihFScfraNeIvAnhzxEvZCTmeyiOmDjMMmFD0PHONpSgLUqhwGleYmtpJU6Wnhd4Jq0rkzvu1GLbayuOmSuJlrSc5D3MVq0IxHD09LeOaHCxW2GeSB2eJxaeRooPjuyTwTbCPdshmcVWuPLmry8PhWhtnF9kjgemESqBkUzffqMTaJq8opFNagHx0tNrv7NpHs/6Rnb49KYfT1sq2hJmxMmSXlvHCUK0Axc3T0tr6mP+IXZ/V67/md4lUf4+9l5F0ZEi+PDhiIiJawyDM5Qt0vxEJQavIrzKRTvJ3TvqK0hXhu7w1iZo7J+I0HFQ8PFkezTuGiHAIJf+2aT32j1UnmTvqNB1JLIbh/iCuJ1Qx5J7uvLSu9qnccuyn79hYu/3CqAahotSluxl3miEodI1K4atAlR3Lex+2h0MrSNo5WGnqGAX/cND4/dR1VimKxuE0FQ827C4keF0y47gldCVxDbcTLohSHUB5h9mYLcZiGz3XGlg0Wg9CLeKuE9xSinu6L/AOdc/wDu0b8PuLk/4ehy60+lq5xdxLyg/JYtRadg3K0UuHWRVhyu6SMKvuT1tLc14t8JZLIUTuWTGNvPEvprCyJTCoRbKvCMc1CUg9Gior3BSLVHEuieKwVAZSvL2O2N9u9TtF00ZLCXTyFrhuLn6LWvcIuGMru69ei9SoqVSCHVgVFKinFORDm+TDt1q66fAaJ3UQLQNM0wV5b9GEuPdmKg4eKeSxAStL64t9ZOgClHvLVuaUSOmgrZzPRHEztAcTIaChoVyazApy4WBhEZMJLmK7JT3WWh1UdSdyo2utwT4ASDhKrDGhmbXpi28qIm1DhhkqTVTcOk91PQqPMrrQaWtlHhNNhMFqk9bKedR4dg81Az9JMTxGW8ErmRjgkEpicPOx9deEudCOcQoeJm05iaOxCYCMW2zBA/+SFI0WoDVSjpXbQVLyj+yTwTQEe7ZFM4s648uavLw+Gx9bTg46ZKtMtZTnIe5itWhGI4enpYd/ZtI9n/AEjO3x6Uw+nraOfGxzi7KPBSLcWrgLde7/0fyoRi+yRwPTCJVBSOZxD9RjbTNnlFI61APjpaSriXAuvw1uSmUXPhXodaXVxAhnohT6w4ugXoo12G3SzlW0JM2JkyS8t44ShWgGLm6elkyw0x8QgkuqGPJPd15d97GxtabgLVPX1M7ckshcOCSUqENvtGNjSETFNS20ThJI7vL1/rZGUImALk8OS4g0bCjlVHXQ762ENCPaM8cJbcaqQ0NQcGo131sNNi8IL75MOWeUBGta69bZrkSNlcwJRPRkNI1bKhlVPr10sWELN4yYd8ezhnnBRrXp1sWIhx4XkAYhwWCzzkr1rXTpZVvCYJ9xNgodZ5S6rUHBofPWxYsRBeDLXw4QS8oYM4d3Xm23sJeTJEe7HgXlvnEFp0AxcvX0sWLESIPw0g+0fpGftg0ph9fWwhoyRSpm8rOQ9yhCdCMRxdfSxYsRCWy04bxlVWVc+SBzajDvt1sFozF0TxCsDTXMWiNTg1PlrYsWIou4p8A7lccW3JoWBI560nLTNodsFxw05Q6nQOpG2tFDoobWqzcDsnTy9PF2e3Sm96JfBwcgcbEZEwiFuOPBYxJDSVJASSBqVE0PRVixaWoquZkMga7YaeKjaulifKxzm6kq59yLg3OuPd1VyrmSZuWgKxREUo43IpaNCtxfeUfCug6ACzpLwZa+HCCXlDBnDu68229ixaLc4uJc43KkWtDRYbIS8mSI92PAvLfOILToBi5evpZEH4aQfaP0jP2waUw+vrYsWxXqENGSKVM3lZyHuUIToRiOLr6WEtlpw3jKqsq58kDm1GHfbrYsWIjKMwdE9bVgaa5i0RqcGp8tbC2zeNQiIdWQGeQhYrWuvSxYsRI66LyD2eHBhyycZK9a106WLFixF//9k=" style="width:100%;height:100%;object-fit:contain;border-radius:50%;"></div><div class="bnav-fab-lbl">Analizar</div></button>
   <button class="bnav-btn" id="nav-historial" onclick="ir('historial')"><div class="bnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:22px;height:22px;"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg></div><div class="bnav-label">Historial</div></button>
   <button class="bnav-btn" id="nav-estrategias" onclick="ir('estrategias')"><div class="bnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:22px;height:22px;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="bnav-label">Estrategias</div></button>
-  <button class="bnav-btn" id="nav-demo" onclick="ir('demo')"><div class="bnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:22px;height:22px;"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div><div class="bnav-label">Demo</div></button>
+  <button class="bnav-btn" id="nav-ligas" onclick="ir('ligas')"><div class="bnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:22px;height:22px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div class="bnav-label">Ligas</div></button>
 </div>
 
 <!-- MODAL BACKUP IMPORTAR -->
@@ -2366,6 +2469,10 @@ select.minput option{background:#080808;color:#efefef;}
 
     <!-- SECCIÓN INDIVIDUAL -->
     <div id="pm-sec-individual">
+      <!-- Botón limpiar individual -->
+      <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+        <button onclick="pmLimpiar('individual')" style="background:none;border:1px solid rgba(200,0,0,.2);color:var(--rojo2);border-radius:6px;padding:5px 12px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px;">🗑 LIMPIAR CASILLAS</button>
+      </div>
       <div class="form-row" style="margin-bottom:10px;">
         <div class="form-group" style="margin:0;">
           <label class="form-label">Liga / Competición</label>
@@ -2489,6 +2596,10 @@ select.minput option{background:#080808;color:#efefef;}
 
     <!-- SECCIÓN COMBINADA -->
     <div id="pm-sec-combinada" style="display:none;">
+      <!-- Botón limpiar combinada -->
+      <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+        <button onclick="pmLimpiar('combinada')" style="background:none;border:1px solid rgba(200,0,0,.2);color:var(--rojo2);border-radius:6px;padding:5px 12px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px;">🗑 LIMPIAR CASILLAS</button>
+      </div>
       <div style="background:rgba(217,160,48,.06);border:1px solid rgba(217,160,48,.15);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:11px;color:#888;line-height:1.6;">
         🔗 Una combinada es una sola apuesta con varias selecciones. La cuota total es el producto de todas las cuotas individuales. Si una falla, pierdes todo el stake.
       </div>
@@ -2673,6 +2784,7 @@ function ir(pg){
   if(pg==='live')renderLive();
   if(pg==='nuevo')goP1();
   if(pg==='demo'){if(!DB.demo)DB.demo={cap:100000,regs:[]};renderDemo();renderDemoStats();}
+  if(pg==='ligas')renderLigas();
   if(pg==='perfil')setTimeout(actualizarInfoStorage,100);
 }
 
@@ -3085,7 +3197,7 @@ function analizarP(){
   });
   saveTeamAnalysis(liga,local,visita);
   const fin=ests.slice(0,2);
-  AA={partido:local+' vs '+visita,liga,fecha:d.fecha,hora:d.hora,casa:d.casa,mercado:d.mercado,cuota:d.cuota,ests:fin,tips,alertas,calLive:fin.some(e=>e.tipo.includes('LIVE')),datos:d,scanResult,mercadoOptimo};
+  AA={partido:local+' vs '+visita,local,visita,liga,fecha:d.fecha,hora:d.hora,casa:d.casa,mercado:d.mercado,cuota:d.cuota,ests:fin,tips,alertas,calLive:fin.some(e=>e.tipo.includes('LIVE')),datos:d,scanResult,mercadoOptimo};
   renderRes();
 }
 
@@ -3426,6 +3538,8 @@ function saveReg(res){
     id:Date.now(),
     fecha:new Date().toLocaleDateString('es-CL'),
     partido:AA.partido, liga:AA.liga,
+    local:AA.local||null,   // nuevo — retrocompatible
+    visita:AA.visita||null, // nuevo — retrocompatible
     ests:estMod?[estMod]:AA.ests.map(e=>e.cod||e),
     casa:casaMod||AA.casa, cuota, stake, res, gan,
     calLive:AA.calLive,
@@ -3437,6 +3551,12 @@ function saveReg(res){
   alert('✅ Registrado: '+res.toUpperCase()+(gan!==0?'\n'+(gan>0?'+':'')+gan.toLocaleString('es-CL')+' CLP':''));
 }
 
+// Helper retrocompatible: usa local/visita si existen, si no usa partido legado
+function getNombrePartido(r){
+  if(r.local&&r.visita) return r.local+' vs '+r.visita;
+  return r.partido||'—';
+}
+
 // ===== HISTORIAL =====
 function renderHist(){
   const el=document.getElementById('hist-lista');
@@ -3446,14 +3566,18 @@ function renderHist(){
     const esPend=r.res==='pendiente';
     const esComb=r.tipo==='combinada';
     const cuotaDisplay=r.cuota?r.cuota.toFixed(2):'—';
+    const nombrePartido=getNombrePartido(r);
     // Selecciones de combinada
-    const selsHTML=esComb&&r.selecciones?r.selecciones.map(s=>`<div style="font-size:10px;color:#777;padding:2px 0;border-bottom:1px solid rgba(255,255,255,.03);">⚬ ${s.partido} · <span style="color:#999;">${s.mercado}</span> · <span style="color:var(--dorado2);">${s.cuota}</span></div>`).join(''):'';
+    const selsHTML=esComb&&r.selecciones?r.selecciones.map(s=>{
+      const nombre=s.local&&s.visita?`${s.local} vs ${s.visita}`:(s.partido||'—');
+      return `<div style="font-size:10px;color:#777;padding:2px 0;border-bottom:1px solid rgba(255,255,255,.03);">⚬ ${nombre} · <span style="color:#999;">${s.mercado}</span> · <span style="color:var(--dorado2);">${s.cuota}</span></div>`;
+    }).join(''):'';
     return `<div class="h-item" onclick="abrirEditPick(${i})" style="cursor:pointer;">
       <div class="h-hdr">
         <div style="flex:1;min-width:0;">
           <div class="h-partido" style="display:flex;align-items:center;gap:6px;">
             ${esComb?`<span style="background:rgba(0,184,224,.12);color:var(--azul);font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;">COMB</span>`:''}
-            ${r.partido}
+            ${nombrePartido}
           </div>
           <div class="h-fecha">${r.fecha||'—'} · ${r.liga||'—'}</div>
           ${r.mercado?`<div style="font-size:10px;color:#666;margin-top:2px;">${r.mercado}</div>`:''}
@@ -3494,6 +3618,33 @@ function cerrarPickManual(){
   document.getElementById('modal-pick-manual').style.display='none';
 }
 
+function pmLimpiar(tipo){
+  const hoy=new Date().toISOString().split('T')[0];
+  if(tipo==='individual'){
+    ['pm-local','pm-visita','pm-mercado','pm-cuota','pm-nota'].forEach(id=>{
+      const e=document.getElementById(id);if(e)e.value='';
+    });
+    ['pm-casa','pm-est','pm-tipo'].forEach(id=>{
+      const e=document.getElementById(id);if(e)e.selectedIndex=0;
+    });
+    const fe=document.getElementById('pm-fecha');if(fe)fe.value=hoy;
+    const st=document.getElementById('pm-stake');
+    if(st)st.value=Math.round(DB.cfg.cap*DB.cfg.stk/100);
+  } else {
+    // Combinada: reiniciar selecciones al mínimo (2 vacías)
+    _pmSels=[{partido:'',mercado:'',cuota:'',liga:''},{partido:'',mercado:'',cuota:'',liga:''}];
+    pmRenderSels();
+    ['pm-stake-com','pm-nombre-com'].forEach(id=>{
+      const e=document.getElementById(id);if(e)e.value='';
+    });
+    const ce=document.getElementById('pm-casa-com');if(ce)ce.selectedIndex=0;
+    const fe=document.getElementById('pm-fecha-com');if(fe)fe.value=hoy;
+    // Resetear totales calculados
+    const ct=document.getElementById('pm-cuota-total');if(ct)ct.textContent='—';
+    const gp=document.getElementById('pm-ganancia-pot');if(gp)gp.textContent='—';
+  }
+}
+
 function pmTab(tipo){
   _pmTipo=tipo;
   const esInd=tipo==='individual';
@@ -3508,11 +3659,11 @@ function pmTab(tipo){
   tabCom.style.background=!esInd?'var(--azul)':'transparent';
   tabCom.style.borderColor=!esInd?'var(--azul)':'var(--borde2)';
   tabCom.style.color=!esInd?'#fff':'var(--texto3)';
-  if(tipo==='combinada'&&!_pmSels.length){_pmSels=[{partido:'',mercado:'',cuota:'',liga:''},{partido:'',mercado:'',cuota:'',liga:''}];pmRenderSels();}
+  if(tipo==='combinada'&&!_pmSels.length){_pmSels=[{local:'',visita:'',partido:'',mercado:'',cuota:'',liga:''},{local:'',visita:'',partido:'',mercado:'',cuota:'',liga:''}];pmRenderSels();}
 }
 
 function pmAddSel(){
-  _pmSels.push({partido:'',mercado:'',cuota:'',liga:''});
+  _pmSels.push({local:'',visita:'',partido:'',mercado:'',cuota:'',liga:''});
   pmRenderSels();
 }
 
@@ -3531,12 +3682,16 @@ function pmRenderSels(){
         <div style="font-size:10px;font-weight:700;color:var(--azul);letter-spacing:.5px;">SELECCIÓN ${i+1}</div>
         ${_pmSels.length>2?`<button onclick="pmRemSel(${i})" style="background:none;border:none;color:var(--rojo2);font-size:13px;cursor:pointer;padding:0 4px;">✕</button>`:''}
       </div>
-      <input type="text" class="form-input" placeholder="Partido (Ej: PSG vs Lyon)" value="${s.partido}"
-        oninput="_pmSels[${i}].partido=this.value" style="margin-bottom:6px;font-size:12px;padding:7px 9px;">
+      <div class="form-row" style="margin-bottom:6px;">
+        <input type="text" class="form-input" placeholder="🏠 Local" value="${s.local||''}"
+          oninput="_pmSels[${i}].local=this.value;_pmSels[${i}].partido=(this.value+' vs '+(_pmSels[${i}].visita||'')).trim()" style="font-size:12px;padding:7px 9px;">
+        <input type="text" class="form-input" placeholder="✈️ Visitante" value="${s.visita||''}"
+          oninput="_pmSels[${i}].visita=this.value;_pmSels[${i}].partido=((_pmSels[${i}].local||'')+' vs '+this.value).trim()" style="font-size:12px;padding:7px 9px;">
+      </div>
       <div class="form-row">
-        <input type="text" class="form-input" placeholder="Mercado (Over 2.5, Local...)" value="${s.mercado}"
+        <input type="text" class="form-input" placeholder="Mercado (Over 2.5, Local...)" value="${s.mercado||''}"
           oninput="_pmSels[${i}].mercado=this.value" style="font-size:12px;padding:7px 9px;">
-        <input type="number" class="form-input" placeholder="Cuota" value="${s.cuota}" step="0.01" min="1"
+        <input type="number" class="form-input" placeholder="Cuota" value="${s.cuota||''}" step="0.01" min="1"
           oninput="_pmSels[${i}].cuota=this.value;pmCalcCombinada()" style="font-size:12px;padding:7px 9px;max-width:80px;">
       </div>
     </div>`).join('');
@@ -3579,32 +3734,39 @@ function savePickManual(res){
     else if(res==='perdida') gan=-stake;
     else if(res==='cashout'){const m=parseFloat(prompt('Monto recibido por cashout (CLP):','0'))||0;gan=m-stake;}
 
-    reg={id:Date.now(),tipo:'individual',fecha,partido,liga,ests:est?[est]:[],casa,cuota,stake,res,gan,mercado,nota,calLive:tipo==='live',
-      // condiciones mínimas para picks manuales — solo mercado y tipo, sin datos de análisis
+    reg={id:Date.now(),tipo:'individual',fecha,partido,liga,
+      local:local||null,   // nuevo — retrocompatible
+      visita:visita||null, // nuevo — retrocompatible
+      ests:est?[est]:[],casa,cuota,stake,res,gan,mercado,nota,calLive:tipo==='live',
       condiciones: {mercado: mercado||null, tipop: tipo||null, origen:'manual'}
     };
 
-  } else {
-    // Combinada
-    const sels=_pmSels.filter(s=>s.partido&&s.cuota);
-    if(sels.length<2){alert('⚠️ Agrega al menos 2 selecciones con partido y cuota');return;}
-    const stake=parseFloat(document.getElementById('pm-stake-com').value)||0;
-    if(!stake){alert('⚠️ Ingresa el stake de la combinada');return;}
-    const casa=document.getElementById('pm-casa-com').value;
-    const nombre=document.getElementById('pm-nombre-com').value.trim()||`Combinada x${sels.length}`;
-    const fechaRaw=document.getElementById('pm-fecha-com').value;
-    const fecha=fechaRaw?new Date(fechaRaw+'T12:00:00').toLocaleDateString('es-CL'):hoy;
-    const cuotaTotal=sels.reduce((a,s)=>a*(parseFloat(s.cuota)||1),1);
-    const cuota=Math.round(cuotaTotal*100)/100;
+    // Combinada — acepta local+visita o partido legacy
+    const sels=_pmSels.filter(s=>(s.local||s.partido)&&s.cuota);
+    if(sels.length<2){alert('⚠️ Agrega al menos 2 selecciones con equipos y cuota');return;}
+    const stakeCom=parseFloat(document.getElementById('pm-stake-com').value)||0;
+    if(!stakeCom){alert('⚠️ Ingresa el stake de la combinada');return;}
+    const casaCom=document.getElementById('pm-casa-com').value;
+    const nombreCom=document.getElementById('pm-nombre-com').value.trim()||`Combinada x${sels.length}`;
+    const fechaRawCom=document.getElementById('pm-fecha-com').value;
+    const fechaCom=fechaRawCom?new Date(fechaRawCom+'T12:00:00').toLocaleDateString('es-CL'):hoy;
+    const cuotaTotalCom=sels.reduce((a,s)=>a*(parseFloat(s.cuota)||1),1);
+    const cuotaCom=Math.round(cuotaTotalCom*100)/100;
 
-    let gan=0;
-    if(res==='ganada') gan=Math.round(stake*(cuota-1));
-    else if(res==='perdida') gan=-stake;
-    else if(res==='cashout'){const m=parseFloat(prompt('Monto recibido por cashout (CLP):','0'))||0;gan=m-stake;}
+    let ganCom=0;
+    if(res==='ganada') ganCom=Math.round(stakeCom*(cuotaCom-1));
+    else if(res==='perdida') ganCom=-stakeCom;
+    else if(res==='cashout'){const m=parseFloat(prompt('Monto recibido por cashout (CLP):','0'))||0;ganCom=m-stakeCom;}
 
-    // Liga compuesta de las selecciones
-    const ligas=[...new Set(sels.map(s=>s.liga||'').filter(Boolean))].join(' / ')||'Combinada';
-    reg={id:Date.now(),tipo:'combinada',fecha,partido:nombre,liga:ligas,ests:[],casa,cuota,stake,res,gan,selecciones:sels.map(s=>({partido:s.partido,mercado:s.mercado||'—',cuota:parseFloat(s.cuota)||0})),calLive:false};
+    const ligasCom=[...new Set(sels.map(s=>s.liga||'').filter(Boolean))].join(' / ')||'Combinada';
+    reg={id:Date.now(),tipo:'combinada',fecha:fechaCom,partido:nombreCom,liga:ligasCom,ests:[],casa:casaCom,cuota:cuotaCom,stake:stakeCom,res,gan:ganCom,
+      selecciones:sels.map(s=>{
+        const loc=s.local||'';
+        const vis=s.visita||'';
+        const part=loc&&vis?`${loc} vs ${vis}`:(s.partido||loc||vis||'—');
+        return {partido:part, local:loc||null, visita:vis||null, mercado:s.mercado||'—', cuota:parseFloat(s.cuota)||0};
+      }),
+      calLive:false};
   }
 
   DB.regs.unshift(reg);
@@ -3620,7 +3782,7 @@ function abrirEditPick(idx){
   const r = DB.regs[idx];
   if(!r) return;
   _editIdx = idx;
-  document.getElementById('ep-partido').textContent = r.partido;
+  document.getElementById('ep-partido').textContent = getNombrePartido(r);
   document.getElementById('ep-meta').textContent = `${r.liga} · ${r.fecha} · Cuota: ${r.cuota||'—'} · Stake: $${(r.stake||0).toLocaleString('es-CL')} CLP`;
   document.getElementById('ep-est').textContent = (r.ests||[]).join(', ') || '—';
   // Mostrar ganancia calculada con cada resultado posible
@@ -3942,7 +4104,7 @@ function renderDemo(){
   const sc={1:'var(--verde)',2:'var(--dorado2)',3:'var(--azul)',0:'var(--texto3)'};
   el.innerHTML=DB.demo.regs.map((r,i)=>`<div class="demo-pick">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">
-      <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;">${r.partido||'—'}</div><div style="font-size:10px;color:#555;">${r.fecha} · ${r.liga||'—'} · ${r.tipo==='live'?'🔴 LIVE':'📋 PRE'}</div></div>
+      <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;">${getNombrePartido(r)}</div><div style="font-size:10px;color:#555;">${r.fecha} · ${r.liga||'—'} · ${r.tipo==='live'?'🔴 LIVE':'📋 PRE'}</div></div>
       <div style="text-align:right;flex-shrink:0;"><div style="color:${gc(r.res)};font-size:12px;font-weight:700;">${gi(r.res)} ${r.res.toUpperCase()}</div><div style="color:${gc(r.res)};font-size:11px;">${r.gan>0?'+':''}$${(r.gan||0).toLocaleString('es-CL')}</div></div>
     </div>
     ${r.seleccion?`<div style="font-size:11px;color:#aaa;margin-bottom:4px;">📌 ${r.seleccion}</div>`:''}
@@ -4094,9 +4256,9 @@ function renderInicio(){
   }
   // BetPractice style cards
   el.innerHTML=ult.map(r=>{
-    const parts=(r.partido||'').split(' vs ');
-    const localName=parts[0]?.trim()||'—';
-    const visitaName=parts[1]?.trim()||'—';
+    // Retrocompatible: usa local/visita si existen, si no hace split de partido
+    const localName = r.local || (r.partido||'').split(' vs ')[0]?.trim() || '—';
+    const visitaName= r.visita|| (r.partido||'').split(' vs ')[1]?.trim() || '—';
     const sl=getShield(localName);
     const sv=getShield(visitaName);
     const resColor=r.res==='ganada'?'verde':r.res==='perdida'?'rojo':'dorado';
@@ -4769,6 +4931,17 @@ function renderStakePreview(){
   if(pp1) pp1.textContent=(stk*0.3).toFixed(1)+'% capital';
 }
 
+// ===== UI: marcar selects llenos con clase has-value =====
+function initSelectStates(){
+  document.querySelectorAll('select.form-select,select.minput').forEach(sel=>{
+    const mark=()=>sel.classList.toggle('has-value',sel.value!==''&&sel.value!=='__custom__');
+    mark();
+    sel.addEventListener('change',mark);
+  });
+}
+document.addEventListener('DOMContentLoaded',initSelectStates);
+setTimeout(initSelectStates,800);
+
 function ligaCustomCheck(selectId,inputId){
   const sel=document.getElementById(selectId);
   const wrap=document.getElementById(inputId+'-wrap');
@@ -5070,6 +5243,208 @@ function gCompara(){
   calcVal();
 }
 
+// ===== LIGAS FAVORITAS — CONFIG MANUAL =====
+const LIGAS_CONFIG = [
+  {
+    liga:'Premier League', pais:'🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra', tier:'A',
+    desc:'Liga de mayor densidad de córneres y ritmo ofensivo del mundo.',
+    p1:['Locales ofensivos con alta posesión','BTTS frecuente','Ritmo alto todo el partido'],
+    p2:['Over 2.5 en duelos abiertos','Córneres Over 9.5 desde el min 25','Equipos dominantes vs bloques medios'],
+    p3:['Value en favoritos moderados (1.60-1.90)','Líneas altas mal ajustadas en copas'],
+    l1:true,  l1txt:'Alta presión y saques de banda — ideal para L1',
+    l2:true,  l2txt:'Muchos partidos abiertos con dominio claro en xG',
+    l3:false, l3txt:'Mercado ajusta muy rápido tras expulsión'
+  },
+  {
+    liga:'Bundesliga', pais:'🇩🇪 Alemania', tier:'A',
+    desc:'La liga con mayor promedio de goles de Europa. Juego vertical y veloz.',
+    p1:['Locales muy ofensivos','BTTS en +65% partidos','Presión alta constante'],
+    p2:['Over 2.5 altísima frecuencia','Córneres Over 9.5','Hándicap asiático confiable'],
+    p3:['Value en visitante con buen xG','Over 3.5 válido en duelos top'],
+    l1:true,  l1txt:'Presión lateral frecuente — mejor liga para L1',
+    l2:true,  l2txt:'Dominio claro en xG, marcadores engañosos habituales',
+    l3:true,  l3txt:'Ritmo alto post-expulsión, good window de 90s'
+  },
+  {
+    liga:'Eredivisie', pais:'🇳🇱 Países Bajos', tier:'A',
+    desc:'Fútbol ofensivo, equipos pequeños muy atacantes. Alta varianza.',
+    p1:['BTTS en casi todos los partidos','Goles en toda la duración'],
+    p2:['Over 2.5 y Over 3.5 viable','Córneres frecuentes'],
+    p3:['Value en locales contra equipos chicos'],
+    l1:true,  l1txt:'Córneres frecuentes por juego abierto',
+    l2:true,  l2txt:'xG reflejan dominio real',
+    l3:false, l3txt:'Mercados pequeños, liquidez baja'
+  },
+  {
+    liga:'Liga Portugal', pais:'🇵🇹 Portugal', tier:'B',
+    desc:'Liga competitiva con equipos tácticos. Porto y Benfica dominan con xG alto.',
+    p1:['BTTS fuera del duelo Porto-Benfica','Locales presionantes'],
+    p2:['Over 2.5 en duelos top','Córneres Over 9.5 para equipos grandes'],
+    p3:['Value en locales dominantes'],
+    l1:true,  l1txt:'Densidad de córneres alta en duelos ofensivos',
+    l2:true,  l2txt:'xG confiable en equipos de los 3 grandes',
+    l3:false, l3txt:'Mercado ajusta rápido'
+  },
+  {
+    liga:'K League 1', pais:'🇰🇷 Corea del Sur', tier:'B',
+    desc:'Liga asiática con alta densidad de córneres. Buena liquidez en casas europeas.',
+    p1:['Locales dominantes en córneres','Ritmo físico alto'],
+    p2:['Over 2.5 moderado','Córneres Over 8.5 viable'],
+    p3:['Value en favoritos locales robustos'],
+    l1:true,  l1txt:'Una de las mejores ligas para L1 por densidad de córneres',
+    l2:true,  l2txt:'xG disponible en SofaScore para duelos principales',
+    l3:true,  l3txt:'Ventana de 90s funciona bien, cuotas lentas en ajustar'
+  },
+  {
+    liga:'J1 League', pais:'🇯🇵 Japón', tier:'B',
+    desc:'Juego técnico con presión alta. Córneres frecuentes en equipos japoneses top.',
+    p1:['Locales de Tokio/Osaka ofensivos','BTTS moderado'],
+    p2:['Over 2.5 en duelos equilibrados','Córneres Over 9.5'],
+    p3:['Value en favoritos claros'],
+    l1:true,  l1txt:'Buena densidad de córneres',
+    l2:true,  l2txt:'xG disponible en partidos de TV',
+    l3:false, l3txt:'Cuota Over post-expulsión ajusta moderado'
+  },
+  {
+    liga:'Brasileirao Serie A', pais:'🇧🇷 Brasil', tier:'B',
+    desc:'Liga de alta intensidad, BTTS moderado, casas con buen valor en líneas.',
+    p1:['Equipos ofensivos de São Paulo/Rio','BTTS en duelos abiertos'],
+    p2:['Over 2.5 viable en duelos top','Córneres moderados'],
+    p3:['Value en locales favoritos'],
+    l1:false, l1txt:'Densidad de córneres media-baja',
+    l2:true,  l2txt:'xG disponible en duelos principales',
+    l3:true,  l3txt:'Cuotas ajustan más lento — buena ventana L3'
+  },
+  {
+    liga:'Serie B Brasil', pais:'🇧🇷 Brasil', tier:'C',
+    desc:'Liga con menor información pública. Mayor ineficiencia de mercado.',
+    p1:['Locales necesitados de puntos','Alta motivación por ascenso/descenso'],
+    p2:['Over 2.5 en duelos de presión','Value detectado con P1'],
+    p3:['Edge +10% frecuente por falta de info'],
+    l1:false, l1txt:'Datos de córneres poco fiables',
+    l2:false, l2txt:'xG no siempre disponible',
+    l3:true,  l3txt:'Cuotas muy lentas — excelente para L3'
+  },
+  {
+    liga:'Liga Profesional', pais:'🇦🇷 Argentina', tier:'B',
+    desc:'Alta intensidad, duelos físicos, BTTS moderado. Buenos mercados de goles.',
+    p1:['Clásicos con alta motivación','BTTS en duelos equilibrados'],
+    p2:['Over 2.5 en equipos ofensivos','Value en favoritos moderados'],
+    p3:['Líneas sobre/bajo a veces mal ajustadas'],
+    l1:false, l1txt:'Juego físico, pocos córneres por presión baja',
+    l2:true,  l2txt:'xG disponible en duelos grandes',
+    l3:true,  l3txt:'Mercado lento — buena ventana L3'
+  },
+  {
+    liga:'Copa de la Liga Chile', pais:'🇨🇱 Chile', tier:'C',
+    desc:'Competencia local con rotaciones frecuentes. Alto riesgo de info limitada.',
+    p1:['Equipos motivados por clasificación','Locales con buena racha'],
+    p2:['Over 2.5 en duelos abiertos','Value en favoritos con margen'],
+    p3:['Edge frecuente por bajo volumen de apuestas'],
+    l1:false, l1txt:'Datos de córneres poco disponibles',
+    l2:false, l2txt:'xG no siempre disponible en Sofascore',
+    l3:true,  l3txt:'Cuotas muy lentas — ideal para L3 si hay expulsión'
+  },
+  {
+    liga:'Liga de Ascenso Chile', pais:'🇨🇱 Chile', tier:'C',
+    desc:'Máxima ineficiencia de mercado. Poca información pero edge positivo frecuente.',
+    p1:['Alta motivación por ascenso','Locales con ventaja clara'],
+    p2:['P1 (value) es la estrategia principal aquí'],
+    p3:['Edge +15% posible en favoritos locales robustos'],
+    l1:false, l1txt:'Sin datos fiables de córneres',
+    l2:false, l2txt:'Sin xG disponible',
+    l3:false, l3txt:'Cuotas pueden ajustar pero mercado muy pequeño'
+  }
+];
+
+let _ligaFiltro = 'todos';
+let _ligaAbierta = null;
+
+function renderLigas(){
+  const el=document.getElementById('ligas-lista');
+  if(!el) return;
+  const config = _ligaFiltro==='todos' ? LIGAS_CONFIG : LIGAS_CONFIG.filter(l=>l.tier===_ligaFiltro);
+
+  el.innerHTML = config.map((l,i)=>{
+    const tid = `liga-body-${l.liga.replace(/\s/g,'_')}`;
+    const tierCol = l.tier==='A'?'var(--rojo2)':l.tier==='B'?'var(--dorado2)':'var(--verde)';
+    const tagsP1 = l.p1.map(t=>`<span class="liga-tag">${t}</span>`).join('');
+    const tagsP2 = l.p2.map(t=>`<span class="liga-tag">${t}</span>`).join('');
+    const tagsP3 = (l.p3||[]).map(t=>`<span class="liga-tag">${t}</span>`).join('');
+    const compatTags = ['L1','L2','L3'].map(c=>{
+      const on = l[c.toLowerCase()];
+      return `<span class="liga-compat-tag ${on?'lct-on':'lct-off'}">${c}</span>`;
+    }).join('');
+    const compatRows = [
+      {cod:'L1',on:l.l1,txt:l.l1txt},
+      {cod:'L2',on:l.l2,txt:l.l2txt},
+      {cod:'L3',on:l.l3,txt:l.l3txt}
+    ].map(c=>`<div class="liga-compat-item">
+      <div class="liga-compat-badge ${c.on?'lcb-on':'lcb-off'}">${c.cod}</div>
+      <div class="liga-compat-txt">${c.on?'✓':'✗'} ${c.txt}</div>
+    </div>`).join('');
+
+    return `<div class="liga-card tier-${l.tier}" onclick="toggleLiga('${tid}')">
+      <div class="liga-card-header">
+        <span class="liga-tier liga-tier-${l.tier}">${l.tier}</span>
+        <div class="liga-info">
+          <div class="liga-nombre">${l.liga}</div>
+          <div class="liga-pais">${l.pais}</div>
+        </div>
+        <div class="liga-compat">${compatTags}</div>
+        <span style="font-size:11px;color:#444;margin-left:6px;" id="chev-${tid}">▼</span>
+      </div>
+      <div class="liga-body" id="${tid}">
+        <div style="font-size:11px;color:#888;margin-bottom:10px;padding-top:8px;">${l.desc}</div>
+        <div class="liga-section">
+          <div class="liga-section-title">Pre-partido — P1 · Qué buscar</div>
+          <div class="liga-tags">${tagsP1}</div>
+        </div>
+        <div class="liga-section">
+          <div class="liga-section-title">Pre-partido — P2 · Mercados</div>
+          <div class="liga-tags">${tagsP2}</div>
+        </div>
+        ${tagsP3?`<div class="liga-section">
+          <div class="liga-section-title">Value · P3 · Edge</div>
+          <div class="liga-tags">${tagsP3}</div>
+        </div>`:''}
+        <div class="liga-section">
+          <div class="liga-section-title">Compatibilidad de estrategias Live</div>
+          <div class="liga-compat-row">${compatRows}</div>
+        </div>
+        <button class="btn-sec" style="margin-top:10px;width:100%;" onclick="irDemoEst('');ir('demo');event.stopPropagation();">🧪 Practicar en Demo con esta liga →</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleLiga(id){
+  const el=document.getElementById(id);
+  const chev=document.getElementById('chev-'+id);
+  if(!el) return;
+  const isOpen=el.classList.contains('open');
+  // Cerrar todas
+  document.querySelectorAll('.liga-body.open').forEach(b=>b.classList.remove('open'));
+  document.querySelectorAll('[id^="chev-liga-body"]').forEach(c=>c.textContent='▼');
+  // Abrir la tocada si estaba cerrada
+  if(!isOpen){el.classList.add('open');if(chev)chev.textContent='▲';}
+}
+
+function ligasFiltrar(tier){
+  _ligaFiltro=tier;
+  // Estilos botones filtro
+  const tierColors={A:'var(--rojo2)',B:'var(--dorado2)',C:'var(--verde)',todos:'var(--rojo2)'};
+  ['todos','A','B','C'].forEach(t=>{
+    const btn=document.getElementById('lf-'+t);
+    if(!btn)return;
+    const activo=t===tier;
+    btn.style.background=activo?`rgba(${t==='todos'?'200,0,0':t==='A'?'200,0,0':t==='B'?'217,160,48':'0,217,110'},.15)`:'transparent';
+    btn.style.color=activo?(tierColors[t]||'#888'):'#555';
+    btn.style.borderColor=activo?'rgba(255,255,255,.15)':'rgba(255,255,255,.06)';
+  });
+  renderLigas();
+}
+
 function srTab(tab){
   document.querySelectorAll('.sr-section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.sr-tab').forEach(b=>b.classList.remove('active'));
@@ -5077,7 +5452,7 @@ function srTab(tab){
   const b=document.getElementById('srtab-'+tab);if(b)b.classList.add('active');
   if(tab==='mercados')renderStatsMercados();
   if(tab==='ranking')renderRanking();
-  if(tab==='ligas')renderLigas();
+  if(tab==='ligas')renderLigasStats();
 }
 
 
@@ -5136,7 +5511,7 @@ function renderRanking(mode){
 }
 
 // ===== LIGAS RANKING =====
-function renderLigas(){
+function renderLigasStats(){
   const el=document.getElementById('ligas-content');
   const ligasUsadas=getLigasUsadas();
   if(!ligasUsadas.length){el.innerHTML=`<div class="empty"><div class="empty-icon">🌍</div><div class="empty-title">Sin ligas aún</div><div class="empty-sub">Las ligas aparecen automáticamente al analizar partidos</div></div>`;return;}
@@ -5230,7 +5605,7 @@ function renderLivePendientes(){
         <div class="lpi-esc" style="color:${sv.color}">${sv.initials}</div>
       </div>
       <div class="lpi-info">
-        <div class="lpi-partido">${r.partido}</div>
+        <div class="lpi-partido">${getNombrePartido(r)}</div>
         <div class="lpi-liga">${r.liga||'—'} · ${r.fecha||'—'}</div>
         <div class="lpi-ests">${(r.ests||[]).map(e=>`<span class="lpi-est-tag" style="background:rgba(255,255,255,.06);color:#888;">${e}</span>`).join('')}</div>
       </div>
