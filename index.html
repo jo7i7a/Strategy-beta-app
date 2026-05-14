@@ -2351,38 +2351,6 @@ select.minput option{background:#080808;color:#efefef;}
       <div class="regla-item"><div class="regla-num">5</div>Registrar ANTES de entrar. Sin excepciones.</div>
       <div class="regla-item"><div class="regla-num">6</div>No usar capital de bono en P1. Tratar como no propio hasta liberar rollover.</div>
     </div>
-    <div class="stitle">📊 Estadísticas SVC</div>
-    <div class="card">
-      <div id="svc-status" style="font-size:11px;margin-bottom:10px;padding:6px 8px;background:rgba(0,0,0,.3);border-radius:6px;">
-        Cargando...
-      </div>
-      <div style="font-size:11px;color:#555;margin-bottom:10px;line-height:1.6;">
-        SVC autocompleta estadísticas de equipos en el análisis. Importa un JSON actualizado para ampliar o actualizar la base de datos sin redeploy.
-      </div>
-
-      <!-- Exportar plantilla -->
-      <button onclick="svcExportarPlantilla()" style="width:100%;background:rgba(0,184,224,.08);border:1px solid rgba(0,184,224,.2);color:var(--azul);border-radius:7px;padding:9px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:7px;">
-        📋 EXPORTAR PLANTILLA JSON (para editar)
-      </button>
-
-      <!-- Importar SVC -->
-      <label style="display:block;">
-        <div style="width:100%;background:rgba(0,217,110,.08);border:1px solid rgba(0,217,110,.2);color:var(--verde);border-radius:7px;padding:9px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-align:center;margin-bottom:7px;">
-          ⬆️ IMPORTAR SVC ACTUALIZADO
-        </div>
-        <input type="file" id="svc-import-input" accept=".json" style="display:none;" onchange="svcImportar(this)">
-      </label>
-
-      <!-- Reset a hardcoded — solo visible si hay custom -->
-      <button id="svc-btn-reset" onclick="svcResetear()" style="display:none;width:100%;background:none;border:1px solid rgba(200,0,0,.2);color:var(--rojo2);border-radius:7px;padding:8px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">
-        🔄 VOLVER AL SVC HARDCODED
-      </button>
-
-      <div style="font-size:9px;color:#333;margin-top:8px;line-height:1.6;">
-        El SVC importado se guarda en tu dispositivo. El SVC hardcoded siempre está disponible como respaldo offline.
-      </div>
-    </div>
-
     <div class="stitle">💾 Backup y Datos</div>
     <div class="card">
       <div style="font-size:11px;color:#666;margin-bottom:12px;line-height:1.6;">
@@ -2950,7 +2918,7 @@ function ir(pg){
   if(pg==='nuevo')goP1();
   if(pg==='demo'){if(!DB.demo)DB.demo={cap:100000,regs:[]};renderDemo();renderDemoStats();}
   if(pg==='ligas')renderLigas();
-  if(pg==='perfil') setTimeout(()=>{actualizarInfoStorage();svcActualizarUI();},100);
+  if(pg==='perfil')setTimeout(actualizarInfoStorage,100);
 }
 
 // E: Restaurar análisis completo al volver a la app
@@ -5063,7 +5031,7 @@ const BACKUP_VERSION = '1.0';
 // Recopilar TODO el localStorage relevante
 function recopilarBackupCompleto(){
   const snap = {};
-  const prefijos = ['tdata_','team_','nm_','ligas_usadas','cce-mis-ligas','cce4','cce-svc-custom'];
+  const prefijos = ['tdata_','team_','nm_','ligas_usadas','cce-mis-ligas','cce4'];
   
   // Iterar todas las claves del localStorage
   for(let i=0; i<localStorage.length; i++){
@@ -5412,11 +5380,10 @@ function intelEquipo(campo){
   const liga=getLigaValue('liga');
   const eq=document.getElementById(campo).value.trim();
   const bannerId='intel-'+campo;
+  const selId=campo;
   const banner=document.getElementById(bannerId);
+  const sel=document.getElementById(selId);
   if(!liga||!eq||eq.length<2){if(banner)banner.style.display='none';return;}
-
-  // ── SVC: autocompletar inputs vacíos ──
-  const svcAplicado = svcAutocompletar(campo);
 
   // Get match history for this team
   const regs=DB.regs.filter(r=>r.partido&&r.partido.includes(eq)&&r.res!=='pendiente');
@@ -5426,30 +5393,26 @@ function intelEquipo(campo){
   const hist=getTeamHistory(liga,eq,campo==='local'?'local':'visita');
   const tips=[];let cls,col;
 
-  // Badge SVC si se autocompleto
-  if(svcAplicado){
-    tips.push('📊 Estadísticas SVC precargadas — revisa y ajusta si es necesario');
-    cls='intel-banner-ok';col='var(--verde)';
-  }
-
   // Picks performance
   if(regs.length>=2){
     const gan=regs.filter(r=>r.res==='ganada').length;
     const hr=((gan/regs.length)*100).toFixed(0);
     const hrN=parseInt(hr);
     tips.push(`${regs.length} picks registrados: ${hr}% ganados`);
-    if(!cls){if(hrN>=65){cls='intel-banner-ok';col='var(--verde)';}
+    if(hrN>=65){cls='intel-banner-ok';col='var(--verde)';}
     else if(hrN>=40){cls='intel-banner-warn';col='var(--dorado2)';}
-    else{cls='intel-banner-bad';col='var(--rojo2)';}}
-  } else if(!cls) {
+    else{cls='intel-banner-bad';col='var(--rojo2)';}
+  } else {
     cls='intel-banner-warn';col='var(--dorado2)';
   }
 
   // Tactical insights from stored history
   if(hist.length>=3){
+    // Check if defensivo visitante (low corners, low pgmv)
     const avgO25=calcTeamAvg(hist,'o25v');
     const avgCorn=calcTeamAvg(hist,'cafv');
     const avgEstilo=hist.filter(h=>h.estilo==='bloque'||h.estilo==='defensivo').length/hist.length;
+
     if(campo==='visita'){
       if(avgEstilo>=0.6)tips.push('⚠️ Equipo juega defensivo fuera el '+Math.round(avgEstilo*100)+'% — ELIMINA L2');
       if(avgO25!==null&&avgO25<50)tips.push('📉 Over 2.5 históricamente bajo ('+avgO25.toFixed(0)+'%) como visitante');
@@ -5608,209 +5571,7 @@ function gCompara(){
   calcVal();
 }
 
-// ===== SVC — BASE LOCAL DE ESTADÍSTICAS =====
-// SVC_DEFAULT = hardcoded (siempre disponible offline)
-// SVC_LIVE    = lo que realmente usa svcAutocompletar:
-//               si hay datos importados en localStorage → los usa
-//               si no → fallback a SVC_DEFAULT
-const SVC_LS_KEY = 'cce-svc-custom';
-
-const SVC_DEFAULT = {
-  // ── PREMIER LEAGUE ────────────────────────────────────────────────
-  'Manchester City':   {pgml:2.3,pgmv:1.9,pgrl:0.8,pgrv:1.0,o25l:80,o25v:72,bttsl:52,bttsv:60,cafl:6.2,ccl:3.8,cafv:5.8,ccv:4.1,o15l:92,o15v:85,o35l:48,o35v:40},
-  'Arsenal':           {pgml:2.1,pgmv:1.7,pgrl:0.7,pgrv:1.1,o25l:75,o25v:68,bttsl:45,bttsv:58,cafl:6.0,ccl:3.5,cafv:5.5,ccv:4.0,o15l:90,o15v:82,o35l:42,o35v:35},
-  'Liverpool':         {pgml:2.4,pgmv:2.0,pgrl:0.9,pgrv:1.2,o25l:82,o25v:75,bttsl:58,bttsv:65,cafl:6.5,ccl:4.0,cafv:6.0,ccv:4.5,o15l:93,o15v:87,o35l:50,o35v:44},
-  'Chelsea':           {pgml:1.9,pgmv:1.5,pgrl:1.1,pgrv:1.3,o25l:70,o25v:62,bttsl:55,bttsv:60,cafl:5.8,ccl:4.2,cafv:5.2,ccv:4.6,o15l:85,o15v:78,o35l:38,o35v:30},
-  'Tottenham':         {pgml:1.8,pgmv:1.6,pgrl:1.3,pgrv:1.4,o25l:68,o25v:65,bttsl:60,bttsv:65,cafl:5.5,ccl:4.5,cafv:5.0,ccv:5.0,o15l:82,o15v:80,o35l:36,o35v:33},
-  'Manchester United': {pgml:1.6,pgmv:1.3,pgrl:1.2,pgrv:1.5,o25l:62,o25v:55,bttsl:52,bttsv:58,cafl:5.0,ccl:4.8,cafv:4.5,ccv:5.2,o15l:78,o15v:72,o35l:30,o35v:25},
-  'Newcastle':         {pgml:1.8,pgmv:1.4,pgrl:0.9,pgrv:1.2,o25l:68,o25v:60,bttsl:48,bttsv:55,cafl:5.8,ccl:4.0,cafv:5.0,ccv:4.5,o15l:83,o15v:76,o35l:35,o35v:28},
-  'Aston Villa':       {pgml:2.0,pgmv:1.6,pgrl:1.0,pgrv:1.3,o25l:72,o25v:65,bttsl:55,bttsv:62,cafl:5.5,ccl:4.2,cafv:5.2,ccv:4.8,o15l:87,o15v:80,o35l:40,o35v:33},
-  'Brighton':          {pgml:1.7,pgmv:1.5,pgrl:1.1,pgrv:1.2,o25l:65,o25v:62,bttsl:55,bttsv:60,cafl:5.2,ccl:4.5,cafv:5.0,ccv:4.8,o15l:80,o15v:78,o35l:32,o35v:30},
-  // ── BUNDESLIGA ────────────────────────────────────────────────────
-  'Bayern Munich':     {pgml:2.8,pgmv:2.2,pgrl:0.7,pgrv:1.0,o25l:88,o25v:80,bttsl:55,bttsv:65,cafl:6.8,ccl:3.5,cafv:6.2,ccv:4.0,o15l:95,o15v:90,o35l:60,o35v:50},
-  'Borussia Dortmund': {pgml:2.4,pgmv:1.9,pgrl:1.1,pgrv:1.3,o25l:82,o25v:75,bttsl:62,bttsv:70,cafl:6.2,ccl:4.2,cafv:5.8,ccv:4.8,o15l:92,o15v:87,o35l:50,o35v:43},
-  'Leverkusen':        {pgml:2.2,pgmv:1.8,pgrl:0.8,pgrv:1.0,o25l:78,o25v:72,bttsl:52,bttsv:60,cafl:6.0,ccl:3.8,cafv:5.5,ccv:4.2,o15l:90,o15v:85,o35l:46,o35v:40},
-  'RB Leipzig':        {pgml:2.0,pgmv:1.7,pgrl:1.0,pgrv:1.2,o25l:75,o25v:68,bttsl:55,bttsv:62,cafl:5.8,ccl:4.0,cafv:5.5,ccv:4.5,o15l:88,o15v:82,o35l:42,o35v:36},
-  'Eintracht Frankfurt':{pgml:1.8,pgmv:1.5,pgrl:1.2,pgrv:1.3,o25l:68,o25v:62,bttsl:58,bttsv:62,cafl:5.5,ccl:4.5,cafv:5.0,ccv:4.8,o15l:83,o15v:78,o35l:35,o35v:30},
-  'Wolfsburg':         {pgml:1.6,pgmv:1.3,pgrl:1.1,pgrv:1.3,o25l:62,o25v:55,bttsl:52,bttsv:58,cafl:5.0,ccl:4.8,cafv:4.5,ccv:5.0,o15l:78,o15v:72,o35l:28,o35v:25},
-  // ── EREDIVISIE ────────────────────────────────────────────────────
-  'Ajax':              {pgml:2.6,pgmv:2.0,pgrl:0.9,pgrv:1.1,o25l:85,o25v:78,bttsl:58,bttsv:68,cafl:6.5,ccl:3.8,cafv:6.0,ccv:4.2,o15l:93,o15v:88,o35l:55,o35v:46},
-  'PSV':               {pgml:2.5,pgmv:2.1,pgrl:0.8,pgrv:1.0,o25l:83,o25v:78,bttsl:55,bttsv:65,cafl:6.3,ccl:3.6,cafv:5.8,ccv:4.0,o15l:92,o15v:88,o35l:52,o35v:46},
-  'Feyenoord':         {pgml:2.3,pgmv:1.8,pgrl:1.0,pgrv:1.2,o25l:80,o25v:72,bttsl:58,bttsv:65,cafl:6.0,ccl:4.0,cafv:5.5,ccv:4.5,o15l:90,o15v:85,o35l:48,o35v:40},
-  'AZ Alkmaar':        {pgml:2.0,pgmv:1.6,pgrl:1.0,pgrv:1.2,o25l:74,o25v:66,bttsl:55,bttsv:62,cafl:5.8,ccl:4.2,cafv:5.2,ccv:4.8,o15l:87,o15v:80,o35l:42,o35v:34},
-  // ── LIGA PORTUGAL ─────────────────────────────────────────────────
-  'Benfica':           {pgml:2.4,pgmv:1.9,pgrl:0.8,pgrv:1.0,o25l:82,o25v:75,bttsl:52,bttsv:62,cafl:6.2,ccl:3.8,cafv:5.8,ccv:4.2,o15l:92,o15v:87,o35l:50,o35v:43},
-  'Porto':             {pgml:2.3,pgmv:1.8,pgrl:0.8,pgrv:1.0,o25l:80,o25v:73,bttsl:50,bttsv:60,cafl:6.0,ccl:4.0,cafv:5.6,ccv:4.4,o15l:91,o15v:86,o35l:48,o35v:40},
-  'Sporting CP':       {pgml:2.2,pgmv:1.7,pgrl:0.8,pgrv:1.0,o25l:78,o25v:70,bttsl:50,bttsv:58,cafl:5.8,ccl:3.8,cafv:5.4,ccv:4.2,o15l:90,o15v:84,o35l:46,o35v:38},
-  'Braga':             {pgml:1.9,pgmv:1.5,pgrl:1.0,pgrv:1.2,o25l:70,o25v:62,bttsl:52,bttsv:58,cafl:5.5,ccl:4.2,cafv:5.0,ccv:4.6,o15l:85,o15v:78,o35l:38,o35v:30},
-  // ── K LEAGUE 1 ────────────────────────────────────────────────────
-  'Jeonbuk':           {pgml:1.9,pgmv:1.5,pgrl:0.9,pgrv:1.2,o25l:70,o25v:62,bttsl:52,bttsv:58,cafl:5.8,ccl:4.2,cafv:5.2,ccv:4.8,o15l:85,o15v:78,o35l:35,o35v:28},
-  'Ulsan':             {pgml:1.8,pgmv:1.4,pgrl:1.0,pgrv:1.2,o25l:66,o25v:58,bttsl:50,bttsv:55,cafl:5.6,ccl:4.4,cafv:5.0,ccv:5.0,o15l:82,o15v:76,o35l:32,o35v:26},
-  'Seongnam':          {pgml:1.5,pgmv:1.2,pgrl:1.2,pgrv:1.4,o25l:58,o25v:50,bttsl:48,bttsv:52,cafl:5.0,ccl:4.8,cafv:4.5,ccv:5.2,o15l:76,o15v:70,o35l:26,o35v:20},
-  // ── J1 LEAGUE ─────────────────────────────────────────────────────
-  'Kawasaki Frontale': {pgml:2.0,pgmv:1.6,pgrl:0.9,pgrv:1.1,o25l:74,o25v:66,bttsl:52,bttsv:60,cafl:6.0,ccl:4.0,cafv:5.5,ccv:4.5,o15l:87,o15v:80,o35l:40,o35v:33},
-  'Vissel Kobe':       {pgml:1.8,pgmv:1.5,pgrl:1.0,pgrv:1.2,o25l:68,o25v:61,bttsl:50,bttsv:57,cafl:5.6,ccl:4.4,cafv:5.2,ccv:4.8,o15l:83,o15v:77,o35l:35,o35v:28},
-  'Gamba Osaka':       {pgml:1.7,pgmv:1.4,pgrl:1.1,pgrv:1.3,o25l:65,o25v:58,bttsl:50,bttsv:55,cafl:5.4,ccl:4.6,cafv:5.0,ccv:5.0,o15l:80,o15v:74,o35l:30,o35v:24},
-  // ── BRASILEIRAO A ─────────────────────────────────────────────────
-  'Flamengo':          {pgml:2.1,pgmv:1.7,pgrl:1.0,pgrv:1.2,o25l:76,o25v:68,bttsl:55,bttsv:62,cafl:5.8,ccl:4.2,cafv:5.4,ccv:4.6,o15l:88,o15v:82,o35l:42,o35v:35},
-  'Palmeiras':         {pgml:1.9,pgmv:1.5,pgrl:0.8,pgrv:1.0,o25l:70,o25v:62,bttsl:48,bttsv:55,cafl:5.5,ccl:4.0,cafv:5.0,ccv:4.5,o15l:85,o15v:78,o35l:38,o35v:30},
-  'Atletico Mineiro':  {pgml:1.8,pgmv:1.4,pgrl:0.9,pgrv:1.1,o25l:66,o25v:58,bttsl:48,bttsv:54,cafl:5.4,ccl:4.2,cafv:4.8,ccv:4.6,o15l:82,o15v:75,o35l:33,o35v:26},
-  'Fluminense':        {pgml:1.6,pgmv:1.3,pgrl:1.0,pgrv:1.2,o25l:60,o25v:54,bttsl:48,bttsv:53,cafl:5.2,ccl:4.6,cafv:4.6,ccv:5.0,o15l:78,o15v:72,o35l:28,o35v:22},
-  // ── LIGA PROFESIONAL ARG ──────────────────────────────────────────
-  'River Plate':       {pgml:2.0,pgmv:1.6,pgrl:0.9,pgrv:1.1,o25l:72,o25v:64,bttsl:52,bttsv:58,cafl:5.6,ccl:4.2,cafv:5.0,ccv:4.8,o15l:86,o15v:80,o35l:38,o35v:30},
-  'Boca Juniors':      {pgml:1.9,pgmv:1.5,pgrl:0.9,pgrv:1.1,o25l:68,o25v:60,bttsl:50,bttsv:56,cafl:5.4,ccl:4.4,cafv:4.8,ccv:4.8,o15l:83,o15v:76,o35l:34,o35v:27},
-  'Racing Club':       {pgml:1.7,pgmv:1.4,pgrl:1.0,pgrv:1.2,o25l:63,o25v:55,bttsl:48,bttsv:53,cafl:5.2,ccl:4.6,cafv:4.6,ccv:5.0,o15l:80,o15v:73,o35l:30,o35v:23},
-  // ── CHILE ─────────────────────────────────────────────────────────
-  'Colo-Colo':         {pgml:1.9,pgmv:1.5,pgrl:0.9,pgrv:1.1,o25l:68,o25v:60,bttsl:50,bttsv:56,cafl:5.4,ccl:4.2,cafv:4.8,ccv:4.6,o15l:82,o15v:76,o35l:33,o35v:26},
-  'Universidad de Chile':{pgml:1.7,pgmv:1.3,pgrl:1.1,pgrv:1.3,o25l:62,o25v:54,bttsl:50,bttsv:55,cafl:5.0,ccl:4.6,cafv:4.5,ccv:5.0,o15l:78,o15v:72,o35l:28,o35v:22},
-  'Universidad Católica':{pgml:1.8,pgmv:1.4,pgrl:0.9,pgrv:1.1,o25l:65,o25v:57,bttsl:48,bttsv:53,cafl:5.2,ccl:4.3,cafv:4.7,ccv:4.7,o15l:80,o15v:74,o35l:30,o35v:24},
-  'Huachipato':        {pgml:1.5,pgmv:1.2,pgrl:1.1,pgrv:1.3,o25l:57,o25v:50,bttsl:47,bttsv:52,cafl:4.8,ccl:4.8,cafv:4.3,ccv:5.0,o15l:74,o15v:68,o35l:24,o35v:18},
-  'Everton de Viña':   {pgml:1.4,pgmv:1.1,pgrl:1.2,pgrv:1.4,o25l:54,o25v:47,bttsl:46,bttsv:50,cafl:4.6,ccl:5.0,cafv:4.0,ccv:5.2,o15l:72,o15v:65,o35l:22,o35v:16},
-  'Audax Italiano':    {pgml:1.3,pgmv:1.0,pgrl:1.3,pgrv:1.5,o25l:50,o25v:43,bttsl:44,bttsv:48,cafl:4.4,ccl:5.2,cafv:3.8,ccv:5.4,o15l:68,o15v:62,o35l:20,o35v:14},
-  'Deportes Antofagasta':{pgml:1.2,pgmv:1.0,pgrl:1.4,pgrv:1.6,o25l:47,o25v:41,bttsl:43,bttsv:46,cafl:4.2,ccl:5.3,cafv:3.6,ccv:5.5,o15l:65,o15v:60,o35l:18,o35v:13},
-  'Cobresal':          {pgml:1.1,pgmv:0.9,pgrl:1.4,pgrv:1.6,o25l:44,o25v:38,bttsl:42,bttsv:45,cafl:4.0,ccl:5.4,cafv:3.4,ccv:5.6,o15l:62,o15v:57,o35l:16,o35v:12},
-  'O\'Higgins':        {pgml:1.5,pgmv:1.2,pgrl:1.2,pgrv:1.4,o25l:56,o25v:49,bttsl:47,bttsv:52,cafl:4.7,ccl:4.9,cafv:4.2,ccv:5.1,o15l:73,o15v:67,o35l:23,o35v:17},
-  'Palestino':         {pgml:1.4,pgmv:1.1,pgrl:1.2,pgrv:1.4,o25l:53,o25v:46,bttsl:46,bttsv:50,cafl:4.5,ccl:5.0,cafv:4.0,ccv:5.2,o15l:71,o15v:64,o35l:22,o35v:15},
-  'Curicó Unido':      {pgml:1.3,pgmv:1.0,pgrl:1.3,pgrv:1.5,o25l:50,o25v:43,bttsl:45,bttsv:48,cafl:4.4,ccl:5.2,cafv:3.8,ccv:5.4,o15l:68,o15v:62,o35l:20,o35v:14},
-  'Deportes Iquique':  {pgml:1.2,pgmv:1.0,pgrl:1.4,pgrv:1.5,o25l:47,o25v:40,bttsl:43,bttsv:46,cafl:4.2,ccl:5.3,cafv:3.6,ccv:5.5,o15l:65,o15v:59,o35l:18,o35v:12},
-};
-
-// ── SVC_LIVE: fallback automático localStorage → hardcoded ──
-function svcCargarVivo(){
-  try{
-    const raw=localStorage.getItem(SVC_LS_KEY);
-    if(raw){const p=JSON.parse(raw);if(p&&typeof p==='object'&&Object.keys(p).length>0)return p;}
-  }catch(e){}
-  return SVC_DEFAULT;
-}
-let SVC_LIVE = svcCargarVivo();
-
-// ── Importar JSON SVC desde archivo ──
-function svcImportar(input){
-  const file=input.files[0];
-  if(!file)return;
-  const reader=new FileReader();
-  reader.onload=(e)=>{
-    try{
-      const data=JSON.parse(e.target.result);
-      // Validación básica: al menos 1 equipo con pgml
-      if(typeof data!=='object'||!Object.values(data).some(v=>v.pgml||v.pgmv))
-        throw new Error('Formato inválido: el JSON debe tener equipos con pgml/pgmv');
-
-      const n=Object.keys(data).length;
-      if(!confirm(`✅ SVC válido detectado:\n${n} equipos encontrados.\n\n¿Guardar e importar?`)){input.value='';return;}
-
-      localStorage.setItem(SVC_LS_KEY,JSON.stringify(data));
-      SVC_LIVE=data;
-      input.value='';
-      svcActualizarUI();
-      alert(`✅ SVC importado: ${n} equipos cargados.\nSe usarán en el próximo análisis.`);
-    }catch(err){
-      input.value='';
-      alert('❌ Error al importar SVC:\n'+err.message+'\n\nRevisa que el archivo sea un JSON válido.');
-    }
-  };
-  reader.readAsText(file);
-}
-
-// ── Exportar SVC actual (hardcoded) como plantilla ──
-function svcExportarPlantilla(){
-  const json=JSON.stringify(SVC_DEFAULT,null,2);
-  const blob=new Blob([json],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;
-  a.download='svc-plantilla-'+new Date().toISOString().split('T')[0]+'.json';
-  document.body.appendChild(a);a.click();
-  document.body.removeChild(a);URL.revokeObjectURL(url);
-}
-
-// ── Resetear SVC al hardcoded ──
-function svcResetear(){
-  if(!confirm('⚠️ Eliminar el SVC importado y volver al hardcoded?\nSe perderán los datos importados.'))return;
-  localStorage.removeItem(SVC_LS_KEY);
-  SVC_LIVE=SVC_DEFAULT;
-  svcActualizarUI();
-  alert('✅ SVC reseteado al hardcoded ('+Object.keys(SVC_DEFAULT).length+' equipos).');
-}
-
-// ── Actualizar UI del panel SVC ──
-function svcActualizarUI(){
-  const el=document.getElementById('svc-status');
-  if(!el)return;
-  const custom=!!localStorage.getItem(SVC_LS_KEY);
-  const n=Object.keys(SVC_LIVE).length;
-  el.innerHTML=custom
-    ?`<span style="color:var(--azul)">📥 SVC importado</span> — ${n} equipos <span style="color:#555;font-size:10px;">(custom)</span>`
-    :`<span style="color:var(--verde)">✅ SVC hardcoded</span> — ${n} equipos <span style="color:#555;font-size:10px;">(por defecto)</span>`;
-  document.getElementById('svc-btn-reset').style.display=custom?'block':'none';
-}
-
-// Mapeo SVC campo → id_html (sufijo l=local, v=visita se agrega según rol)
-const SVC_MAP = {
-  pgm:  {l:'pgml',  v:'pgmv'},
-  pgr:  {l:'pgrl',  v:'pgrv'},
-  o15:  {l:'o15l',  v:'o15v'},
-  o25:  {l:'o25l',  v:'o25v'},
-  o35:  {l:'o35l',  v:'o35v'},
-  btts: {l:'bttsl', v:'bttsv'},
-  caf:  {l:'cafl',  v:'cafv'},
-  cc:   {l:'ccl',   v:'ccv'},
-};
-
-// Aplicar SVC al formulario — solo llena inputs vacíos
-function svcAutocompletar(campo){
-  const eq = (document.getElementById(campo)?.value||'').trim();
-  if(!eq) return false;
-
-  // Buscar coincidencia exacta primero, luego parcial (usa SVC_LIVE = custom || default)
-  let datos = SVC_LIVE[eq];
-  if(!datos){
-    const key = Object.keys(SVC_LIVE).find(k=>
-      k.toLowerCase()===eq.toLowerCase() ||
-      k.toLowerCase().includes(eq.toLowerCase()) ||
-      eq.toLowerCase().includes(k.toLowerCase().split(' ')[0])
-    );
-    if(key) datos = SVC_LIVE[key];
-  }
-  if(!datos) return false;
-
-  const rol = campo==='local'?'l':'v';
-  let aplicados = 0;
-
-  Object.entries(SVC_MAP).forEach(([svcKey,ids])=>{
-    const fieldId = ids[rol];
-    const el = document.getElementById(fieldId);
-    const svcVal = datos[svcKey+(rol==='l'?'l':'v')] ?? datos[fieldId];
-    if(el && !el.value && svcVal!=null){
-      el.value = svcVal;
-      el.classList.add('has-value');
-      aplicados++;
-    }
-  });
-
-  // Córneres totales co95/co105 — solo si ambos campos están vacíos y hay datos
-  if(campo==='local'&&datos.cafl!=null&&datos.cafv==null){
-    // no hay datos de visitante todavía, esperar
-  } else if(campo==='visita'){
-    const localEq=(document.getElementById('local')?.value||'').trim();
-    const localDatos=SVC_LIVE[localEq]||Object.values(SVC_LIVE).find((v,i)=>{
-      const k=Object.keys(SVC_LIVE)[i];
-      return k.toLowerCase().includes(localEq.toLowerCase())||localEq.toLowerCase().includes(k.toLowerCase().split(' ')[0]);
-    });
-    if(localDatos){
-      const co95El=document.getElementById('co95');
-      const co105El=document.getElementById('co105');
-      const totalCorners=(localDatos.cafl||0)+(localDatos.ccl||0)+(datos.cafv||0)+(datos.ccv||0);
-      const pctOver95 = totalCorners>0 ? Math.min(90, Math.round(50 + (totalCorners-9)*8)) : null;
-      const pctOver105 = totalCorners>0 ? Math.min(80, Math.round(35 + (totalCorners-9)*8)) : null;
-      if(co95El&&!co95El.value&&pctOver95!=null){co95El.value=pctOver95;co95El.classList.add('has-value');}
-      if(co105El&&!co105El.value&&pctOver105!=null){co105El.value=pctOver105;co105El.classList.add('has-value');}
-    }
-  }
-
-  return aplicados > 0;
-}
+// ===== LIGAS FAVORITAS — CONFIG MANUAL =====
 const LIGAS_CONFIG = [
   {
     liga:'Premier League', pais:'🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra', tier:'A',
