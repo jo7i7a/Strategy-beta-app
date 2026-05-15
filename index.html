@@ -4607,13 +4607,57 @@ function getShield(teamName){
   return {initials,color:colors[idx]};
 }
 
+// Normalizar nombre de equipo → slug para assets/teams/nombre.png
+function getTeamLogoPath(teamName){
+  if(!teamName) return null;
+  const map={
+    'colo-colo':'colo-colo','colo colo':'colo-colo',
+    'universidad de chile':'universidad-de-chile',
+    'universidad católica':'universidad-catolica','universidad catolica':'universidad-catolica',
+    'huachipato':'huachipato',
+    'everton de viña':'everton','everton de vina':'everton',
+    "o'higgins":'ohiggins','ohiggins':'ohiggins',
+    'palestino':'palestino','cobresal':'cobresal',
+    'deportes antofagasta':'antofagasta',
+    'curicó unido':'curico','curico unido':'curico',
+    'deportes iquique':'iquique',
+    'river plate':'river-plate','boca juniors':'boca-juniors','racing club':'racing',
+    'flamengo':'flamengo','palmeiras':'palmeiras','botafogo':'botafogo',
+    'fluminense':'fluminense','bahia':'bahia',
+    'vasco da gama':'vasco','vasco':'vasco',
+    'internacional':'internacional',
+    'são paulo':'sao-paulo','sao paulo':'sao-paulo',
+    'athletico paranaense':'athletico-pr','atletico paranaense':'athletico-pr',
+    'atletico mineiro':'atletico-mg','atlético mineiro':'atletico-mg',
+    'manchester city':'manchester-city','arsenal':'arsenal','liverpool':'liverpool',
+    'chelsea':'chelsea','tottenham':'tottenham','newcastle':'newcastle',
+    'manchester united':'manchester-united','aston villa':'aston-villa','brighton':'brighton',
+    'bayern munich':'bayern-munich','fc bayern':'bayern-munich',
+    'borussia dortmund':'dortmund','bvb':'dortmund',
+    'leverkusen':'leverkusen','bayer leverkusen':'leverkusen','rb leipzig':'rb-leipzig',
+    'eintracht frankfurt':'frankfurt','wolfsburg':'wolfsburg',
+    'ajax':'ajax','psv':'psv','feyenoord':'feyenoord','az alkmaar':'az',
+    'benfica':'benfica','porto':'porto','sporting cp':'sporting','sporting':'sporting','braga':'braga',
+    'jeonbuk':'jeonbuk','ulsan':'ulsan',
+    'kawasaki frontale':'kawasaki','vissel kobe':'vissel-kobe','gamba osaka':'gamba',
+  };
+  const key=teamName.toLowerCase().trim();
+  const slug=map[key]||key
+    .replace(/[áàä]/g,'a').replace(/[éèë]/g,'e').replace(/[íìï]/g,'i')
+    .replace(/[óòö]/g,'o').replace(/[úùü]/g,'u').replace(/ñ/g,'n')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  return 'assets/teams/'+slug+'.png';
+}
+
+// Helper central de escudos: logo local con fallback a iniciales
 function shieldHTML(teamName, size=40){
+  if(!teamName) return '';
   const s=getShield(teamName);
-  const img=`https://api.sofascore.app/api/v1/team/search?q=${encodeURIComponent(teamName)}`;
-  const uid='sh_'+teamName.replace(/\s/g,'_')+'_'+size;
-  // Use initials as fallback, try to load logo
-  return `<div class="ua-escudo" style="width:${size}px;height:${size}px;" id="${uid}">
-    <span style="font-size:${Math.round(size*.32)}px;font-weight:900;color:${s.color};position:relative;z-index:1;">${s.initials}</span>
+  const path=getTeamLogoPath(teamName);
+  const uid='sh_'+Math.random().toString(36).slice(2,8);
+  return `<div class="ua-escudo" style="width:${size}px;height:${size}px;overflow:hidden;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;" id="${uid}">
+    <span style="font-size:${Math.round(size*.32)}px;font-weight:900;color:${s.color};position:absolute;z-index:0;">${s.initials}</span>
+    <img src="${path}" style="width:90%;height:90%;object-fit:contain;position:relative;z-index:1;" onerror="this.style.display='none'" loading="lazy">
   </div>`;
 }
 
@@ -4667,16 +4711,12 @@ function renderInicio(){
         <div class="ua-liga">${r.liga||'—'} · ${r.fecha||'—'}</div>
         <div class="ua-vs">
           <div class="ua-team">
-            <div class="ua-escudo" style="background:rgba(240,240,255,.05);border-color:rgba(255,255,255,.08);overflow:hidden;">
-              <img src="${_CAM}" style="width:110%;height:110%;object-fit:cover;position:absolute;inset:-5%;" onerror="this.style.display='none'">
-            </div>
+            ${shieldHTML(localName,42)}
             <div class="ua-team-name">${localName}</div>
           </div>
           <div class="ua-vs-txt">VS</div>
           <div class="ua-team">
-            <div class="ua-escudo" style="background:rgba(0,20,80,.12);border-color:rgba(0,80,200,.15);overflow:hidden;">
-              <img src="${_ESC_NUE}" style="width:100%;height:100%;object-fit:contain;position:absolute;inset:0;" onerror="this.style.display='none'">
-            </div>
+            ${shieldHTML(visitaName,42)}
             <div class="ua-team-name">${visitaName}</div>
           </div>
         </div>
@@ -5998,10 +6038,10 @@ function renderLivePendientes(){
     const l=parts[0]?.trim()||'?'; const v=parts[1]?.trim()||'?';
     const sl=getShield(l); const sv=getShield(v);
     return `<div class="live-partido-item" onclick="liveShowFormulario(${JSON.stringify(r).replace(/"/g,'&quot;')})">
-      <div class="lpi-escudos">
-        <div class="lpi-esc" style="color:${sl.color}">${sl.initials}</div>
+      <div class="lpi-escudos" style="display:flex;align-items:center;gap:6px;">
+        ${shieldHTML(l,32)}
         <div class="lpi-vs">vs</div>
-        <div class="lpi-esc" style="color:${sv.color}">${sv.initials}</div>
+        ${shieldHTML(v,32)}
       </div>
       <div class="lpi-info">
         <div class="lpi-partido">${getNombrePartido(r)}</div>
