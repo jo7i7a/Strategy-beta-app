@@ -4611,41 +4611,99 @@ function getShield(teamName){
 function getTeamLogoPath(teamName){
   if(!teamName) return null;
   const map={
-    'colo-colo':'colo-colo','colo colo':'colo-colo',
-    'universidad de chile':'universidad-de-chile',
-    'universidad católica':'universidad-catolica','universidad catolica':'universidad-catolica',
+    // ── CHILE ──────────────────────────────────────────────
+    'colo-colo':'colocolo','colo colo':'colocolo',
+    'universidad de chile':'universidaddechile',
+    'universidad católica':'universidadcatólica','universidad catolica':'universidadcatólica',
     'huachipato':'huachipato',
     'everton de viña':'everton','everton de vina':'everton',
     "o'higgins":'ohiggins','ohiggins':'ohiggins',
-    'palestino':'palestino','cobresal':'cobresal',
+    'palestino':'palestino',
+    'cobresal':'cobresal',
     'deportes antofagasta':'antofagasta',
-    'curicó unido':'curico','curico unido':'curico',
-    'deportes iquique':'iquique',
-    'river plate':'river-plate','boca juniors':'boca-juniors','racing club':'racing',
-    'flamengo':'flamengo','palmeiras':'palmeiras','botafogo':'botafogo',
-    'fluminense':'fluminense','bahia':'bahia',
-    'vasco da gama':'vasco','vasco':'vasco',
+    'audax italiano':'audaxitaliano',
+    'coquimbo unido':'coquimbounido',
+    'union la calera':'unionlacalera','unión la calera':'unionlacalera',
+    'nublense':'nublense',
+    'deportes limache':'deporteslimache',
+    'deportes concepcion':'deportesconcepcion','deportes concepción':'deportesconcepcion',
+    'universidad de concepcion':'universidaddeconcepcio','universidad de concepción':'universidaddeconcepcio',
+    'la serena':'laserana',
+    'avs futbol sad':'avsfutebolsad',
+    // ── ARGENTINA ──────────────────────────────────────────
+    'river plate':'riverplate',
+    'boca juniors':'bocajuniors',
+    'racing club':'racing',
+    // ── BRASIL ─────────────────────────────────────────────
+    'flamengo':'flamengo',
+    'palmeiras':'palmeiras',
+    'botafogo':'botafogo',
+    'fluminense':'fluminense',
+    'bahia':'bahia',
+    'vasco da gama':'vascodagama','vasco':'vascodagama',
     'internacional':'internacional',
-    'são paulo':'sao-paulo','sao paulo':'sao-paulo',
-    'athletico paranaense':'athletico-pr','atletico paranaense':'athletico-pr',
-    'atletico mineiro':'atletico-mg','atlético mineiro':'atletico-mg',
-    'manchester city':'manchester-city','arsenal':'arsenal','liverpool':'liverpool',
-    'chelsea':'chelsea','tottenham':'tottenham','newcastle':'newcastle',
-    'manchester united':'manchester-united','aston villa':'aston-villa','brighton':'brighton',
-    'bayern munich':'bayern-munich','fc bayern':'bayern-munich',
-    'borussia dortmund':'dortmund','bvb':'dortmund',
-    'leverkusen':'leverkusen','bayer leverkusen':'leverkusen','rb leipzig':'rb-leipzig',
-    'eintracht frankfurt':'frankfurt','wolfsburg':'wolfsburg',
-    'ajax':'ajax','psv':'psv','feyenoord':'feyenoord','az alkmaar':'az',
-    'benfica':'benfica','porto':'porto','sporting cp':'sporting','sporting':'sporting','braga':'braga',
-    'jeonbuk':'jeonbuk','ulsan':'ulsan',
-    'kawasaki frontale':'kawasaki','vissel kobe':'vissel-kobe','gamba osaka':'gamba',
+    'são paulo':'saopaulo','sao paulo':'saopaulo',
+    'athletico paranaense':'brazil_athletico-parana','atletico paranaense':'brazil_athletico-parana',
+    'atletico mineiro':'atleticomineiro','atlético mineiro':'atleticomineiro',
+    'cruzeiro':'cruzeiro',
+    'santos':'santos',
+    'rb bragantino':'rbbragantino',
+    // ── PREMIER LEAGUE ─────────────────────────────────────
+    'manchester city':'manchesterCity',
+    'arsenal':'arsenal',
+    'liverpool':'liverpool',
+    'chelsea':'chelsea',
+    'tottenham':'tottenhamHotspur','tottenham hotspur':'tottenhamHotspur',
+    'newcastle':'newcastleUnited','newcastle united':'newcastleUnited',
+    'manchester united':'manchesterUnited',
+    'aston villa':'astonVilla',
+    'brighton':'brighton',
+    'fulham':'fulham',
+    'bournemouth':'bournemouth',
+    'crystal palace':'crystalPalace',
+    'wolverhampton':'wolves','wolves':'wolves',
+    'west ham':'westHamUnited','west ham united':'westHamUnited',
+    'leicester':'leicesterCity','leicester city':'leicesterCity',
+    'southampton':'southampton',
+    'watford':'watford',
+    'burnley':'burnley',
+    'cardiff city':'cardiffCity',
+    'stoke city':'stokeCity',
+    'sunderland':'sunderlandAfc',
+    'swansea':'swanseaCityAfc','swansea city':'swanseaCityAfc',
+    'norwich':'norwichCity','norwich city':'norwichCity',
+    'huddersfield':'huddersfield',
+    // ── BUNDESLIGA ─────────────────────────────────────────
+    'bayern munich':'bayernmunich','fc bayern':'bayernmunich',
+    'borussia dortmund':'borussiadortmund','bvb':'borussiadortmund',
+    'leverkusen':'leverkusen','bayer leverkusen':'leverkusen',
+    'rb leipzig':'rbleipzig',
+    'eintracht frankfurt':'eintrachtfrankfurt',
+    'wolfsburg':'wolfsburg',
+    // ── EREDIVISIE ─────────────────────────────────────────
+    'ajax':'ajax',
+    'psv':'psv',
+    'feyenoord':'feyenoord',
+    'az alkmaar':'az',
+    // ── LIGA PORTUGAL ──────────────────────────────────────
+    'benfica':'benfica','sl benfica':'benfica',
+    'porto':'fcporto','fc porto':'fcporto',
+    'sporting cp':'sportingcp','sporting':'sportingcp',
+    'braga':'scbraga','sc braga':'scbraga',
+    'estoril':'estoril',
+    'vitoria':'vitoria',
+    'vitoria de guimaraes':'vitoriadeguimaraes',
+    'alverca':'alverca',
+    'arouca':'arouca',
+    'gil vicente':'gilvicente',
+    'casa pia':'casapiaac',
+    // ── ASIA ───────────────────────────────────────────────
+    'jeonbuk':'jeonbuk',
+    'kawasaki frontale':'kawasaki',
   };
   const key=teamName.toLowerCase().trim();
-  const slug=map[key]||key
-    .replace(/[áàä]/g,'a').replace(/[éèë]/g,'e').replace(/[íìï]/g,'i')
-    .replace(/[óòö]/g,'o').replace(/[úùü]/g,'u').replace(/ñ/g,'n')
-    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  const slug=map[key];
+  if(!slug) return null; // sin fallback a slug automático — evita 404 silencioso
   return 'assets/teams/'+slug+'.png';
 }
 
@@ -4655,9 +4713,10 @@ function shieldHTML(teamName, size=40){
   const s=getShield(teamName);
   const path=getTeamLogoPath(teamName);
   const uid='sh_'+Math.random().toString(36).slice(2,8);
+  const imgTag=path?`<img src="${path}" style="width:90%;height:90%;object-fit:contain;position:relative;z-index:1;" onerror="this.style.display='none'" loading="lazy">`:'';
   return `<div class="ua-escudo" style="width:${size}px;height:${size}px;overflow:hidden;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;" id="${uid}">
     <span style="font-size:${Math.round(size*.32)}px;font-weight:900;color:${s.color};position:absolute;z-index:0;">${s.initials}</span>
-    <img src="${path}" style="width:90%;height:90%;object-fit:contain;position:relative;z-index:1;" onerror="this.style.display='none'" loading="lazy">
+    ${imgTag}
   </div>`;
 }
 
