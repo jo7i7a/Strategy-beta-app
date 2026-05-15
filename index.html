@@ -1032,7 +1032,7 @@ select.minput option{background:#080808;color:#efefef;}
         <div class="form-group">
           <label class="form-label">Equipo Local</label>
           <div class="ac-wrap">
-            <input type="text" class="form-input" id="local" placeholder="Ej: Bayern" oninput="acS('local')" autocomplete="off" onchange="intelEquipo('local')">
+            <input type="text" class="form-input" id="local" placeholder="Ej: Bayern" oninput="acS('local')" autocomplete="off" onchange="intelEquipo('local')" onblur="intelEquipo('local')">
             <div class="ac-list" id="acl-local"></div>
           </div>
           <div class="intel-banner" id="intel-local" style="margin-top:6px;"></div>
@@ -1040,7 +1040,7 @@ select.minput option{background:#080808;color:#efefef;}
         <div class="form-group">
           <label class="form-label">Equipo Visitante</label>
           <div class="ac-wrap">
-            <input type="text" class="form-input" id="visita" placeholder="Ej: Dortmund" oninput="acS('visita')" autocomplete="off" onchange="intelEquipo('visita')">
+            <input type="text" class="form-input" id="visita" placeholder="Ej: Dortmund" oninput="acS('visita')" autocomplete="off" onchange="intelEquipo('visita')" onblur="intelEquipo('visita')">
             <div class="ac-list" id="acl-visita"></div>
           </div>
           <div class="intel-banner" id="intel-visita" style="margin-top:6px;"></div>
@@ -3016,6 +3016,11 @@ function goP1(){
       if(localEl&&!localEl.value&&est.local) localEl.value=est.local;
       const visitaEl=document.getElementById('visita');
       if(visitaEl&&!visitaEl.value&&est.visita) visitaEl.value=est.visita;
+      // SVC: autocompletar campos vacíos tras restaurar nombres
+      if(typeof svcAutocompletar==='function'){
+        if(est.local) svcAutocompletar('local');
+        if(est.visita) svcAutocompletar('visita');
+      }
     }
   }catch(e){}
 }
@@ -3477,9 +3482,36 @@ function renderRes(){
     h+=`</div>`;
   }
 
+  // Goleadores y rematadores desde SVC
+  const localEqRes=(AA.local||AA.partido?.split(' vs ')[0]||'').trim();
+  const visitaEqRes=(AA.visita||AA.partido?.split(' vs ')[1]||'').trim();
+  const svcLocal=SVC_LIVE[localEqRes]||Object.values(SVC_LIVE).find((v,i)=>Object.keys(SVC_LIVE)[i].toLowerCase().includes(localEqRes.toLowerCase()));
+  const svcVisita=SVC_LIVE[visitaEqRes]||Object.values(SVC_LIVE).find((v,i)=>Object.keys(SVC_LIVE)[i].toLowerCase().includes(visitaEqRes.toLowerCase()));
+  if((svcLocal&&svcLocal.top_gol)||(svcVisita&&svcVisita.top_gol)){
+    h+=`<div style="background:rgba(8,8,8,.95);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:12px;margin-bottom:10px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.8px;color:#555;margin-bottom:10px;">⚽ GOLEADORES Y REMATADORES</div>`;
+    if(svcLocal&&svcLocal.top_gol){
+      h+=`<div style="margin-bottom:8px;">
+        <div style="font-size:10px;color:#888;margin-bottom:3px;">🏠 ${localEqRes.toUpperCase()}</div>
+        <div style="font-size:11px;color:#ccc;">⚽ <strong style="color:var(--verde)">Gol:</strong> ${svcLocal.top_gol}</div>
+        <div style="font-size:11px;color:#ccc;margin-top:2px;">🎯 <strong style="color:var(--dorado2)">Remate:</strong> ${svcLocal.top_rem||'—'}</div>
+      </div>`;
+    }
+    if(svcVisita&&svcVisita.top_gol){
+      h+=`<div>
+        <div style="font-size:10px;color:#888;margin-bottom:3px;">✈️ ${visitaEqRes.toUpperCase()}</div>
+        <div style="font-size:11px;color:#ccc;">⚽ <strong style="color:var(--verde)">Gol:</strong> ${svcVisita.top_gol}</div>
+        <div style="font-size:11px;color:#ccc;margin-top:2px;">🎯 <strong style="color:var(--dorado2)">Remate:</strong> ${svcVisita.top_rem||'—'}</div>
+      </div>`;
+    }
+    h+=`<div style="font-size:9px;color:#333;margin-top:8px;">Fuente: SVC — actualizar con importar JSON</div>
+    </div>`;
+  }
+
   // Botones de acción
   if(calLive) h+=`<button class="btn-verde" onclick="ir('live')">🔴 IR A SEGUIMIENTO LIVE →</button>`;
   h+=`<button class="btn-verde" onclick="abrirModalReg()">📝 REGISTRAR APUESTA</button>`;
+  h+=`<button class="btn-sec" onclick="abrirDemoDesdeAnalisis()" style="background:rgba(0,184,224,.1);border-color:rgba(0,184,224,.3);color:var(--azul);">🧪 REGISTRAR EN DEMO</button>`;
   h+=`<button class="btn-sec" onclick="goP2()">← VOLVER A MÉTRICAS</button>`;
   h+=`<button onclick="reiniciarAnalisis()" style="width:100%;background:none;border:1px solid rgba(200,0,0,.2);color:var(--rojo2);border-radius:8px;padding:10px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px;margin-top:6px;">🔄 NUEVO ANÁLISIS</button>`;
   h+=`<div class="spacer"></div>`;
@@ -4438,6 +4470,28 @@ function saveDemoPick(res){
   document.getElementById('demo-confianza').value=70;demoConfianzaChange();
   demoTab('picks');renderDemoStats();
 }
+
+// Abrir Demo pre-relleno desde el análisis
+function abrirDemoDesdeAnalisis(){
+  if(!AA) return;
+  ir('demo');
+  setTimeout(()=>{
+    const p=document.getElementById('demo-partido');
+    const l=document.getElementById('demo-liga');
+    const c=document.getElementById('demo-cat-mercado');
+    const s=document.getElementById('demo-seleccion');
+    const cu=document.getElementById('demo-cuota');
+    if(p&&!p.value) p.value=AA.partido||'';
+    if(l&&!l.value) l.value=AA.liga||'';
+    if(cu&&!cu.value&&AA.cuota) cu.value=AA.cuota;
+    // Mercado óptimo si existe
+    if(AA.mercadoOptimo&&AA.mercadoOptimo.prob>=65){
+      if(c&&!c.value) c.value='goles';
+      if(s&&!s.value) s.value=AA.mercadoOptimo.mercado||'';
+    }
+  },200);
+}
+
 function renderDemo(){
   if(!DB.demo) DB.demo={cap:100000,regs:[]};
   const el=document.getElementById('demo-lista');if(!el) return;
@@ -6225,13 +6279,13 @@ const SVC_LS_KEY = 'cce-svc-custom';
 const SVC_DEFAULT = {
   // ── PREMIER LEAGUE ─────────────────────────────────────────
   'Manchester City':{pgml:2.3,pgmv:1.9,pgrl:0.8,pgrv:1.0,o25l:80,o25v:72,bttsl:52,bttsv:60,cafl:6.2,ccl:3.8,cafv:5.8,ccv:4.1,o15l:92,o15v:85,o35l:48,o35v:40},
-  'Arsenal':{pgml:2.1,pgmv:1.7,pgrl:0.7,pgrv:1.1,o25l:75,o25v:68,bttsl:45,bttsv:58,cafl:6.0,ccl:3.5,cafv:5.5,ccv:4.0,o15l:90,o15v:82,o35l:42,o35v:35},
-  'Liverpool':{pgml:2.4,pgmv:2.0,pgrl:0.9,pgrv:1.2,o25l:82,o25v:75,bttsl:58,bttsv:65,cafl:6.5,ccl:4.0,cafv:6.0,ccv:4.5,o15l:93,o15v:87,o35l:50,o35v:44},
+  'Arsenal':{pgml:2.1,pgmv:1.7,pgrl:0.7,pgrv:1.1,o25l:75,o25v:68,bttsl:45,bttsv:58,cafl:6.0,ccl:3.5,cafv:5.5,ccv:4.0,o15l:90,o15v:82,o35l:42,o35v:35,top_gol:'Bukayo Saka / Kai Havertz',top_rem:'Martin Ødegaard / Gabriel Martinelli'},
+  'Liverpool':{pgml:2.4,pgmv:2.0,pgrl:0.9,pgrv:1.2,o25l:82,o25v:75,bttsl:58,bttsv:65,cafl:6.5,ccl:4.0,cafv:6.0,ccv:4.5,o15l:93,o15v:87,o35l:50,o35v:44,top_gol:'Mohamed Salah / Diogo Jota',top_rem:'Trent Alexander-Arnold / Luis Díaz'},
   'Chelsea':{pgml:1.9,pgmv:1.5,pgrl:1.1,pgrv:1.3,o25l:70,o25v:62,bttsl:55,bttsv:60,cafl:5.8,ccl:4.2,cafv:5.2,ccv:4.6,o15l:85,o15v:78,o35l:38,o35v:30},
   'Tottenham':{pgml:1.8,pgmv:1.6,pgrl:1.3,pgrv:1.4,o25l:68,o25v:65,bttsl:60,bttsv:65,cafl:5.5,ccl:4.5,cafv:5.0,ccv:5.0,o15l:82,o15v:80,o35l:36,o35v:33},
   'Newcastle':{pgml:1.8,pgmv:1.4,pgrl:0.9,pgrv:1.2,o25l:68,o25v:60,bttsl:48,bttsv:55,cafl:5.8,ccl:4.0,cafv:5.0,ccv:4.5,o15l:83,o15v:76,o35l:35,o35v:28},
   // ── BUNDESLIGA ─────────────────────────────────────────────
-  'Bayern Munich':{pgml:2.8,pgmv:2.2,pgrl:0.7,pgrv:1.0,o25l:88,o25v:80,bttsl:55,bttsv:65,cafl:6.8,ccl:3.5,cafv:6.2,ccv:4.0,o15l:95,o15v:90,o35l:60,o35v:50},
+  'Bayern Munich':{pgml:2.8,pgmv:2.2,pgrl:0.7,pgrv:1.0,o25l:88,o25v:80,bttsl:55,bttsv:65,cafl:6.8,ccl:3.5,cafv:6.2,ccv:4.0,o15l:95,o15v:90,o35l:60,o35v:50,top_gol:'Harry Kane / Thomas Müller',top_rem:'Jamal Musiala / Leroy Sané'},
   'Borussia Dortmund':{pgml:2.4,pgmv:1.9,pgrl:1.1,pgrv:1.3,o25l:82,o25v:75,bttsl:62,bttsv:70,cafl:6.2,ccl:4.2,cafv:5.8,ccv:4.8,o15l:92,o15v:87,o35l:50,o35v:43},
   'Leverkusen':{pgml:2.2,pgmv:1.8,pgrl:0.8,pgrv:1.0,o25l:78,o25v:72,bttsl:52,bttsv:60,cafl:6.0,ccl:3.8,cafv:5.5,ccv:4.2,o15l:90,o15v:85,o35l:46,o35v:40},
   'RB Leipzig':{pgml:2.0,pgmv:1.7,pgrl:1.0,pgrv:1.2,o25l:75,o25v:68,bttsl:55,bttsv:62,cafl:5.8,ccl:4.0,cafv:5.5,ccv:4.5,o15l:88,o15v:82,o35l:42,o35v:36},
@@ -6247,12 +6301,10 @@ const SVC_DEFAULT = {
   'Jeonbuk':{pgml:1.9,pgmv:1.5,pgrl:0.9,pgrv:1.2,o25l:70,o25v:62,bttsl:52,bttsv:58,cafl:5.8,ccl:4.2,cafv:5.2,ccv:4.8,o15l:85,o15v:78,o35l:35,o35v:28},
   'Kawasaki Frontale':{pgml:2.0,pgmv:1.6,pgrl:0.9,pgrv:1.1,o25l:74,o25v:66,bttsl:52,bttsv:60,cafl:6.0,ccl:4.0,cafv:5.5,ccv:4.5,o15l:87,o15v:80,o35l:40,o35v:33},
   // ── BRASILEIRAO / ARGENTINA ────────────────────────────────
-  'Flamengo':{pgml:2.1,pgmv:1.7,pgrl:1.0,pgrv:1.2,o25l:76,o25v:68,bttsl:55,bttsv:62,cafl:5.8,ccl:4.2,cafv:5.4,ccv:4.6,o15l:88,o15v:82,o35l:42,o35v:35},
-  'Palmeiras':{pgml:1.9,pgmv:1.5,pgrl:0.8,pgrv:1.0,o25l:70,o25v:62,bttsl:48,bttsv:55,cafl:5.5,ccl:4.0,cafv:5.0,ccv:4.5,o15l:85,o15v:78,o35l:38,o35v:30},
-  'River Plate':{pgml:2.0,pgmv:1.6,pgrl:0.9,pgrv:1.1,o25l:72,o25v:64,bttsl:52,bttsv:58,cafl:5.6,ccl:4.2,cafv:5.0,ccv:4.8,o15l:86,o15v:80,o35l:38,o35v:30},
-  'Boca Juniors':{pgml:1.9,pgmv:1.5,pgrl:0.9,pgrv:1.1,o25l:68,o25v:60,bttsl:50,bttsv:56,cafl:5.4,ccl:4.4,cafv:4.8,ccv:4.8,o15l:83,o15v:76,o35l:34,o35v:27},
+  'River Plate':{pgml:2.0,pgmv:1.6,pgrl:0.9,pgrv:1.1,o25l:72,o25v:64,bttsl:52,bttsv:58,cafl:5.6,ccl:4.2,cafv:5.0,ccv:4.8,o15l:86,o15v:80,o35l:38,o35v:30,top_gol:'Miguel Borja / Facundo Colidio',top_rem:'Nicolás De La Cruz / Claudio Echeverri'},
+  'Boca Juniors':{pgml:1.9,pgmv:1.5,pgrl:0.9,pgrv:1.1,o25l:68,o25v:60,bttsl:50,bttsv:56,cafl:5.4,ccl:4.4,cafv:4.8,ccv:4.8,o15l:83,o15v:76,o35l:34,o35v:27,top_gol:'Milton Giménez / Edinson Cavani',top_rem:'Kevin Zenón / Pol Fernández'},
   // ── CHILE ──────────────────────────────────────────────────
-  'Colo-Colo':{pgml:1.9,pgmv:1.5,pgrl:0.9,pgrv:1.1,o25l:68,o25v:60,bttsl:50,bttsv:56,cafl:5.4,ccl:4.2,cafv:4.8,ccv:4.6,o15l:82,o15v:76,o35l:33,o35v:26},
+  'Colo-Colo':{pgml:1.9,pgmv:1.5,pgrl:0.9,pgrv:1.1,o25l:68,o25v:60,bttsl:50,bttsv:56,cafl:5.4,ccl:4.2,cafv:4.8,ccv:4.6,o15l:82,o15v:76,o35l:33,o35v:26,top_gol:'Marcos Bolados / Maximiliano Falcón',top_rem:'Arturo Vidal / Carlos Palacios'},
   'Universidad de Chile':{pgml:1.7,pgmv:1.3,pgrl:1.1,pgrv:1.3,o25l:62,o25v:54,bttsl:50,bttsv:55,cafl:5.0,ccl:4.6,cafv:4.5,ccv:5.0,o15l:78,o15v:72,o35l:28,o35v:22},
   'Universidad Católica':{pgml:1.8,pgmv:1.4,pgrl:0.9,pgrv:1.1,o25l:65,o25v:57,bttsl:48,bttsv:53,cafl:5.2,ccl:4.3,cafv:4.7,ccv:4.7,o15l:80,o15v:74,o35l:30,o35v:24},
   'Huachipato':{pgml:1.5,pgmv:1.2,pgrl:1.1,pgrv:1.3,o25l:57,o25v:50,bttsl:47,bttsv:52,cafl:4.8,ccl:4.8,cafv:4.3,ccv:5.0,o15l:74,o15v:68,o35l:24,o35v:18},
@@ -6261,6 +6313,16 @@ const SVC_DEFAULT = {
   'Palestino':{pgml:1.4,pgmv:1.1,pgrl:1.2,pgrv:1.4,o25l:53,o25v:46,bttsl:46,bttsv:50,cafl:4.5,ccl:5.0,cafv:4.0,ccv:5.2,o15l:71,o15v:64,o35l:22,o35v:15},
   'Cobresal':{pgml:1.1,pgmv:0.9,pgrl:1.4,pgrv:1.6,o25l:44,o25v:38,bttsl:42,bttsv:45,cafl:4.0,ccl:5.4,cafv:3.4,ccv:5.6,o15l:62,o15v:57,o35l:16,o35v:12},
   'Deportes Antofagasta':{pgml:1.2,pgmv:1.0,pgrl:1.4,pgrv:1.6,o25l:47,o25v:41,bttsl:43,bttsv:46,cafl:4.2,ccl:5.3,cafv:3.6,ccv:5.5,o15l:65,o15v:60,o35l:18,o35v:13},
+  // ── BRASILEIRAO SÉRIE A ────────────────────────────────────────
+  'Flamengo':{pgml:2.1,pgmv:1.5,pgrl:0.9,pgrv:1.2,o15l:88,o15v:80,o25l:69,o25v:60,o35l:42,o35v:32,bttsl:65,bttsv:58,cafl:5.2,ccl:3.5,cafv:4.8,ccv:4.0,top_gol:'Gonzalo Plata / Pedro',top_rem:'Gerson / De la Cruz'},
+  'Palmeiras':{pgml:1.7,pgmv:1.3,pgrl:0.8,pgrv:1.0,o15l:85,o15v:76,o25l:53,o25v:53,o35l:33,o35v:28,bttsl:67,bttsv:67,cafl:6.5,ccl:6.0,cafv:5.5,ccv:5.0,top_gol:'Vitor Roque / Flaco López',top_rem:'Raphael Veiga / Estêvão'},
+  'Botafogo':{pgml:1.5,pgmv:1.3,pgrl:1.5,pgrv:2.0,o15l:85,o15v:80,o25l:79,o25v:79,o35l:50,o35v:48,bttsl:86,bttsv:86,cafl:4.5,ccl:4.5,cafv:4.3,ccv:4.8,top_gol:'Matheus Martins / Igor Jesus',top_rem:'Almada / Savarino'},
+  'Fluminense':{pgml:1.7,pgmv:1.3,pgrl:1.2,pgrv:1.3,o15l:85,o15v:78,o25l:60,o25v:60,o35l:38,o35v:33,bttsl:70,bttsv:70,cafl:5.0,ccl:4.7,cafv:4.7,ccv:5.1,top_gol:'Germán Cano / Jhon Arias',top_rem:'Nonato / Lima'},
+  'Bahia':{pgml:1.3,pgmv:1.0,pgrl:1.2,pgrv:1.5,o15l:80,o15v:72,o25l:57,o25v:57,o35l:35,o35v:30,bttsl:64,bttsv:64,cafl:5.8,ccl:5.5,cafv:5.5,ccv:4.8,top_gol:'Everaldo / Thaciano',top_rem:'Caio Alexandre / Erick'},
+  'Vasco da Gama':{pgml:1.4,pgmv:1.4,pgrl:1.4,pgrv:1.4,o15l:82,o15v:75,o25l:60,o25v:60,o35l:36,o35v:36,bttsl:80,bttsv:80,cafl:5.2,ccl:4.2,cafv:4.1,ccv:5.2,top_gol:'Vegetti / Payet',top_rem:'Coutinho / Maxime Dominguez'},
+  'Internacional':{pgml:1.8,pgmv:1.2,pgrl:0.6,pgrv:1.1,o15l:85,o15v:72,o25l:50,o25v:43,o35l:30,o35v:25,bttsl:43,bttsv:50,cafl:6.5,ccl:5.0,cafv:5.2,ccv:6.5,top_gol:'Enner Valencia / Bruno Tabata',top_rem:'Alan Patrick / Bernabei'},
+  'São Paulo':{pgml:1.9,pgmv:1.4,pgrl:0.7,pgrv:1.0,o15l:88,o15v:82,o25l:60,o25v:53,o35l:38,o35v:30,bttsl:48,bttsv:57,cafl:7.0,ccl:6.1,cafv:6.2,ccv:7.0,top_gol:'André Silva / Calleri',top_rem:'Luciano / Oscar'},
+  'Athletico Paranaense':{pgml:2.1,pgmv:1.5,pgrl:0.6,pgrv:0.9,o15l:90,o15v:82,o25l:62,o25v:55,o35l:40,o35v:32,bttsl:55,bttsv:62,cafl:5.5,ccl:3.5,cafv:3.5,ccv:5.5,top_gol:'Christian / Cuello',top_rem:'Erick / Fernandinho'},
 };
 
 // Cargar SVC: localStorage > hardcoded
@@ -6278,7 +6340,20 @@ const SVC_MAP={
   pgm:{l:'pgml',v:'pgmv'},pgr:{l:'pgrl',v:'pgrv'},
   o15:{l:'o15l',v:'o15v'},o25:{l:'o25l',v:'o25v'},o35:{l:'o35l',v:'o35v'},
   btts:{l:'bttsl',v:'bttsv'},caf:{l:'cafl',v:'cafv'},cc:{l:'ccl',v:'ccv'},
+  // gel/csl se derivan de pgrl si no están explícitos en el SVC
 };
+
+// Derivar gel% (recibió gol) y csl% (clean sheet) desde pgrl/pgrv
+function svcDerivarDefensa(pgr){
+  if(pgr==null) return null;
+  // A mayor pgr → más goles recibidos → más "recibió gol %"
+  const gel = pgr<=0.5?30 : pgr<=0.8?50 : pgr<=1.0?60 : pgr<=1.3?70 : pgr<=1.6?80 : 90;
+  const csl = 100 - gel;
+  return {gel, csl};
+}
+
+// Campos que son <select> con opciones de 0-100 en pasos de 10
+const SVC_SELECT_FIELDS = new Set(['o15l','o25l','o35l','o15v','o25v','o35v','bttsl','bttsv']);
 
 // Autocompletar inputs vacíos — nunca sobrescribe lo ya escrito
 function svcAutocompletar(campo){
@@ -6298,10 +6373,37 @@ function svcAutocompletar(campo){
   const rol=campo==='local'?'l':'v';
   let n=0;
   Object.entries(SVC_MAP).forEach(([sk,ids])=>{
-    const el=document.getElementById(ids[rol]);
-    const val=datos[sk+(rol==='l'?'l':'v')]??datos[ids[rol]];
-    if(el&&!el.value&&val!=null){el.value=val;n++;}
+    const fieldId=ids[rol];
+    const el=document.getElementById(fieldId);
+    let val=datos[sk+(rol==='l'?'l':'v')]??datos[fieldId];
+    if(el&&!el.value&&val!=null){
+      // Si es un select (opciones de 10 en 10), redondear al múltiplo de 10 más cercano
+      if(SVC_SELECT_FIELDS.has(fieldId)){
+        val=Math.round(val/10)*10;
+        // Verificar que la opción existe
+        if([...el.options].some(o=>parseInt(o.value)===val)){
+          el.value=val;n++;
+        }
+      } else {
+        el.value=val;n++;
+      }
+    }
   });
+  // Defensa derivada: gel/csl desde pgrl, gev/csv desde pgrv
+  const pgrKey = rol==='l'?'pgrl':'pgrv';
+  const gelKey = rol==='l'?'gel':'gev';
+  const cslKey = rol==='l'?'csl':'csv';
+  const pgrVal = datos[pgrKey];
+  if(pgrVal!=null){
+    const def = svcDerivarDefensa(pgrVal);
+    if(def){
+      const gelEl=document.getElementById(gelKey);
+      const cslEl=document.getElementById(cslKey);
+      if(gelEl&&!gelEl.value){gelEl.value=def.gel;n++;}
+      if(cslEl&&!cslEl.value){cslEl.value=def.csl;n++;}
+    }
+  }
+
   // Córneres totales co95/co105 — solo cuando se completa el visitante
   if(campo==='visita'&&n>0){
     const localEq=(document.getElementById('local')?.value||'').trim();
