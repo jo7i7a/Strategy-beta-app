@@ -2329,11 +2329,10 @@ select.minput option{background:#080808;color:#efefef;}
       </div>
       <div class="p-row" style="margin-top:8px;"><div class="p-lbl">Muestra estadística</div><div class="p-val" style="color:var(--dorado2);">Últimos 10 partidos</div></div>
     </div>
-    <div class="stitle">Casas Activas</div>
+    <div class="stitle">🏦 Casas Activas</div>
     <div class="card">
-      <div class="p-row"><div class="p-lbl">Betsson</div><div class="p-val" style="color:var(--verde)">$3.800 CLP</div></div>
-      <div class="p-row"><div class="p-lbl">Betano</div><div class="p-val" style="color:var(--verde)">$10.000 CLP</div></div>
-      <div class="p-row"><div class="p-lbl">Tonibet</div><div class="p-val" style="color:var(--verde)">$10.000 CLP</div></div>
+      <div id="casas-lista"></div>
+      <button onclick="casaAgregar()" style="width:100%;margin-top:8px;background:rgba(0,217,110,.08);border:1px solid rgba(0,217,110,.2);color:var(--verde);border-radius:7px;padding:9px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px;">+ AGREGAR CASA</button>
     </div>
     <div class="stitle">Fuentes de Datos</div>
     <div class="card">
@@ -2909,6 +2908,17 @@ select.minput option{background:#080808;color:#efefef;}
 
 </div><!-- /cnt -->
 
+<!-- MODAL CASAS -->
+<div class="modal-bg" id="modal-casa">
+  <div class="modal" style="width:100%;max-width:380px;">
+    <div style="display:flex;align-items:center;margin-bottom:16px;">
+      <button onclick="cModal('modal-casa')" style="background:none;border:none;color:var(--texto2);font-size:20px;cursor:pointer;padding:0 10px 0 0;line-height:1;">←</button>
+      <div class="modal-title" id="modal-casa-title" style="margin:0;flex:1;text-align:center;padding-right:30px;">CASA</div>
+    </div>
+    <div id="modal-casa-body"></div>
+  </div>
+</div>
+
 <script>
 // ===== DB =====
 let DB={regs:[],eqs:{},cal:[],cfg:{cap:23353,stk:5}};
@@ -2933,7 +2943,7 @@ function ir(pg){
   if(pg==='nuevo')goP1();
   if(pg==='demo'){if(!DB.demo)DB.demo={cap:100000,regs:[]};renderDemo();renderDemoStats();}
   if(pg==='ligas')renderLigas();
-  if(pg==='perfil')setTimeout(()=>{actualizarInfoStorage();svcActualizarUI();},100);
+  if(pg==='perfil')setTimeout(()=>{actualizarInfoStorage();svcActualizarUI();renderCasas();},100);
 }
 
 // E: Restaurar análisis completo al volver a la app
@@ -4616,24 +4626,24 @@ function getTeamLogoPath(teamName){
     'universidad de chile':'universidaddechile',
     'universidad católica':'universidadcatólica','universidad catolica':'universidadcatólica',
     'huachipato':'huachipato',
-    'everton de viña':'everton','everton de vina':'everton',
+    'everton de viña':'everton','everton de vina':'everton','everton':'everton',
     "o'higgins":'ohiggins','ohiggins':'ohiggins',
     'palestino':'palestino',
     'cobresal':'cobresal',
     'deportes antofagasta':'antofagasta',
     'audax italiano':'audaxitaliano',
-    'coquimbo unido':'coquimbounido',
+    'coquimbo unido':'coquimbounido','coquimbo':'coquimbounido',
     'union la calera':'unionlacalera','unión la calera':'unionlacalera',
     'nublense':'nublense',
     'deportes limache':'deporteslimache',
     'deportes concepcion':'deportesconcepcion','deportes concepción':'deportesconcepcion',
-    'universidad de concepcion':'universidaddeconcepcio','universidad de concepción':'universidaddeconcepcio',
-    'la serena':'laserana',
-    'avs futbol sad':'avsfutebolsad',
+    'universidad de concepcion':'universidaddeconcepcion','universidad de concepción':'universidaddeconcepcion',
+    'la serena':'laserana','cd la serena':'laserana',
+    'avs futbol sad':'avsfutebolsad','avs':'avsfutebolsad',
     // ── ARGENTINA ──────────────────────────────────────────
     'river plate':'riverplate',
     'boca juniors':'bocajuniors',
-    'racing club':'racing',
+    'racing club':'racing','racing':'racing',
     // ── BRASIL ─────────────────────────────────────────────
     'flamengo':'flamengo',
     'palmeiras':'palmeiras',
@@ -4643,11 +4653,13 @@ function getTeamLogoPath(teamName){
     'vasco da gama':'vascodagama','vasco':'vascodagama',
     'internacional':'internacional',
     'são paulo':'saopaulo','sao paulo':'saopaulo',
-    'athletico paranaense':'brazil_athletico-parana','atletico paranaense':'brazil_athletico-parana',
+    'athletico paranaense':'brazil_athletico-paranaense_256x256.football-logos.cc',
+    'atletico paranaense':'brazil_athletico-paranaense_256x256.football-logos.cc',
     'atletico mineiro':'atleticomineiro','atlético mineiro':'atleticomineiro',
     'cruzeiro':'cruzeiro',
     'santos':'santos',
-    'rb bragantino':'rbbragantino',
+    'rb bragantino':'rbbragantino','bragantino':'rbbragantino','bragantino sp':'rbbragantino',
+    'mirasol sp':'saopaulo', // fallback
     // ── PREMIER LEAGUE ─────────────────────────────────────
     'manchester city':'manchesterCity',
     'arsenal':'arsenal',
@@ -4663,6 +4675,7 @@ function getTeamLogoPath(teamName){
     'crystal palace':'crystalPalace',
     'wolverhampton':'wolves','wolves':'wolves',
     'west ham':'westHamUnited','west ham united':'westHamUnited',
+    'west brom':'westBromwichAlbion','west bromwich':'westBromwichAlbion',
     'leicester':'leicesterCity','leicester city':'leicesterCity',
     'southampton':'southampton',
     'watford':'watford',
@@ -4674,17 +4687,17 @@ function getTeamLogoPath(teamName){
     'norwich':'norwichCity','norwich city':'norwichCity',
     'huddersfield':'huddersfield',
     // ── BUNDESLIGA ─────────────────────────────────────────
-    'bayern munich':'bayernmunich','fc bayern':'bayernmunich',
-    'borussia dortmund':'borussiadortmund','bvb':'borussiadortmund',
+    'bayern munich':'bayernmunich','fc bayern':'bayernmunich','bayern':'bayernmunich',
+    'borussia dortmund':'borussiadortmund','bvb':'borussiadortmund','dortmund':'borussiadortmund',
     'leverkusen':'leverkusen','bayer leverkusen':'leverkusen',
     'rb leipzig':'rbleipzig',
-    'eintracht frankfurt':'eintrachtfrankfurt',
+    'eintracht frankfurt':'eintrachtfrankfurt','frankfurt':'eintrachtfrankfurt',
     'wolfsburg':'wolfsburg',
     // ── EREDIVISIE ─────────────────────────────────────────
     'ajax':'ajax',
     'psv':'psv',
     'feyenoord':'feyenoord',
-    'az alkmaar':'az',
+    'az alkmaar':'az','az':'az',
     // ── LIGA PORTUGAL ──────────────────────────────────────
     'benfica':'benfica','sl benfica':'benfica',
     'porto':'fcporto','fc porto':'fcporto',
@@ -4699,11 +4712,11 @@ function getTeamLogoPath(teamName){
     'casa pia':'casapiaac',
     // ── ASIA ───────────────────────────────────────────────
     'jeonbuk':'jeonbuk',
-    'kawasaki frontale':'kawasaki',
+    'kawasaki frontale':'kawasaki','kawasaki':'kawasaki',
   };
   const key=teamName.toLowerCase().trim();
   const slug=map[key];
-  if(!slug) return null; // sin fallback a slug automático — evita 404 silencioso
+  if(!slug) return null;
   return 'assets/teams/'+slug+'.png';
 }
 
@@ -6370,7 +6383,175 @@ function renderLive(){
   document.getElementById('live-screen-resultado').style.display='none';
 }
 
-// ===== SVC — ESTADÍSTICAS POR EQUIPO =====
+// ===== CASAS DE APUESTAS =====
+const CASAS_LS_KEY = 'cce-casas';
+const CASAS_DEFAULT = [
+  {nombre:'Betsson',  capital:3800,  activa:true},
+  {nombre:'Betano',   capital:10000, activa:true},
+  {nombre:'Tonibet',  capital:10000, activa:true},
+];
+
+function casasCargar(){
+  try{
+    const raw=localStorage.getItem(CASAS_LS_KEY);
+    if(raw){const p=JSON.parse(raw);if(Array.isArray(p)&&p.length>0)return p;}
+  }catch(e){}
+  return JSON.parse(JSON.stringify(CASAS_DEFAULT));
+}
+
+function casasGuardar(casas){
+  localStorage.setItem(CASAS_LS_KEY, JSON.stringify(casas));
+}
+
+function renderCasas(){
+  const el=document.getElementById('casas-lista');
+  if(!el) return;
+  const casas=casasCargar();
+  if(!casas.length){el.innerHTML='<div style="font-size:11px;color:#444;padding:8px 0;">Sin casas registradas</div>';return;}
+  el.innerHTML=casas.map((c,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+      <div style="flex:1;">
+        <div style="font-size:12px;font-weight:700;color:#ddd;">${c.nombre}</div>
+        <div style="font-size:11px;color:var(--verde);">$${c.capital.toLocaleString('es-CL')} CLP</div>
+      </div>
+      <button onclick="casaEditar(${i})" style="background:rgba(0,184,224,.1);border:1px solid rgba(0,184,224,.2);color:var(--azul);border-radius:6px;padding:5px 10px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">EDITAR</button>
+      <button onclick="casaEliminar(${i})" style="background:none;border:1px solid rgba(200,0,0,.2);color:var(--rojo2);border-radius:6px;padding:5px 8px;font-family:'Rajdhani',sans-serif;font-size:11px;cursor:pointer;">✕</button>
+    </div>`).join('');
+}
+
+function casaAgregar(){
+  const body=document.getElementById('modal-casa-body');
+  const ttl=document.getElementById('modal-casa-title');
+  if(ttl) ttl.textContent='+ NUEVA CASA';
+  body.innerHTML=`
+    <div style="margin-bottom:12px;">
+      <div class="p-lbl" style="margin-bottom:6px;">Nombre de la casa</div>
+      <input id="mc-nombre" class="form-input" type="text" placeholder="Ej: Codere" style="width:100%;box-sizing:border-box;">
+    </div>
+    <div style="margin-bottom:16px;">
+      <div class="p-lbl" style="margin-bottom:6px;">Capital inicial (CLP)</div>
+      <input id="mc-capital" class="form-input" type="number" placeholder="0" min="0" style="width:100%;box-sizing:border-box;">
+    </div>
+    <button onclick="casaGuardarNueva()" style="width:100%;background:rgba(0,217,110,.12);border:1px solid rgba(0,217,110,.3);color:var(--verde);border-radius:8px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.5px;">✅ GUARDAR</button>`;
+  aModal('modal-casa');
+}
+
+function casaGuardarNueva(){
+  const nombre=(document.getElementById('mc-nombre')?.value||'').trim();
+  const capital=parseInt(document.getElementById('mc-capital')?.value)||0;
+  if(!nombre){document.getElementById('mc-nombre').focus();return;}
+  const casas=casasCargar();
+  if(casas.find(x=>x.nombre.toLowerCase()===nombre.toLowerCase())){
+    alert('Ya existe una casa con ese nombre.');return;
+  }
+  casas.push({nombre,capital});
+  casasGuardar(casas);
+  cModal('modal-casa');
+  renderCasas();
+}
+
+function casaEditarModal(idx){
+  const casas=casasCargar();
+  const c=casas[idx];if(!c)return;
+  const body=document.getElementById('modal-casa-body');
+  const ttl=document.getElementById('modal-casa-title');
+  if(ttl) ttl.textContent=c.nombre.toUpperCase();
+  body.innerHTML=`
+    <div style="background:rgba(0,217,110,.06);border:1px solid rgba(0,217,110,.12);border-radius:8px;padding:10px 12px;margin-bottom:14px;text-align:center;">
+      <div style="font-size:11px;color:#666;margin-bottom:2px;">CAPITAL ACTUAL</div>
+      <div style="font-size:20px;font-weight:700;color:var(--verde);">$${c.capital.toLocaleString('es-CL')} CLP</div>
+    </div>
+    <div style="margin-bottom:10px;">
+      <div class="p-lbl" style="margin-bottom:6px;">Nombre</div>
+      <input id="mc-edit-nombre" class="form-input" type="text" value="${c.nombre}" style="width:100%;box-sizing:border-box;">
+    </div>
+    <div style="margin-bottom:10px;">
+      <div class="p-lbl" style="margin-bottom:6px;">Nuevo capital total (CLP)</div>
+      <input id="mc-edit-capital" class="form-input" type="number" value="${c.capital}" min="0" style="width:100%;box-sizing:border-box;">
+    </div>
+    <div style="margin-bottom:14px;">
+      <div class="p-lbl" style="margin-bottom:6px;">Inyectar / Retirar (CLP)</div>
+      <div style="display:flex;gap:8px;">
+        <input id="mc-edit-mov" class="form-input" type="number" placeholder="Ej: 5000 o -2000" style="flex:1;box-sizing:border-box;">
+        <button onclick="casaAplicarMovimiento(${idx})" style="background:rgba(0,184,224,.12);border:1px solid rgba(0,184,224,.25);color:var(--azul);border-radius:7px;padding:8px 12px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">APLICAR</button>
+      </div>
+    </div>
+    <button onclick="casaGuardarEdicion(${idx})" style="width:100%;background:rgba(0,217,110,.12);border:1px solid rgba(0,217,110,.3);color:var(--verde);border-radius:8px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.5px;margin-bottom:8px;">✅ GUARDAR CAMBIOS</button>
+    <button onclick="casaEliminar(${idx})" style="width:100%;background:none;border:1px solid rgba(200,0,0,.2);color:var(--rojo2);border-radius:8px;padding:10px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px;">🗑 ELIMINAR CASA</button>`;
+  aModal('modal-casa');
+}
+
+function casaGuardarEdicion(idx){
+  const casas=casasCargar();
+  const nombre=(document.getElementById('mc-edit-nombre')?.value||'').trim();
+  const capital=parseInt(document.getElementById('mc-edit-capital')?.value);
+  if(!nombre)return;
+  if(!isNaN(capital)&&capital>=0) casas[idx].capital=capital;
+  casas[idx].nombre=nombre;
+  casasGuardar(casas);
+  cModal('modal-casa');
+  renderCasas();
+}
+
+function casaAplicarMovimiento(idx){
+  const casas=casasCargar();
+  const mov=parseInt(document.getElementById('mc-edit-mov')?.value)||0;
+  if(mov===0)return;
+  casas[idx].capital=Math.max(0,casas[idx].capital+mov);
+  casasGuardar(casas);
+  // Actualizar el input de capital en el modal
+  const capEl=document.getElementById('mc-edit-capital');
+  if(capEl) capEl.value=casas[idx].capital;
+  const movEl=document.getElementById('mc-edit-mov');
+  if(movEl) movEl.value='';
+  // Actualizar el resumen visual
+  const body=document.getElementById('modal-casa-body');
+  const summary=body?.querySelector('div[style*="CAPITAL ACTUAL"]')?.parentElement;
+  if(summary) summary.querySelector('div[style*="font-size:20px"]').textContent='$'+casas[idx].capital.toLocaleString('es-CL')+' CLP';
+  renderCasas();
+}
+
+function casaEliminar(idx){
+  const casas=casasCargar();
+  if(!casas[idx])return;
+  const nombre=casas[idx].nombre;
+  // Usar modal de confirmación inline
+  const body=document.getElementById('modal-casa-body');
+  body.innerHTML=`
+    <div style="text-align:center;padding:10px 0 20px;">
+      <div style="font-size:32px;margin-bottom:10px;">⚠️</div>
+      <div style="font-size:14px;color:#ddd;margin-bottom:6px;">¿Eliminar <strong>${nombre}</strong>?</div>
+      <div style="font-size:11px;color:#555;margin-bottom:20px;">Esta acción no se puede deshacer.</div>
+      <button onclick="casaConfirmarEliminar(${idx})" style="width:100%;background:rgba(200,0,0,.15);border:1px solid rgba(200,0,0,.3);color:var(--rojo2);border-radius:8px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;">🗑 SÍ, ELIMINAR</button>
+      <button onclick="cModal('modal-casa')" style="width:100%;background:none;border:none;color:#555;font-family:'Rajdhani',sans-serif;font-size:12px;cursor:pointer;padding:8px;">Cancelar</button>
+    </div>`;
+}
+
+function casaConfirmarEliminar(idx){
+  const casas=casasCargar();
+  casas.splice(idx,1);
+  casasGuardar(casas);
+  cModal('modal-casa');
+  renderCasas();
+}
+
+// Mantener casaEditar como alias para botones viejos
+function casaEditar(idx){ casaEditarModal(idx); }
+
+// Actualizar selectores de casa en formularios de registro
+function actualizarSelectorCasas(){
+  const casas=casasCargar();
+  const nombres=casas.map(c=>c.nombre);
+  ['casa-sel','pm-casa','demo-casa'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el||el.tagName!=='SELECT') return;
+    const actual=el.value;
+    el.innerHTML=nombres.map(n=>`<option value="${n}">${n}</option>`).join('');
+    if(nombres.includes(actual)) el.value=actual;
+  });
+}
+
+
 // SVC_DEFAULT: hardcoded, siempre disponible offline
 // SVC_LIVE:    usa localStorage si hay datos importados, si no usa SVC_DEFAULT
 const SVC_LS_KEY = 'cce-svc-custom';
