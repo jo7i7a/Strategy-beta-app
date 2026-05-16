@@ -887,6 +887,20 @@ select.minput option{background:#080808;color:#efefef;}
     <div class="cap-item"><div class="cap-val" id="hm-roi" style="color:var(--texto)">—</div><div class="cap-lbl">ROI Mes</div></div>
   </div>
 
+  <!-- Picks pendientes rápidos -->
+  <div id="hm-pendientes" style="display:none;margin:0 16px 12px;">
+    <div style="background:rgba(217,160,48,.06);border:1px solid rgba(217,160,48,.2);border-radius:10px;padding:10px 12px;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:.8px;color:var(--dorado2);margin-bottom:8px;">⏳ PICKS PENDIENTES</div>
+      <div id="hm-pend-lista"></div>
+    </div>
+  </div>
+
+  <!-- Widget casas -->
+  <div style="margin:0 16px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 12px;">
+    <div style="font-size:9px;font-weight:700;letter-spacing:.8px;color:var(--dorado2);margin-bottom:8px;">💰 CAPITAL POR CASA</div>
+    <div id="hm-casas"></div>
+  </div>
+
 
   <!-- QUICK ACCESS -->
   <div class="quick-access">
@@ -2296,7 +2310,8 @@ select.minput option{background:#080808;color:#efefef;}
       <div class="p-row"><div class="p-lbl">Usuario</div><div class="p-val">Juan</div></div>
       <div class="p-row">
         <div class="p-lbl">Capital Propio (CLP)</div>
-        <div><input type="number" class="form-input" id="cfg-cap" value="23353" style="width:130px;text-align:right;padding:6px 8px;" onchange="saveCfg();renderStakePreview()"></div>
+        <div><div id="cfg-cap" style="width:130px;text-align:right;padding:6px 8px;font-size:16px;font-weight:700;color:var(--verde);">—</div></div>
+      <div style="font-size:9px;color:#444;margin-top:2px;">Suma automática de tus casas</div>
       </div>
       <div class="p-row">
         <div class="p-lbl">Stake Estándar (S1)</div>
@@ -2923,6 +2938,8 @@ select.minput option{background:#080808;color:#efefef;}
 // ===== DB =====
 let DB={regs:[],eqs:{},cal:[],cfg:{cap:23353,stk:5}};
 try{const s=localStorage.getItem('cce4');if(s)DB=JSON.parse(s);}catch(e){}
+// Sincronizar capital con suma de casas al iniciar
+try{const _cas=JSON.parse(localStorage.getItem('cce-casas')||'[]');if(_cas.length>0)DB.cfg.cap=_cas.reduce((a,x)=>a+(x.capital||0),0);}catch(e){}
 function sDB(){try{localStorage.setItem('cce4',JSON.stringify(DB));}catch(e){}}
 let AA=null;
 
@@ -3754,6 +3771,7 @@ function saveRegCom(res){
   };
   DB.regs.unshift(reg);
   if(res!=='pendiente') DB.cfg.cap+=gan;
+  casaActualizarCapital(casa, stake, gan, res);
   sDB();
   cModal('modal-reg');
   _mrSels=[];
@@ -3840,6 +3858,8 @@ function saveReg(res){
   };
   DB.regs.unshift(reg);
   if(res!=='pendiente')DB.cfg.cap+=gan;
+  // Tracking por casa
+  casaActualizarCapital(reg.casa, stake, gan, res);
   sDB();cModal('modal-reg');renderInicio();
   alert('✅ Registrado: '+res.toUpperCase()+(gan!==0?'\n'+(gan>0?'+':'')+gan.toLocaleString('es-CL')+' CLP':''));
 }
@@ -4183,26 +4203,32 @@ function guardarCamposPick(){
 
 function editPickRes(nuevoRes){
   if(_editIdx===null) return;
-  const r = DB.regs[_editIdx];
-  const resAnterior = r.res;
-  const stake = r.stake||0; const cuota = r.cuota||1;
-  // Revertir ganancia anterior si ya estaba contabilizada
+  const r=DB.regs[_editIdx];
+  const resAnterior=r.res;
+  const stake=r.stake||0,cuota=r.cuota||1;
+  const nombreCasa=r.casa||'';
+  // Revertir ganancia anterior en capital global Y en casa
   if(resAnterior!=='pendiente'){
-    const ganAnterior = resAnterior==='ganada'?Math.round(stake*cuota-stake):resAnterior==='perdida'?-stake:resAnterior==='cashout'?Math.round(stake*(cuota-1)*0.5):0;
-    DB.cfg.cap -= ganAnterior;
+    const ganAnt=resAnterior==='ganada'?Math.round(stake*cuota-stake):resAnterior==='perdida'?-stake:Math.round(stake*(cuota-1)*0.5);
+    DB.cfg.cap-=ganAnt;
+    if(nombreCasa){const casas=casasCargar();const idx=casas.findIndex(x=>x.nombre.toLowerCase()===nombreCasa.toLowerCase());if(idx>=0){casas[idx].capital=Math.max(0,casas[idx].capital-ganAnt);casasGuardar(casas);}}
+  } else {
+    // Era pendiente: stake estaba reservado, devolverlo
+    if(nombreCasa){const casas=casasCargar();const idx=casas.findIndex(x=>x.nombre.toLowerCase()===nombreCasa.toLowerCase());if(idx>=0){casas[idx].capital+=stake;casasGuardar(casas);}}
   }
   // Calcular nueva ganancia
-  let ganNueva = 0;
-  if(nuevoRes==='ganada') ganNueva = Math.round(stake*cuota-stake);
-  else if(nuevoRes==='perdida') ganNueva = -stake;
-  else if(nuevoRes==='cashout') ganNueva = Math.round(stake*(cuota-1)*0.5);
-  if(nuevoRes!=='pendiente') DB.cfg.cap += ganNueva;
-  r.res = nuevoRes;
-  r.gan = ganNueva;
-  sDB();
-  cerrarEditPick();
-  renderHist();
-  renderInicio();
+  let ganNueva=0;
+  if(nuevoRes==='ganada') ganNueva=Math.round(stake*cuota-stake);
+  else if(nuevoRes==='perdida') ganNueva=-stake;
+  else if(nuevoRes==='cashout') ganNueva=Math.round(stake*(cuota-1)*0.5);
+  if(nuevoRes!=='pendiente'){
+    DB.cfg.cap+=ganNueva;
+    casaActualizarCapital(nombreCasa,stake,ganNueva,nuevoRes);
+  } else {
+    casaActualizarCapital(nombreCasa,stake,0,'pendiente');
+  }
+  r.res=nuevoRes;r.gan=ganNueva;
+  sDB();cerrarEditPick();renderHist();renderInicio();
 }
 
 function eliminarPick(){
@@ -4733,9 +4759,42 @@ function shieldHTML(teamName, size=40){
   </div>`;
 }
 
+
+// Resolver pick pendiente directamente desde inicio
+function resolverPendiente(idx, nuevoRes){
+  const r=DB.regs[idx];
+  if(!r||r.res!=='pendiente') return;
+  const stake=r.stake||0, cuota=r.cuota||1;
+  let ganNueva=0;
+  if(nuevoRes==='ganada') ganNueva=Math.round(stake*cuota-stake);
+  else if(nuevoRes==='perdida') ganNueva=-stake;
+  // Revertir stake reservado y aplicar resultado
+  casaResolverPendiente(r.casa||'', stake, ganNueva);
+  DB.cfg.cap+=ganNueva;
+  r.res=nuevoRes; r.gan=ganNueva;
+  sDB();
+  renderInicio();
+  renderHist();
+}
+
 function renderInicio(){
   document.getElementById('hm-cap').textContent='$'+DB.cfg.cap.toLocaleString('es-CL');
   document.getElementById('hm-stk').textContent='$'+Math.round(DB.cfg.cap*DB.cfg.stk/100).toLocaleString('es-CL');
+  // Widget casas
+  const casasEl=document.getElementById('hm-casas');
+  if(casasEl){
+    const casas=casasCargar();
+    const totalCasas=casas.reduce((a,x)=>a+x.capital,0);
+    casasEl.innerHTML=casas.map(x=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);">
+        <span style="font-size:11px;color:#888;">${x.nombre}</span>
+        <span style="font-size:12px;font-weight:700;color:var(--verde);">$${x.capital.toLocaleString('es-CL')}</span>
+      </div>`).join('')+
+      `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0 2px;">
+        <span style="font-size:10px;color:#555;font-weight:700;letter-spacing:.5px;">TOTAL CASAS</span>
+        <span style="font-size:13px;font-weight:700;color:var(--dorado2);">$${totalCasas.toLocaleString('es-CL')}</span>
+      </div>`;
+  }
   const hoy=new Date().toLocaleDateString('es-CL');
   document.getElementById('hm-pic').textContent=DB.regs.filter(r=>r.fecha===hoy).length;
   const mes=new Date().getMonth();
@@ -4762,6 +4821,32 @@ function renderInicio(){
     re.textContent='—';
     re.style.color='var(--texto)';
   }
+  // Pendientes rápidos
+  const pendientes=DB.regs.filter(r=>r.res==='pendiente');
+  const elPend=document.getElementById('hm-pendientes');
+  if(elPend){
+    if(pendientes.length>0){
+      elPend.style.display='block';
+      const pendEl=document.getElementById('hm-pend-lista');
+      if(pendEl) pendEl.innerHTML=pendientes.slice(0,5).map((r,i)=>{
+        const idx=DB.regs.indexOf(r);
+        const nombre=getNombrePartido(r);
+        return `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);">
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:11px;font-weight:700;color:#ddd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${nombre}</div>
+            <div style="font-size:10px;color:#555;">${r.fecha||'—'} · cuota ${r.cuota||'—'} · $${(r.stake||0).toLocaleString('es-CL')}</div>
+          </div>
+          <div style="display:flex;gap:4px;">
+            <button onclick="resolverPendiente(${idx},'ganada')" style="background:rgba(0,217,110,.15);border:1px solid rgba(0,217,110,.3);color:var(--verde);border-radius:5px;padding:5px 8px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;">✅</button>
+            <button onclick="resolverPendiente(${idx},'perdida')" style="background:rgba(200,0,0,.1);border:1px solid rgba(200,0,0,.2);color:var(--rojo2);border-radius:5px;padding:5px 8px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;">❌</button>
+          </div>
+        </div>`;
+      }).join('') + (pendientes.length>5?`<div style="font-size:10px;color:#444;padding:6px 0;text-align:center;">+${pendientes.length-5} más en Historial</div>`:'');
+    } else {
+      elPend.style.display='none';
+    }
+  }
+
   const ult=DB.regs.slice(0,3);const el=document.getElementById('hm-ult');
   if(!ult.length){
     el.innerHTML=`<div style="margin:0 16px;"><div class="empty"><div class="empty-icon">📊</div><div class="empty-title">Sin análisis aún</div><div class="empty-sub">Agrega tu primer partido para comenzar</div></div></div>`;
@@ -4835,7 +4920,7 @@ function calD(id){DB.cal=DB.cal.filter(c=>c.id!==id);sDB();renderCal();}
 
 // ===== CONFIG =====
 function saveCfg(){
-  DB.cfg.cap=parseFloat(document.getElementById('cfg-cap').value)||23353;
+  // cfg-cap ya no es editable — se calcula desde las casas
   DB.cfg.stk=parseFloat(document.getElementById('cfg-stk').value)||5;
   sDB();renderInicio();renderStakePreview();
 }
@@ -6383,6 +6468,55 @@ function renderLive(){
   document.getElementById('live-screen-resultado').style.display='none';
 }
 
+
+// ===== TRACKING FINANCIERO POR CASA =====
+// Descuenta stake al registrar, suma/resta gan al resolver
+function casaActualizarCapital(nombreCasa, stake, gan, res){
+  if(!nombreCasa) return;
+  const casas = casasCargar();
+  const idx = casas.findIndex(c=>c.nombre.toLowerCase()===nombreCasa.toLowerCase());
+  if(idx<0) return; // casa no encontrada, no hacer nada
+  if(res==='pendiente'){
+    // Solo reservar el stake (descontar)
+    casas[idx].capital = Math.max(0, casas[idx].capital - stake);
+  } else {
+    // Resultado final: ajustar por ganancia neta
+    // gan ya incluye el stake restado (gan=-stake si perdida, gan=profit si ganada)
+    casas[idx].capital = Math.max(0, casas[idx].capital + gan);
+  }
+  casasGuardar(casas);
+}
+
+// Al resolver un pick pendiente: revertir el stake reservado y aplicar resultado real
+function casaResolverPendiente(nombreCasa, stake, ganNueva){
+  if(!nombreCasa) return;
+  const casas = casasCargar();
+  const idx = casas.findIndex(c=>c.nombre.toLowerCase()===nombreCasa.toLowerCase());
+  if(idx<0) return;
+  // Devolver el stake reservado + aplicar ganancia real
+  casas[idx].capital = Math.max(0, casas[idx].capital + stake + ganNueva);
+  casasGuardar(casas);
+}
+
+
+// Capital Propio = suma de todas las casas (fuente de verdad)
+function recalcularCapital(){
+  const casas = casasCargar();
+  const total = casas.reduce((a,x)=>a+(x.capital||0), 0);
+  DB.cfg.cap = total;
+  sDB();
+  // Actualizar UI si está visible
+  const el = document.getElementById('hm-cap');
+  if(el) el.textContent = '$'+total.toLocaleString('es-CL');
+  const stk = document.getElementById('hm-stk');
+  if(stk) stk.textContent = '$'+Math.round(total*DB.cfg.stk/100).toLocaleString('es-CL');
+  const cfgCap = document.getElementById('cfg-cap');
+  if(cfgCap) cfgCap.textContent = '$'+total.toLocaleString('es-CL');
+  const cfgStk = document.getElementById('cfg-stk-preview');
+  // Actualizar stakes preview
+  if(typeof renderStakePreview==='function') renderStakePreview();
+}
+
 // ===== CASAS DE APUESTAS =====
 const CASAS_LS_KEY = 'cce-casas';
 const CASAS_DEFAULT = [
@@ -6401,6 +6535,22 @@ function casasCargar(){
 
 function casasGuardar(casas){
   localStorage.setItem(CASAS_LS_KEY, JSON.stringify(casas));
+  actualizarSelectorCasas();
+  recalcularCapital();
+  // Actualizar widget inicio directamente sin recargar toda la página
+  const casasEl=document.getElementById('hm-casas');
+  if(casasEl){
+    const totalCasas=casas.reduce((a,x)=>a+(x.capital||0),0);
+    casasEl.innerHTML=casas.map(x=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);">
+        <span style="font-size:11px;color:#888;">${x.nombre}</span>
+        <span style="font-size:12px;font-weight:700;color:var(--verde);">$${(x.capital||0).toLocaleString('es-CL')}</span>
+      </div>`).join('')+
+      `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0 2px;">
+        <span style="font-size:10px;color:#555;font-weight:700;letter-spacing:.5px;">TOTAL CASAS</span>
+        <span style="font-size:13px;font-weight:700;color:var(--dorado2);">$${totalCasas.toLocaleString('es-CL')}</span>
+      </div>`;
+  }
 }
 
 function renderCasas(){
