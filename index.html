@@ -1144,7 +1144,7 @@ select.minput option{background:#080808;color:#efefef;}
     <div class="mblock">
       <div class="mblock-hdr"><div class="mblock-name">Over Goles</div><div class="mbadge mb-of">OFENSIVO</div></div>
       <div class="bloque-tag bloque-tag-temp">📅 TEMPORADA COMPLETA — Soccerstats</div>
-      <div class="mteam-lbl" id="lbl-la">🏠 LOCAL</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div class="mteam-lbl" id="lbl-la" style="margin-bottom:0;">🏠 LOCAL</div><button onclick="abrirCapturaRapida('local')" style="background:rgba(0,184,224,.1);border:1px solid rgba(0,184,224,.25);color:var(--azul);border-radius:5px;padding:4px 10px;font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;cursor:pointer;">⚡ CALCULAR</button></div>
       <div class="minputs" style="margin-bottom:6px;">
         <div class="minput-wrap"><div class="minput-lbl">Over 1.5 %<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Stats › Home › col. <em>1.5+</em></div></div><select class="minput" id="o15l" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipOver()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
         <div class="minput-wrap"><div class="minput-lbl">Over 2.5 %<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Stats › Home › col. <em>2.5+</em></div></div><select class="minput" id="o25l" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipOver()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
@@ -1158,7 +1158,7 @@ select.minput option{background:#080808;color:#efefef;}
             <div class="nm-suggestions" id="nms-pgml"></div>
           </div>
       </div>
-      <div class="mteam-lbl" id="lbl-va">✈️ VISITANTE</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div class="mteam-lbl" id="lbl-va" style="margin-bottom:0;">✈️ VISITANTE</div><button onclick="abrirCapturaRapida('visita')" style="background:rgba(0,184,224,.1);border:1px solid rgba(0,184,224,.25);color:var(--azul);border-radius:5px;padding:4px 10px;font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;cursor:pointer;">⚡ CALCULAR</button></div>
       <div class="minputs">
         <div class="minput-wrap"><div class="minput-lbl">Over 1.5 %<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Stats › Away › col. <em>1.5+</em></div></div><select class="minput" id="o15v" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipOver()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
         <div class="minput-wrap"><div class="minput-lbl">Over 2.5 %<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Stats › Away › col. <em>2.5+</em></div></div><select class="minput" id="o25v" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipOver()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
@@ -1277,6 +1277,30 @@ select.minput option{background:#080808;color:#efefef;}
     </div>
 
 
+
+    <!-- BLOQUE F — REMATES A PUERTA -->
+    <div class="stitle">🎯 Bloque F — Remates a Puerta</div>
+    <div class="mblock">
+      <div class="mblock-hdr"><div class="mblock-name">Remates</div><div class="mbadge" style="background:rgba(255,149,0,.15);color:#ff9500;border-color:rgba(255,149,0,.3);">P4</div></div>
+      <div class="mteam-lbl">🏠 LOCAL</div>
+      <div class="minputs" style="margin-bottom:6px;">
+        <div class="nm-wrap"><div class="minput-lbl">SOT/partido<div style="font-size:9px;color:#444;font-style:italic;">Sofascore › Shots on Target</div></div><input type="number" class="minput" id="sotl" min="0" step="0.1" placeholder="3.5" oninput="tipRemates()"></div>
+        <div class="nm-wrap"><div class="minput-lbl">Remates totales/partido<div style="font-size:9px;color:#444;font-style:italic;">Sofascore › Total Shots</div></div><input type="number" class="minput" id="shotsl" min="0" step="0.1" placeholder="12.0" oninput="tipRemates()"></div>
+      </div>
+      <div class="mteam-lbl">✈️ VISITANTE</div>
+      <div class="minputs" style="margin-bottom:6px;">
+        <div class="nm-wrap"><div class="minput-lbl">SOT/partido<div style="font-size:9px;color:#444;font-style:italic;">Sofascore › Shots on Target</div></div><input type="number" class="minput" id="sotv" min="0" step="0.1" placeholder="2.8" oninput="tipRemates()"></div>
+        <div class="nm-wrap"><div class="minput-lbl">Remates totales/partido<div style="font-size:9px;color:#444;font-style:italic;">Sofascore › Total Shots</div></div><input type="number" class="minput" id="shotsv" min="0" step="0.1" placeholder="10.0" oninput="tipRemates()"></div>
+      </div>
+      <div style="margin-top:6px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06);">
+        <div style="font-size:10px;font-weight:700;color:#555;margin-bottom:6px;">REMATES RECIBIDOS</div>
+        <div class="minputs">
+          <div class="nm-wrap"><div class="minput-lbl">SOT recibidos local<div style="font-size:9px;color:#444;font-style:italic;">Sofascore › rival › SOT conceded</div></div><input type="number" class="minput" id="sotrl" min="0" step="0.1" placeholder="3.0" oninput="tipRemates()"></div>
+          <div class="nm-wrap"><div class="minput-lbl">SOT recibidos visita<div style="font-size:9px;color:#444;font-style:italic;">Sofascore › rival › SOT conceded</div></div><input type="number" class="minput" id="sotrv" min="0" step="0.1" placeholder="3.5" oninput="tipRemates()"></div>
+        </div>
+      </div>
+      <div id="tip-remates" style="display:none;margin-top:10px;border-radius:8px;padding:10px 12px;"></div>
+    </div>
     <!-- BLOQUE D -->
     <div class="stitle">🧠 Bloque D — Contexto del Encuentro</div>
     <div class="mblock">
@@ -1777,6 +1801,7 @@ select.minput option{background:#080808;color:#efefef;}
       <button class="sr-tab" id="srtab-mercados" onclick="srTab('mercados')">🎯 MERCADOS</button>
       <button class="sr-tab" id="srtab-ranking" onclick="srTab('ranking')">🏆 RANKING</button>
       <button class="sr-tab" id="srtab-ligas" onclick="srTab('ligas')">🌍 LIGAS</button>
+    <button class="sr-tab" id="srtab-p4" onclick="srTab('p4');renderP4Lista()">🎯 P4 REMATES</button>
     </div>
 
     <!-- STATS -->
@@ -1795,7 +1820,64 @@ select.minput option{background:#080808;color:#efefef;}
       <div class="stitle">Por Liga</div><div id="st-lig"></div>
     </div>
 
-    <!-- MERCADOS -->
+    <!-- P4 REMATES -->
+<div class="sr-section" id="sr-p4">
+  <div class="nota" style="margin-bottom:12px;">Equipos que cumplen el umbral P4 según datos ingresados en análisis. Se actualiza automáticamente con cada análisis nuevo.</div>
+
+  <!-- Filtro umbral -->
+  <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;">
+    <div style="font-size:11px;color:#666;">Umbral SOT mínimo:</div>
+    <select id="p4-umbral" onchange="renderP4Lista()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#ddd;border-radius:6px;padding:4px 8px;font-size:11px;">
+      <option value="3">3+ SOT/partido</option>
+      <option value="3.5" selected>3.5+ SOT/partido</option>
+      <option value="4">4+ SOT/partido</option>
+      <option value="4.5">4.5+ SOT/partido</option>
+      <option value="5">5+ SOT/partido</option>
+    </select>
+  </div>
+
+  <!-- Tabla local -->
+  <div class="stitle" style="color:#ff9500;">🏠 COMO LOCAL</div>
+  <div style="overflow-x:auto;margin-bottom:16px;">
+    <table style="width:100%;border-collapse:collapse;font-size:11px;" id="p4-tabla-local">
+      <thead>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.1);">
+          <th style="text-align:left;padding:6px 4px;color:#555;font-weight:700;letter-spacing:.5px;">EQUIPO</th>
+          <th style="text-align:center;padding:6px 4px;color:#ff9500;font-weight:700;">SOT</th>
+          <th style="text-align:center;padding:6px 4px;color:#aaa;font-weight:700;">REMATES</th>
+          <th style="text-align:center;padding:6px 4px;color:#555;font-weight:700;">LIGA</th>
+          <th style="text-align:center;padding:6px 4px;color:#555;font-weight:700;">ANÁLISIS</th>
+        </tr>
+      </thead>
+      <tbody id="p4-local-body"></tbody>
+    </table>
+    <div id="p4-local-empty" style="display:none;font-size:11px;color:#444;padding:12px;text-align:center;">Sin equipos que cumplan el umbral como local</div>
+  </div>
+
+  <!-- Tabla visitante -->
+  <div class="stitle" style="color:#ff9500;">✈️ COMO VISITANTE</div>
+  <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:11px;" id="p4-tabla-visita">
+      <thead>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.1);">
+          <th style="text-align:left;padding:6px 4px;color:#555;font-weight:700;letter-spacing:.5px;">EQUIPO</th>
+          <th style="text-align:center;padding:6px 4px;color:#ff9500;font-weight:700;">SOT</th>
+          <th style="text-align:center;padding:6px 4px;color:#aaa;font-weight:700;">REMATES</th>
+          <th style="text-align:center;padding:6px 4px;color:#555;font-weight:700;">LIGA</th>
+          <th style="text-align:center;padding:6px 4px;color:#555;font-weight:700;">ANÁLISIS</th>
+        </tr>
+      </thead>
+      <tbody id="p4-visita-body"></tbody>
+    </table>
+    <div id="p4-visita-empty" style="display:none;font-size:11px;color:#444;padding:12px;text-align:center;">Sin equipos que cumplan el umbral como visitante</div>
+  </div>
+
+  <div style="margin-top:16px;font-size:9px;color:#333;line-height:1.6;">
+    Los datos provienen del SVC y de los análisis registrados. Para agregar un equipo, completa el Bloque F en un nuevo análisis.
+  </div>
+</div>
+
+<!-- MERCADOS -->
     <div class="sr-section" id="sr-mercados">
       <div class="nota" style="margin-bottom:12px;">Rendimiento real por tipo de mercado. Se actualiza automáticamente con cada pick registrado.</div>
       <div id="st-mercados-content"></div>
@@ -2971,6 +3053,23 @@ select.minput option{background:#080808;color:#efefef;}
 
 </div><!-- /cnt -->
 
+<!-- MODAL CAPTURA RÁPIDA -->
+<div class="modal-bg" id="modal-captura-rapida">
+  <div class="modal" style="max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;align-items:center;margin-bottom:14px;">
+      <button onclick="cModal('modal-captura-rapida')" style="background:none;border:none;color:var(--texto2);font-size:20px;cursor:pointer;padding:0 10px 0 0;">←</button>
+      <div id="cr-titulo" class="modal-title" style="margin:0;flex:1;text-align:center;padding-right:30px;">⚡ CALCULAR</div>
+    </div>
+    <input type="hidden" id="cr-rol" value="local">
+    <div style="font-size:11px;color:#666;margin-bottom:8px;">Pega los resultados uno por línea.<br><span style="color:#444;">Ej: 3-1 · 2-0 · 1-1</span></div>
+    <textarea id="cr-input" style="width:100%;min-height:160px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#ddd;font-size:14px;padding:10px;font-family:'Rajdhani',sans-serif;box-sizing:border-box;resize:vertical;line-height:1.8;" placeholder="3-1&#10;2-0&#10;1-1&#10;0-2&#10;4-1&#10;2-2&#10;1-0&#10;3-2&#10;0-1&#10;2-1"></textarea>
+    <div style="font-size:9px;color:#333;margin:6px 0 12px;font-style:italic;">Hasta 10 partidos. Formato: goles local - goles visitante</div>
+    <button onclick="crCalcular()" style="width:100%;background:rgba(0,184,224,.1);border:1px solid rgba(0,184,224,.3);color:var(--azul);border-radius:8px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px;">⚡ CALCULAR</button>
+    <div id="cr-resultado" style="display:none;"></div>
+  </div>
+</div>
+
+
 <!-- MODAL CASAS -->
 <div class="modal-bg" id="modal-casa">
   <div class="modal" style="width:100%;max-width:380px;">
@@ -3254,6 +3353,246 @@ function calcVal(){
   else{cls='vb-bad';tit='❌ SIN VALUE';col='var(--rojo2)';}
   vb.className='vbox '+cls;vb.style.display='block';
   vb.innerHTML=`<div class="vb-title" style="color:${col}">${tit}</div><div class="vb-grid"><div><div class="vb-lbl">Prob. Implícita</div><div class="vb-val" style="color:var(--texto2)">${pi.toFixed(1)}%</div></div><div><div class="vb-lbl">Prob. Real Est.</div><div class="vb-val" style="color:${edge>=0?'var(--verde)':'var(--rojo2)'}">${pr.toFixed(1)}%</div></div><div><div class="vb-lbl">Edge</div><div class="vb-val" style="color:${col}">${edge>=0?'+':''}${edge.toFixed(1)}%</div></div></div><div class="vb-nota">${edge>=5?'La casa subestima la probabilidad real. Existe ventaja estadística.':edge>=0?'Edge mínimo. Cuota bien calibrada. Apostar solo si otros factores lo justifican.':'La probabilidad implícita supera tu estimación real. Sin ventaja estadística.'}</div>`;
+}
+
+// ===== MOTOR P4 — REMATES A PUERTA =====
+function tipRemates(){
+  const sotl  = parseFloat(document.getElementById('sotl')?.value)  || 0;
+  const shotsl= parseFloat(document.getElementById('shotsl')?.value) || 0;
+  const sotv  = parseFloat(document.getElementById('sotv')?.value)   || 0;
+  const shotsv= parseFloat(document.getElementById('shotsv')?.value) || 0;
+  const sotrl = parseFloat(document.getElementById('sotrl')?.value)  || 0; // SOT recibidos por local
+  const sotrv = parseFloat(document.getElementById('sotrv')?.value)  || 0; // SOT recibidos por visita
+
+  const el = document.getElementById('tip-remates');
+  if(!el) return;
+
+  // Necesito al menos un equipo con datos
+  if(!sotl && !sotv){ el.style.display='none'; return; }
+
+  let msgs = [];
+  let p4Score = 0; // acumula puntos para umbral P4
+
+  // ── Ratio conversión local (SOT → Gol) ──────────────────
+  if(sotl > 0 && parseFloat(document.getElementById('pgml')?.value) > 0){
+    const pgml = parseFloat(document.getElementById('pgml').value);
+    const ratioL = sotl / pgml; // remates a puerta por gol
+    if(ratioL <= 3.5){
+      msgs.push({col:'var(--verde)', txt:`🎯 Local convierte 1 de cada ${ratioL.toFixed(1)} remates a puerta — eficiencia ALTA`});
+      p4Score += 2;
+    } else if(ratioL <= 5){
+      msgs.push({col:'var(--dorado2)', txt:`⚠️ Local necesita ${ratioL.toFixed(1)} remates por gol — eficiencia MEDIA`});
+      p4Score += 1;
+    } else {
+      msgs.push({col:'var(--rojo2)', txt:`📉 Local necesita ${ratioL.toFixed(1)} remates por gol — eficiencia BAJA`});
+    }
+  }
+
+  // ── Ratio conversión visitante ───────────────────────────
+  if(sotv > 0 && parseFloat(document.getElementById('pgmv')?.value) > 0){
+    const pgmv = parseFloat(document.getElementById('pgmv').value);
+    const ratioV = sotv / pgmv;
+    if(ratioV <= 3.5){
+      msgs.push({col:'var(--verde)', txt:`🎯 Visita convierte 1 de cada ${ratioV.toFixed(1)} remates a puerta — eficiencia ALTA`});
+      p4Score += 2;
+    } else if(ratioV <= 5){
+      msgs.push({col:'var(--dorado2)', txt:`⚠️ Visita necesita ${ratioV.toFixed(1)} remates por gol — eficiencia MEDIA`});
+      p4Score += 1;
+    }
+  }
+
+  // ── Local ataca a rival que recibe muchos remates ────────
+  if(sotl > 0 && sotrv > 0){
+    const presion = (sotl + sotrv) / 2;
+    if(presion >= 4.5){
+      msgs.push({col:'var(--verde)', txt:`🔥 Local (${sotl} SOT) ataca a rival que recibe ${sotrv} SOT/partido — presión ofensiva ALTA`});
+      p4Score += 2;
+    }
+  }
+
+  // ── Visitante ataca a local que recibe muchos remates ────
+  if(sotv > 0 && sotrl > 0){
+    const presionV = (sotv + sotrl) / 2;
+    if(presionV >= 4){
+      msgs.push({col:'var(--dorado2)', txt:`⚡ Visita (${sotv} SOT) vs local que recibe ${sotrl} SOT/partido — presión visitante NOTABLE`});
+      p4Score += 1;
+    }
+  }
+
+  // ── Total remates esperados ──────────────────────────────
+  if(shotsl > 0 && shotsv > 0){
+    const totalShots = shotsl + shotsv;
+    if(totalShots >= 24){
+      msgs.push({col:'var(--verde)', txt:`📊 ${totalShots} remates totales esperados — partido muy activo`});
+      p4Score += 1;
+    } else if(totalShots >= 18){
+      msgs.push({col:'var(--dorado2)', txt:`📊 ${totalShots} remates totales esperados — actividad normal`});
+    }
+  }
+
+  // ── Umbral P4 ────────────────────────────────────────────
+  let p4Html = '';
+  if(p4Score >= 4){
+    p4Html = `<div style="margin-top:10px;background:rgba(255,149,0,.12);border:1px solid rgba(255,149,0,.35);border-radius:7px;padding:8px 10px;">
+      <div style="font-size:11px;font-weight:700;color:#ff9500;margin-bottom:4px;">🎯 UMBRAL P4 ALCANZADO</div>
+      <div style="font-size:10px;color:#cc7700;line-height:1.6;">Busca en las casas mercados de:<br>
+      <strong>· Remates a puerta Equipo X (Over)</strong><br>
+      <strong>· Remates totales Over X.5</strong><br>
+      <strong>· Jugador X 1+ remate a puerta</strong><br>
+      Compara la cuota implícita con el promedio histórico del equipo/jugador para detectar edge.</div>
+    </div>`;
+  } else if(p4Score >= 2){
+    p4Html = `<div style="margin-top:8px;font-size:10px;color:#555;font-style:italic;">Score P4: ${p4Score}/6 — Sin umbral claro para mercado de remates</div>`;
+  }
+
+  if(msgs.length === 0){ el.style.display='none'; return; }
+
+  el.style.display='block';
+  el.style.background='rgba(255,149,0,.05)';
+  el.style.border='1px solid rgba(255,149,0,.15)';
+  el.innerHTML = msgs.map(m=>`<div style="font-size:11px;color:${m.col};margin-bottom:4px;">${m.txt}</div>`).join('') + p4Html;
+}
+
+
+// ===== LISTA P4 — EQUIPOS CON UMBRAL DE REMATES =====
+const P4_LS_KEY = 'cce-p4-remates';
+
+// Guardar datos P4 de un equipo tras el análisis
+function p4GuardarEquipo(equipo, liga, rol, sotVal, shotsVal){
+  if(!equipo || !sotVal || sotVal <= 0) return;
+  try{
+    const raw = localStorage.getItem(P4_LS_KEY);
+    const data = raw ? JSON.parse(raw) : {};
+    const key = equipo + '|' + liga + '|' + rol;
+    data[key] = {
+      equipo, liga, rol,
+      sot: sotVal,
+      shots: shotsVal || null,
+      fecha: new Date().toLocaleDateString('es-CL'),
+      ts: Date.now()
+    };
+    localStorage.setItem(P4_LS_KEY, JSON.stringify(data));
+  } catch(e){}
+}
+
+// Renderizar la lista P4 en el panel
+function renderP4Lista(){
+  const umbral = parseFloat(document.getElementById('p4-umbral')?.value) || 3.5;
+  let data = {};
+  try{const raw=localStorage.getItem(P4_LS_KEY);if(raw)data=JSON.parse(raw);}catch(e){}
+
+  // También incluir equipos del SVC que tengan sotl/sotv
+  if(typeof SVC_LIVE !== 'undefined'){
+    Object.entries(SVC_LIVE).forEach(([equipo, vals])=>{
+      if(vals.sotl){
+        const keyL = equipo+'||local';
+        if(!data[keyL]) data[keyL]={equipo,liga:'SVC',rol:'local',sot:vals.sotl,shots:vals.shotsl||null,fecha:'SVC',ts:0};
+      }
+      if(vals.sotv){
+        const keyV = equipo+'||visita';
+        if(!data[keyV]) data[keyV]={equipo,liga:'SVC',rol:'visita',sot:vals.sotv,shots:vals.shotsv||null,fecha:'SVC',ts:0};
+      }
+    });
+  }
+
+  const locales = Object.values(data).filter(d=>d.rol==='local'&&d.sot>=umbral).sort((a,b)=>b.sot-a.sot);
+  const visitas = Object.values(data).filter(d=>d.rol==='visita'&&d.sot>=umbral).sort((a,b)=>b.sot-a.sot);
+
+  const renderFila = (d)=>{
+    const sotColor = d.sot>=4.5?'var(--verde)':d.sot>=3.5?'#ff9500':'var(--dorado2)';
+    return `<tr style="border-bottom:1px solid rgba(255,255,255,.04);">
+      <td style="padding:7px 4px;font-weight:700;color:#ddd;">${d.equipo}</td>
+      <td style="padding:7px 4px;text-align:center;font-weight:700;color:${sotColor};">${d.sot.toFixed(1)}</td>
+      <td style="padding:7px 4px;text-align:center;color:#666;">${d.shots?d.shots.toFixed(1):'—'}</td>
+      <td style="padding:7px 4px;text-align:center;color:#444;font-size:10px;">${d.liga}</td>
+      <td style="padding:7px 4px;text-align:center;color:#333;font-size:10px;">${d.fecha}</td>
+    </tr>`;
+  };
+
+  const bodyL = document.getElementById('p4-local-body');
+  const emptyL = document.getElementById('p4-local-empty');
+  const bodyV = document.getElementById('p4-visita-body');
+  const emptyV = document.getElementById('p4-visita-empty');
+
+  if(bodyL){
+    bodyL.innerHTML = locales.map(renderFila).join('');
+    if(emptyL) emptyL.style.display = locales.length ? 'none' : 'block';
+  }
+  if(bodyV){
+    bodyV.innerHTML = visitas.map(renderFila).join('');
+    if(emptyV) emptyV.style.display = visitas.length ? 'none' : 'block';
+  }
+}
+
+
+
+
+
+// ===== CAPTURA RÁPIDA — CALCULAR DESDE RESULTADOS =====
+function abrirCapturaRapida(rol){
+  const equipo=document.getElementById(rol)?.value.trim()||(rol==='local'?'Local':'Visitante');
+  document.getElementById('cr-rol').value=rol;
+  document.getElementById('cr-titulo').textContent=(rol==='local'?'🏠 ':'✈️ ')+equipo.toUpperCase();
+  document.getElementById('cr-input').value='';
+  document.getElementById('cr-resultado').style.display='none';
+  aModal('modal-captura-rapida');
+}
+
+function crCalcular(){
+  const texto=document.getElementById('cr-input').value.trim();
+  const rol=document.getElementById('cr-rol').value;
+  if(!texto){alert('Ingresa al menos un resultado.\nEj: 3-1\n2-0\n1-1');return;}
+  const lineas=texto.split(String.fromCharCode(10)).map(l=>l.trim()).filter(l=>l.length>0);
+  const partidos=[];
+  for(const linea of lineas){
+    const m=linea.match(/(\d+)\s*[-:]\s*(\d+)/);
+    if(m) partidos.push({gf:parseInt(m[1]),gc:parseInt(m[2])});
+  }
+  if(!partidos.length){alert('No se encontraron resultados válidos.\nFormato: 3-1\n2-0\n1-1');return;}
+  const n=partidos.length;
+  const totalGF=partidos.reduce((a,p)=>a+p.gf,0);
+  const totalGC=partidos.reduce((a,p)=>a+p.gc,0);
+  const over15=partidos.filter(p=>p.gf+p.gc>1.5).length;
+  const over25=partidos.filter(p=>p.gf+p.gc>2.5).length;
+  const over35=partidos.filter(p=>p.gf+p.gc>3.5).length;
+  const btts=partidos.filter(p=>p.gf>0&&p.gc>0).length;
+  const cs=partidos.filter(p=>p.gc===0).length;
+  const pct=v=>Math.round(v/n*100/10)*10;
+  const st={n,o15:pct(over15),o25:pct(over25),o35:pct(over35),
+    btts:pct(btts),pgm:(totalGF/n).toFixed(2),pgr:(totalGC/n).toFixed(2),
+    cs:pct(cs),gel:pct(n-cs)};
+  const resEl=document.getElementById('cr-resultado');
+  resEl.style.display='block';
+  resEl.innerHTML=`
+    <div style="font-size:10px;font-weight:700;color:#555;margin-bottom:8px;">${n} PARTIDOS — GF:${totalGF} GA:${totalGC}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;">
+      <div style="background:rgba(0,0,0,.3);border-radius:6px;padding:8px;text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--verde);">${st.o25}%</div><div style="font-size:9px;color:#555;">OVER 2.5</div></div>
+      <div style="background:rgba(0,0,0,.3);border-radius:6px;padding:8px;text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--azul);">${st.btts}%</div><div style="font-size:9px;color:#555;">BTTS</div></div>
+      <div style="background:rgba(0,0,0,.3);border-radius:6px;padding:8px;text-align:center;"><div style="font-size:18px;font-weight:700;color:#ddd;">${st.pgm}</div><div style="font-size:9px;color:#555;">GOLES/PARTIDO</div></div>
+      <div style="background:rgba(0,0,0,.3);border-radius:6px;padding:8px;text-align:center;"><div style="font-size:18px;font-weight:700;color:#ddd;">${st.pgr}</div><div style="font-size:9px;color:#555;">RECIBIDOS/PARTIDO</div></div>
+      <div style="background:rgba(0,0,0,.3);border-radius:6px;padding:8px;text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--dorado2);">${st.o15}%</div><div style="font-size:9px;color:#555;">OVER 1.5</div></div>
+      <div style="background:rgba(0,0,0,.3);border-radius:6px;padding:8px;text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--dorado2);">${st.o35}%</div><div style="font-size:9px;color:#555;">OVER 3.5</div></div>
+      <div style="background:rgba(0,0,0,.3);border-radius:6px;padding:8px;text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--verde);">${st.cs}%</div><div style="font-size:9px;color:#555;">CLEAN SHEET</div></div>
+      <div style="background:rgba(0,0,0,.3);border-radius:6px;padding:8px;text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--rojo2);">${st.gel}%</div><div style="font-size:9px;color:#555;">RECIBIÓ GOL</div></div>
+    </div>
+    <button onclick='crAplicar(${JSON.stringify(st).replace(/"/g,"'")},"${rol}")'
+      style="width:100%;background:rgba(0,217,110,.12);border:1px solid rgba(0,217,110,.3);color:var(--verde);border-radius:8px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">
+      ✅ APLICAR AL FORMULARIO
+    </button>`;
+}
+
+function crAplicar(st,rol){
+  const s=rol==='local'?'l':'v';
+  const set=(id,val)=>{const el=document.getElementById(id);if(el&&!el.value)el.value=val;};
+  set('o15'+s,st.o15);set('o25'+s,st.o25);set('o35'+s,st.o35);
+  set('btts'+s,st.btts);set('pgm'+s,st.pgm);set('pgr'+s,st.pgr);
+  set('cs'+s,st.cs);set('ge'+s,st.gel);
+  if(typeof tipOver==='function')tipOver();
+  if(typeof tipBTTS==='function')tipBTTS();
+  if(typeof tipDef==='function')tipDef();
+  cModal('modal-captura-rapida');
+  const lbl=rol==='local'?document.getElementById('lbl-la'):document.getElementById('lbl-va');
+  if(lbl){const o=lbl.innerHTML;lbl.innerHTML+=' <span style="color:var(--verde);font-size:10px;">✅</span>';setTimeout(()=>{lbl.innerHTML=o;},2000);}
 }
 
 // ===== MOTOR =====
@@ -5253,6 +5592,10 @@ const TEAM_LABELS={
 let _memData = null;
 
 function saveTeamData(local,visita,liga){
+  const sotl=parseFloat(document.getElementById('sotl')?.value)||0;
+  const sotv=parseFloat(document.getElementById('sotv')?.value)||0;
+  if(sotl>0) p4GuardarEquipo(local,liga,'local',sotl,parseFloat(document.getElementById('shotsl')?.value)||0);
+  if(sotv>0) p4GuardarEquipo(visita,liga,'visita',sotv,parseFloat(document.getElementById('shotsv')?.value)||0);
   const data={};
   TEAM_FIELDS.forEach(f=>{const el=document.getElementById(f);if(el&&el.value)data[f]=el.value;});
   if(!Object.keys(data).length)return;
@@ -6283,6 +6626,7 @@ function srTab(tab){
   if(tab==='mercados')renderStatsMercados();
   if(tab==='ranking')renderRanking();
   if(tab==='ligas')renderLigasStats();
+  if(tab==='p4')renderP4Lista();
 }
 
 
