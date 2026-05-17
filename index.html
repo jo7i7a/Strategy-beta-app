@@ -1802,6 +1802,7 @@ select.minput option{background:#080808;color:#efefef;}
       <button class="sr-tab" id="srtab-ranking" onclick="srTab('ranking')">🏆 RANKING</button>
       <button class="sr-tab" id="srtab-ligas" onclick="srTab('ligas')">🌍 LIGAS</button>
     <button class="sr-tab" id="srtab-p4" onclick="srTab('p4');renderP4Lista()">🎯 P4 REMATES</button>
+    <button class="sr-tab" id="srtab-predictivo" onclick="srTab('predictivo');renderPredictivo()">🧠 PREDICTIVO</button>
     </div>
 
     <!-- STATS -->
@@ -1875,6 +1876,12 @@ select.minput option{background:#080808;color:#efefef;}
   <div style="margin-top:16px;font-size:9px;color:#333;line-height:1.6;">
     Los datos provienen del SVC y de los análisis registrados. Para agregar un equipo, completa el Bloque F en un nuevo análisis.
   </div>
+</div>
+
+<!-- PREDICTIVO -->
+<div class="sr-section" id="sr-predictivo">
+  <div class="nota" style="margin-bottom:12px;">Sistema de aprendizaje basado en tu historial real. Detecta patrones, recomienda stake y alerta sobre estrategias a evitar.</div>
+  <div id="pred-contenido"></div>
 </div>
 
 <!-- MERCADOS -->
@@ -3044,6 +3051,19 @@ select.minput option{background:#080808;color:#efefef;}
       <div class="form-group"><label class="form-label">Hora</label><input type="time" class="form-input" id="cal-h"></div>
     </div>
     <div class="form-group"><label class="form-label">Liga</label><input type="text" class="form-input" id="cal-l" placeholder="Bundesliga"></div>
+    <div class="form-group">
+      <label class="form-label">🔔 Avisar antes del partido</label>
+      <select class="form-input" id="cal-notif">
+        <option value="0">Sin aviso</option>
+        <option value="15">15 minutos antes</option>
+        <option value="30" selected>30 minutos antes</option>
+        <option value="60">1 hora antes</option>
+        <option value="120">2 horas antes</option>
+        <option value="1440">1 día antes</option>
+      </select>
+    </div>="time" class="form-input" id="cal-h"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Liga</label><input type="text" class="form-input" id="cal-l" placeholder="Bundesliga"></div>
     <div class="modal-btns">
       <button class="btn-modal ganada" onclick="saveCal()">✅ GUARDAR</button>
       <button class="btn-modal perdida" onclick="cModal('modal-cal')">✖ CANCELAR</button>
@@ -3558,9 +3578,12 @@ function crCalcular(){
   const btts=partidos.filter(p=>p.gf>0&&p.gc>0).length;
   const cs=partidos.filter(p=>p.gc===0).length;
   const pct=v=>Math.round(v/n*100/10)*10;
-  const st={n,o15:pct(over15),o25:pct(over25),o35:pct(over35),
+  // Guardar en variable global para que crAplicar lo lea sin pasar por HTML
+  window._crStats={n,o15:pct(over15),o25:pct(over25),o35:pct(over35),
     btts:pct(btts),pgm:(totalGF/n).toFixed(2),pgr:(totalGC/n).toFixed(2),
     cs:pct(cs),gel:pct(n-cs)};
+  window._crRol=rol;
+  const st=window._crStats;
   const resEl=document.getElementById('cr-resultado');
   resEl.style.display='block';
   resEl.innerHTML=`
@@ -3575,24 +3598,309 @@ function crCalcular(){
       <div style="background:rgba(0,0,0,.3);border-radius:6px;padding:8px;text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--verde);">${st.cs}%</div><div style="font-size:9px;color:#555;">CLEAN SHEET</div></div>
       <div style="background:rgba(0,0,0,.3);border-radius:6px;padding:8px;text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--rojo2);">${st.gel}%</div><div style="font-size:9px;color:#555;">RECIBIÓ GOL</div></div>
     </div>
-    <button onclick='crAplicar(${JSON.stringify(st).replace(/"/g,"'")},"${rol}")'
+    <button onclick="crAplicar()"
       style="width:100%;background:rgba(0,217,110,.12);border:1px solid rgba(0,217,110,.3);color:var(--verde);border-radius:8px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">
       ✅ APLICAR AL FORMULARIO
     </button>`;
 }
 
-function crAplicar(st,rol){
+function crAplicar(){
+  const st=window._crStats;
+  const rol=window._crRol;
+  if(!st||!rol) return;
   const s=rol==='local'?'l':'v';
-  const set=(id,val)=>{const el=document.getElementById(id);if(el&&!el.value)el.value=val;};
-  set('o15'+s,st.o15);set('o25'+s,st.o25);set('o35'+s,st.o35);
-  set('btts'+s,st.btts);set('pgm'+s,st.pgm);set('pgr'+s,st.pgr);
-  set('cs'+s,st.cs);set('ge'+s,st.gel);
-  if(typeof tipOver==='function')tipOver();
-  if(typeof tipBTTS==='function')tipBTTS();
-  if(typeof tipDef==='function')tipDef();
+  const set=(id,val)=>{
+    const el=document.getElementById(id);
+    if(!el||el.value) return; // no sobrescribir lo ya ingresado
+    el.value=val;
+  };
+  set('o15'+s, st.o15);
+  set('o25'+s, st.o25);
+  set('o35'+s, st.o35);
+  set('btts'+s, st.btts);
+  set('pgm'+s,  st.pgm);
+  set('pgr'+s,  st.pgr);
+  set('cs'+s,   st.cs);
+  set('ge'+s,   st.gel);
+  // Disparar recálculos
+  if(typeof tipOver==='function') tipOver();
+  if(typeof tipBTTS==='function') tipBTTS();
+  if(typeof tipDef==='function')  tipDef();
+  if(typeof calcVal==='function') calcVal();
   cModal('modal-captura-rapida');
+  // Confirmación visual en el label del equipo
   const lbl=rol==='local'?document.getElementById('lbl-la'):document.getElementById('lbl-va');
-  if(lbl){const o=lbl.innerHTML;lbl.innerHTML+=' <span style="color:var(--verde);font-size:10px;">✅</span>';setTimeout(()=>{lbl.innerHTML=o;},2000);}
+  if(lbl){
+    const orig=lbl.innerHTML;
+    lbl.innerHTML+=' <span style="color:var(--verde);font-size:10px;font-weight:700;">✅ calculado</span>';
+    setTimeout(()=>{lbl.innerHTML=orig;},2500);
+  }
+}
+
+
+// ===== SISTEMA PREDICTIVO — BLOQUE 4 =====
+
+// Calcular stats históricas de una estrategia/liga/mercado
+function predStats(filtros={}){
+  const regs = DB.regs.filter(r=>r.res&&r.res!=='pendiente');
+  return regs.filter(r=>{
+    if(filtros.est && !(r.ests||[]).some(e=>e===filtros.est)) return false;
+    if(filtros.liga && r.liga!==filtros.liga) return false;
+    if(filtros.mercado && r.mercado!==filtros.mercado) return false;
+    if(filtros.casa && r.casa!==filtros.casa) return false;
+    return true;
+  }).reduce((a,r)=>{
+    a.t++;
+    if(r.res==='ganada') a.g++;
+    a.stake+=(r.stake||0);
+    a.profit+=(r.gan||0);
+    return a;
+  },{t:0,g:0,stake:0,profit:0});
+}
+
+// Nivel de confianza basado en historial real
+function predConfianza(est, liga){
+  const global = predStats({est});
+  const conLiga = liga ? predStats({est,liga}) : null;
+  
+  // Usar la muestra más específica si tiene suficientes picks
+  const stats = (conLiga&&conLiga.t>=3) ? conLiga : global;
+  if(stats.t < 3) return null; // insuficiente muestra
+  
+  const wr = stats.g/stats.t;
+  const roi = stats.stake>0 ? stats.profit/stats.stake : 0;
+  return {wr:Math.round(wr*100), roi:Math.round(roi*100), n:stats.t, 
+          esEspecifico: conLiga&&conLiga.t>=3};
+}
+
+// Recomendar stake según historial
+function predStakeRecomendado(est, liga, stakeBase){
+  const conf = predConfianza(est, liga);
+  if(!conf) return {nivel:'S2', razon:'Sin historial suficiente', stake:stakeBase};
+  
+  if(conf.wr>=65 && conf.roi>=10 && conf.n>=5){
+    return {nivel:'S3', razon:`WR ${conf.wr}% · ROI +${conf.roi}% en ${conf.n} picks`, stake:Math.round(stakeBase*1.5), badge:'🔥'};
+  } else if(conf.wr>=55 && conf.n>=3){
+    return {nivel:'S2', razon:`WR ${conf.wr}% en ${conf.n} picks`, stake:stakeBase, badge:'✅'};
+  } else if(conf.wr<45 && conf.n>=5){
+    return {nivel:'S1', razon:`WR ${conf.wr}% bajo — reducir stake`, stake:Math.round(stakeBase*0.6), badge:'⚠️'};
+  }
+  return {nivel:'S2', razon:`WR ${conf.wr}% en ${conf.n} picks`, stake:stakeBase, badge:'📊'};
+}
+
+// Detectar patrones ganadores en el historial
+function predDetectarPatrones(){
+  const regs = DB.regs.filter(r=>r.res&&r.res!=='pendiente'&&r.res!=='cashout');
+  if(regs.length < 5) return [];
+  
+  const mapa = {};
+  regs.forEach(r=>{
+    (r.ests||['—']).forEach(est=>{
+      const liga = r.liga||'—';
+      const key = `${est}||${liga}`;
+      if(!mapa[key]) mapa[key]={est,liga,t:0,g:0,stake:0,profit:0};
+      mapa[key].t++;
+      if(r.res==='ganada') mapa[key].g++;
+      mapa[key].stake+=(r.stake||0);
+      mapa[key].profit+=(r.gan||0);
+    });
+  });
+  
+  return Object.values(mapa)
+    .filter(m=>m.t>=3)
+    .map(m=>({
+      ...m,
+      wr: Math.round(m.g/m.t*100),
+      roi: m.stake>0 ? Math.round(m.profit/m.stake*100) : 0
+    }))
+    .sort((a,b)=>(b.wr+b.roi/2)-(a.wr+a.roi/2));
+}
+
+// Renderizar sección predictiva en Stats
+function renderPredictivo(){
+  const el = document.getElementById('pred-contenido');
+  if(!el) return;
+  
+  const patrones = predDetectarPatrones();
+  const regs = DB.regs.filter(r=>r.res&&r.res!=='pendiente');
+  
+  if(regs.length < 3){
+    el.innerHTML=`<div style="text-align:center;padding:20px;font-size:11px;color:#444;">
+      Necesitas al menos 3 picks resueltos para activar el sistema predictivo.<br>
+      <span style="color:#333;">Tienes ${regs.length} pick${regs.length!==1?'s':''} registrado${regs.length!==1?'s':''} con resultado.</span>
+    </div>`;
+    return;
+  }
+
+  // Patrones destacados
+  const confirmados = patrones.filter(p=>p.wr>=65&&p.t>=5);
+  const buenos = patrones.filter(p=>p.wr>=55&&p.t>=3&&!confirmados.includes(p));
+  const alertas = patrones.filter(p=>p.wr<40&&p.t>=5);
+
+  let h = '';
+
+  // Resumen predictivo
+  const totalWR = regs.length ? Math.round(regs.filter(r=>r.res==='ganada').length/regs.length*100) : 0;
+  const totalROI = regs.reduce((a,r)=>a+(r.stake||0),0) > 0 
+    ? Math.round(regs.reduce((a,r)=>a+(r.gan||0),0)/regs.reduce((a,r)=>a+(r.stake||0),0)*100) : 0;
+  
+  h += `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+    <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px;text-align:center;">
+      <div style="font-size:20px;font-weight:700;color:${totalWR>=55?'var(--verde)':totalWR>=45?'var(--dorado2)':'var(--rojo2)'};">${totalWR}%</div>
+      <div style="font-size:9px;color:#555;">WIN RATE GLOBAL</div>
+    </div>
+    <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px;text-align:center;">
+      <div style="font-size:20px;font-weight:700;color:${totalROI>=0?'var(--verde)':'var(--rojo2)'};">${totalROI>0?'+':''}${totalROI}%</div>
+      <div style="font-size:9px;color:#555;">ROI GLOBAL</div>
+    </div>
+    <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px;text-align:center;">
+      <div style="font-size:20px;font-weight:700;color:var(--azul);">${patrones.length}</div>
+      <div style="font-size:9px;color:#555;">PATRONES</div>
+    </div>
+  </div>`;
+
+  // Patrones confirmados
+  if(confirmados.length){
+    h += `<div style="font-size:10px;font-weight:700;letter-spacing:.6px;color:var(--verde);margin-bottom:8px;">🔥 PATRONES CONFIRMADOS (≥65% WR · ≥5 picks)</div>`;
+    confirmados.forEach(p=>{
+      h += `<div style="background:rgba(0,217,110,.06);border:1px solid rgba(0,217,110,.2);border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <div style="font-size:12px;font-weight:700;color:#ddd;">${p.est} <span style="font-size:10px;color:#666;">· ${p.liga}</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--verde);">${p.wr}% WR</div>
+        </div>
+        <div style="display:flex;gap:12px;font-size:10px;color:#666;">
+          <span>${p.t} picks</span>
+          <span>ROI: <span style="color:${p.roi>=0?'var(--verde)':'var(--rojo2)'}">${p.roi>0?'+':''}${p.roi}%</span></span>
+          <span style="color:var(--verde);font-weight:700;">→ Usar S3</span>
+        </div>
+      </div>`;
+    });
+  }
+
+  // Patrones buenos
+  if(buenos.length){
+    h += `<div style="font-size:10px;font-weight:700;letter-spacing:.6px;color:var(--dorado2);margin-bottom:8px;margin-top:10px;">✅ TENDENCIA POSITIVA (≥55% WR · ≥3 picks)</div>`;
+    buenos.slice(0,4).forEach(p=>{
+      h += `<div style="background:rgba(217,160,48,.06);border:1px solid rgba(217,160,48,.15);border-radius:8px;padding:10px 12px;margin-bottom:6px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:11px;font-weight:700;color:#ddd;">${p.est} · ${p.liga}</div>
+          <div style="font-size:11px;font-weight:700;color:var(--dorado2);">${p.wr}%</div>
+        </div>
+        <div style="font-size:10px;color:#666;margin-top:2px;">${p.t} picks · ROI ${p.roi>0?'+':''}${p.roi}% → Usar S2</div>
+      </div>`;
+    });
+  }
+
+  // Alertas
+  if(alertas.length){
+    h += `<div style="font-size:10px;font-weight:700;letter-spacing:.6px;color:var(--rojo2);margin-bottom:8px;margin-top:10px;">⚠️ EVITAR POR AHORA (<40% WR · ≥5 picks)</div>`;
+    alertas.forEach(p=>{
+      h += `<div style="background:rgba(200,0,0,.05);border:1px solid rgba(200,0,0,.15);border-radius:8px;padding:8px 12px;margin-bottom:6px;">
+        <div style="display:flex;justify-content:space-between;">
+          <div style="font-size:11px;color:#888;">${p.est} · ${p.liga}</div>
+          <div style="font-size:11px;color:var(--rojo2);">${p.wr}% · S1 máx</div>
+        </div>
+      </div>`;
+    });
+  }
+
+  if(!confirmados.length && !buenos.length && !alertas.length){
+    h += `<div style="text-align:center;padding:16px;font-size:11px;color:#444;">
+      Acumulando datos — se necesitan ≥3 picks por combinación estrategia/liga para detectar patrones.
+    </div>`;
+  }
+
+  el.innerHTML = h;
+}
+
+
+// ===== NOTIFICACIONES DE PARTIDO =====
+const CAL_NOTIF_KEY = 'cce-cal-notifs';
+
+// Pedir permiso de notificaciones
+async function notifPedirPermiso(){
+  if(!('Notification' in window)) return false;
+  if(Notification.permission === 'granted') return true;
+  const perm = await Notification.requestPermission();
+  return perm === 'granted';
+}
+
+// Programar notificación para un partido
+async function notifProgramar(partido){
+  if(!partido.h || !partido.f || !partido.notif || partido.notif===0) return;
+  const ok = await notifPedirPermiso();
+  if(!ok) return;
+
+  // Calcular ms hasta la notificación
+  const fechaPartido = new Date(partido.f + 'T' + partido.h);
+  const fechaNotif = new Date(fechaPartido.getTime() - partido.notif * 60 * 1000);
+  const ahora = new Date();
+  const msHasta = fechaNotif.getTime() - ahora.getTime();
+
+  if(msHasta <= 0) return; // ya pasó
+
+  // Guardar en localStorage para restaurar al recargar
+  const notifs = JSON.parse(localStorage.getItem(CAL_NOTIF_KEY)||'{}');
+  notifs[partido.id] = {
+    partido: partido.p,
+    liga: partido.l||'',
+    fechaNotif: fechaNotif.toISOString(),
+    msHasta,
+    notif: partido.notif
+  };
+  localStorage.setItem(CAL_NOTIF_KEY, JSON.stringify(notifs));
+
+  // Programar con setTimeout
+  notifEjecutar(partido.id, partido.p, partido.l||'', partido.notif, msHasta);
+}
+
+// Ejecutar la notificación cuando llega el momento
+function notifEjecutar(id, nombrePartido, liga, minutos, msHasta){
+  setTimeout(()=>{
+    if(Notification.permission !== 'granted') return;
+    const aviso = minutos < 60 ? `${minutos} min` : minutos === 60 ? '1 hora' : minutos === 120 ? '2 horas' : '1 día';
+    new Notification('⚽ ' + nombrePartido, {
+      body: `${liga ? liga+' · ' : ''}Comienza en ${aviso}`,
+      icon: 'assets/teams/colocolo.png',
+      badge: 'assets/teams/colocolo.png',
+      tag: 'partido-'+id,
+      requireInteraction: true
+    });
+    // Limpiar del localStorage
+    try{
+      const notifs = JSON.parse(localStorage.getItem(CAL_NOTIF_KEY)||'{}');
+      delete notifs[id];
+      localStorage.setItem(CAL_NOTIF_KEY, JSON.stringify(notifs));
+    }catch(e){}
+  }, msHasta);
+}
+
+// Restaurar notificaciones pendientes al cargar la app
+function notifRestaurar(){
+  if(!('Notification' in window) || Notification.permission !== 'granted') return;
+  try{
+    const notifs = JSON.parse(localStorage.getItem(CAL_NOTIF_KEY)||'{}');
+    const ahora = Date.now();
+    Object.entries(notifs).forEach(([id, n])=>{
+      const msHasta = new Date(n.fechaNotif).getTime() - ahora;
+      if(msHasta > 0){
+        notifEjecutar(id, n.partido, n.liga, n.notif, msHasta);
+      } else {
+        // Ya pasó, limpiar
+        delete notifs[id];
+      }
+    });
+    localStorage.setItem(CAL_NOTIF_KEY, JSON.stringify(notifs));
+  }catch(e){}
+}
+
+// Cancelar notificación de un partido eliminado
+function notifCancelar(id){
+  try{
+    const notifs = JSON.parse(localStorage.getItem(CAL_NOTIF_KEY)||'{}');
+    delete notifs[id];
+    localStorage.setItem(CAL_NOTIF_KEY, JSON.stringify(notifs));
+  }catch(e){}
 }
 
 // ===== MOTOR =====
@@ -3962,6 +4270,38 @@ function renderRes(){
     }
     h+=`<div style="font-size:9px;color:#333;margin-top:8px;">Fuente: SVC — actualizar con importar JSON</div>
     </div>`;
+  }
+
+  // Indicador predictivo — WR histórico de la estrategia
+  if(AA&&AA.ests&&AA.ests.length>0){
+    const estPrincipal = AA.ests.find(e=>['L1','L2','L3','P1','P2','P3','P4'].includes(e));
+    if(estPrincipal){
+      const conf = predConfianza(estPrincipal, AA.liga);
+      if(conf){
+        const color = conf.wr>=65?'var(--verde)':conf.wr>=50?'var(--dorado2)':'var(--rojo2)';
+        const badge = conf.wr>=65&&conf.n>=5?'🔥 PATRÓN CONFIRMADO':conf.wr>=55?'✅ Tendencia positiva':'📊 Historial disponible';
+        const rec = predStakeRecomendado(estPrincipal, AA.liga, Math.round(DB.cfg.cap*DB.cfg.stk/100));
+        h+=`<div style="background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px;margin-bottom:10px;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:.8px;color:#555;margin-bottom:8px;">🧠 HISTORIAL ${estPrincipal}</div>
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <div style="flex:1;text-align:center;background:rgba(0,0,0,.3);border-radius:6px;padding:6px;">
+              <div style="font-size:18px;font-weight:700;color:${color};">${conf.wr}%</div>
+              <div style="font-size:9px;color:#555;">WIN RATE</div>
+            </div>
+            <div style="flex:1;text-align:center;background:rgba(0,0,0,.3);border-radius:6px;padding:6px;">
+              <div style="font-size:18px;font-weight:700;color:${conf.roi>=0?'var(--verde)':'var(--rojo2)'};">${conf.roi>0?'+':''}${conf.roi}%</div>
+              <div style="font-size:9px;color:#555;">ROI</div>
+            </div>
+            <div style="flex:1;text-align:center;background:rgba(0,0,0,.3);border-radius:6px;padding:6px;">
+              <div style="font-size:18px;font-weight:700;color:#aaa;">${conf.n}</div>
+              <div style="font-size:9px;color:#555;">PICKS</div>
+            </div>
+          </div>
+          <div style="font-size:10px;color:${color};font-weight:700;">${badge}</div>
+          <div style="font-size:10px;color:#555;margin-top:4px;">Stake recomendado: <strong style="color:#ddd;">${rec.nivel}</strong> ($${rec.stake.toLocaleString('es-CL')}) · ${rec.razon}</div>
+        </div>`;
+      }
+    }
   }
 
   // Botones de acción
@@ -5495,17 +5835,65 @@ function renderInicio(){
 
 // ===== CALENDARIO =====
 function saveCal(){
-  const p=document.getElementById('cal-p').value.trim();if(!p){alert('⚠️ Ingresa el partido');return;}
-  DB.cal.push({id:Date.now(),p,f:document.getElementById('cal-f').value,h:document.getElementById('cal-h').value,l:document.getElementById('cal-l').value,est:'pendiente'});
-  sDB();cModal('modal-cal');renderCal();
+  const p=document.getElementById('cal-p').value.trim();
+  if(!p){alert('⚠️ Ingresa el nombre del partido');return;}
+  const notif=parseInt(document.getElementById('cal-notif')?.value)||0;
+  const partido={
+    id:Date.now(),p,
+    f:document.getElementById('cal-f').value,
+    h:document.getElementById('cal-h').value,
+    l:document.getElementById('cal-l').value.trim(),
+    est:'pendiente',
+    notif
+  };
+  DB.cal.push(partido);
+  sDB();
+  cModal('modal-cal');
+  renderCal();
+  if(notif>0) notifProgramar(partido);
 }
 function renderCal(){
   const el=document.getElementById('cal-lista');
-  if(!DB.cal.length){el.innerHTML=`<div class="empty"><div class="empty-icon">🗓</div><div class="empty-title">Calendario vacío</div></div>`;return;}
-  el.innerHTML=DB.cal.sort((a,b)=>a.f>b.f?1:-1).map(c=>`<div class="cal-item"><div><div class="cal-partido">${c.p}</div><div class="cal-meta">${c.l||'—'} · ${c.f||'—'} ${c.h||''}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;"><span class="cal-est cal-${c.est==='pendiente'?'p':c.est==='analizado'?'a':'d'}">${c.est==='pendiente'?'⏳':c.est==='analizado'?'✅':'❌'} ${c.est}</span><div style="display:flex;gap:4px;"><button onclick="calE(${c.id},'analizado')" style="background:rgba(0,217,110,.08);border:1px solid rgba(0,217,110,.18);color:var(--verde);border-radius:4px;padding:3px 7px;font-size:10px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;">✅</button><button onclick="calE(${c.id},'descartado')" style="background:rgba(240,20,20,.08);border:1px solid rgba(240,20,20,.18);color:var(--rojo2);border-radius:4px;padding:3px 7px;font-size:10px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;">❌</button><button onclick="calD(${c.id})" style="background:rgba(255,255,255,.03);border:1px solid var(--borde);color:var(--texto3);border-radius:4px;padding:3px 7px;font-size:10px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;">🗑</button></div></div></div>`).join('');
+
+  // Botón activar notificaciones si no están activas
+  const tieneNotif = DB.cal.some(c=>c.notif>0);
+  let notifBanner = '';
+  if(tieneNotif && 'Notification' in window && Notification.permission !== 'granted'){
+    notifBanner = `<div style="background:rgba(217,160,48,.1);border:1px solid rgba(217,160,48,.25);border-radius:8px;padding:10px 12px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-size:11px;color:var(--dorado2);">🔔 Activa las notificaciones para recibir avisos</div>
+      <button onclick="notifPedirPermiso().then(ok=>ok&&renderCal())" style="background:rgba(217,160,48,.2);border:1px solid rgba(217,160,48,.3);color:var(--dorado2);border-radius:6px;padding:5px 10px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">ACTIVAR</button>
+    </div>`;
+  }
+
+  if(!DB.cal.length){
+    el.innerHTML=notifBanner+`<div class="empty"><div class="empty-icon">🗓</div><div class="empty-txt">Sin partidos agendados</div></div>`;
+    return;
+  }
+
+  const ahora = new Date();
+  el.innerHTML = notifBanner + DB.cal.sort((a,b)=>a.f>b.f?1:-1).map(c=>{
+    const esHoy = c.f === new Date().toLocaleDateString('en-CA');
+    const fechaMs = c.f&&c.h ? new Date(c.f+'T'+c.h).getTime() : null;
+    const pasado = fechaMs && fechaMs < ahora.getTime();
+    const aviso = c.notif>0 ? (c.notif<60?`🔔 ${c.notif}min antes`:c.notif===60?'🔔 1h antes':c.notif===120?'🔔 2h antes':'🔔 1 día antes') : '';
+    return `<div class="cal-item" style="${pasado?'opacity:.5':''}">
+      <div style="flex:1;">
+        <div class="cal-partido">${c.p}</div>
+        <div class="cal-meta">${c.l||'—'} · ${c.f||'—'} ${c.h||''} ${esHoy?'<span style="color:var(--verde);font-weight:700;">· HOY</span>':''}</div>
+        ${aviso?`<div style="font-size:10px;color:var(--dorado2);margin-top:2px;">${aviso}</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
+        <span class="cal-est cal-${c.est==='pendiente'?'p':c.est==='analizado'?'a':'d'}">${c.est==='pendiente'?'⏳':c.est==='analizado'?'✅':'❌'}</span>
+        <div style="display:flex;gap:4px;">
+          <button onclick="calE(${c.id},'analizado')" style="background:rgba(0,217,110,.1);border:1px solid rgba(0,217,110,.2);color:var(--verde);border-radius:4px;padding:3px 7px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;">✅</button>
+          <button onclick="calD(${c.id})" style="background:rgba(200,0,0,.1);border:1px solid rgba(200,0,0,.2);color:var(--rojo2);border-radius:4px;padding:3px 7px;font-size:10px;cursor:pointer;">🗑</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 function calE(id,e){const c=DB.cal.find(c=>c.id===id);if(c){c.est=e;sDB();renderCal();}}
-function calD(id){DB.cal=DB.cal.filter(c=>c.id!==id);sDB();renderCal();}
+function calD(id){DB.cal=DB.cal.filter(c=>c.id!==id);sDB();renderCal();notifCancelar(id);}
 
 // ===== CONFIG =====
 function saveCfg(){
@@ -6627,6 +7015,7 @@ function srTab(tab){
   if(tab==='ranking')renderRanking();
   if(tab==='ligas')renderLigasStats();
   if(tab==='p4')renderP4Lista();
+  if(tab==='predictivo')renderPredictivo();
 }
 
 
@@ -7568,6 +7957,13 @@ function svcActualizarUI(){
 
 // ===== INIT =====
 renderInicio();
+notifRestaurar();
+// Registrar Service Worker para modo offline
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js')
+    .then(()=>console.log('SW registrado'))
+    .catch(e=>console.log('SW error:',e));
+}
 
 // ===== PWA — INSTALACIÓN Y OFFLINE ===========================
 (function initPWA(){
