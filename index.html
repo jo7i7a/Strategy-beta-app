@@ -822,6 +822,46 @@ select.minput option{background:#080808;color:#efefef;}
   text-shadow:0 0 20px rgba(200,0,0,.5);display:none;
 }
 .countdown-label{font-size:10px;color:#555;text-align:center;letter-spacing:1px;text-transform:uppercase;margin-top:-8px;display:none;}
+
+/* ===== SEPARACIÓN TEMPORADA vs FORMA RECIENTE ===== */
+.bloque-temp { border-left: 3px solid rgba(255,255,255,.12); padding-left: 10px; margin-bottom: 14px; }
+.bloque-forma { border-left: 3px solid rgba(0,217,110,.4); padding-left: 10px; margin-bottom: 14px; }
+.bloque-tag {
+  display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: .6px;
+  padding: 2px 7px; border-radius: 4px; margin-bottom: 8px;
+}
+.bloque-tag-temp { background: rgba(255,255,255,.06); color: #555; border: 1px solid rgba(255,255,255,.08); }
+.bloque-tag-forma { background: rgba(0,217,110,.1); color: var(--verde); border: 1px solid rgba(0,217,110,.25); }
+
+/* ===== BLOQUE FORMA RECIENTE F10 ===== */
+.f10-bloque { margin-top: 14px; }
+.f10-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.f10-titulo {
+  font-size: 9px; font-weight: 700; letter-spacing: .8px; color: var(--verde);
+  text-transform: uppercase;
+}
+.f10-btn {
+  background: rgba(0,217,110,.1); border: 1px solid rgba(0,217,110,.3);
+  color: var(--verde); border-radius: 6px; padding: 5px 10px;
+  font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
+  cursor: pointer; letter-spacing: .5px;
+}
+.f10-campo { opacity: .5; pointer-events: none; }
+.f10-campo.activo { opacity: 1; pointer-events: auto; }
+.f10-nota { font-size: 9px; color: #444; margin-bottom: 8px; font-style: italic; }
+/* Modal captura rápida */
+.f10-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.f10-grid-item { display: flex; flex-direction: column; gap: 3px; }
+.f10-grid-lbl { font-size: 10px; color: #666; }
+.f10-grid-val { font-size: 14px; font-weight: 700; color: var(--verde); text-align: center; padding: 6px; background: rgba(0,217,110,.06); border-radius: 6px; border: 1px solid rgba(0,217,110,.15); }
+.f10-partidos-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 4px; margin: 8px 0; }
+.f10-partido-btn { border: none; border-radius: 4px; padding: 8px 4px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Rajdhani',sans-serif; text-align: center; }
+.f10-partido-btn.over { background: rgba(0,217,110,.2); color: var(--verde); }
+.f10-partido-btn.under { background: rgba(200,0,0,.15); color: var(--rojo2); }
+.f10-partido-btn.neutro { background: rgba(255,255,255,.08); color: #888; }
 </style>
 </head>
 <body>
@@ -1103,13 +1143,14 @@ select.minput option{background:#080808;color:#efefef;}
 <div class="stitle">📈 Bloque A — Rendimiento Ofensivo</div>
     <div class="mblock">
       <div class="mblock-hdr"><div class="mblock-name">Over Goles</div><div class="mbadge mb-of">OFENSIVO</div></div>
+      <div class="bloque-tag bloque-tag-temp">📅 TEMPORADA COMPLETA — Soccerstats</div>
       <div class="mteam-lbl" id="lbl-la">🏠 LOCAL</div>
       <div class="minputs" style="margin-bottom:6px;">
-        <div class="minput-wrap"><div class="minput-lbl">Over 1.5 %</div><select class="minput" id="o15l" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipOver()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
-        <div class="minput-wrap"><div class="minput-lbl">Over 2.5 %</div><select class="minput" id="o25l" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipOver()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
-        <div class="minput-wrap"><div class="minput-lbl">Over 3.5 %</div><select class="minput" id="o35l" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
+        <div class="minput-wrap"><div class="minput-lbl">Over 1.5 %<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Stats › Home › col. <em>1.5+</em></div></div><select class="minput" id="o15l" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipOver()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
+        <div class="minput-wrap"><div class="minput-lbl">Over 2.5 %<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Stats › Home › col. <em>2.5+</em></div></div><select class="minput" id="o25l" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipOver()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
+        <div class="minput-wrap"><div class="minput-lbl">Over 3.5 %<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Stats › Home › col. <em>3.5+</em></div></div><select class="minput" id="o35l" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
         <div class="nm-wrap">
-            <div class="minput-lbl">Prom. goles marc.</div>
+            <div class="minput-lbl">Prom. goles marc.<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Home table › <em>GF ÷ GP</em></div></div>
             <input type="number" class="minput" id="pgml" min="0" step="0.1" placeholder="1.5"
               oninput="nmInput(this,'pgml');tipOver()"
               onblur="nmBlur(this,'pgml')"
@@ -1119,11 +1160,11 @@ select.minput option{background:#080808;color:#efefef;}
       </div>
       <div class="mteam-lbl" id="lbl-va">✈️ VISITANTE</div>
       <div class="minputs">
-        <div class="minput-wrap"><div class="minput-lbl">Over 1.5 %</div><select class="minput" id="o15v" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipOver()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
-        <div class="minput-wrap"><div class="minput-lbl">Over 2.5 %</div><select class="minput" id="o25v" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipOver()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
-        <div class="minput-wrap"><div class="minput-lbl">Over 3.5 %</div><select class="minput" id="o35v" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
+        <div class="minput-wrap"><div class="minput-lbl">Over 1.5 %<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Stats › Away › col. <em>1.5+</em></div></div><select class="minput" id="o15v" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipOver()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
+        <div class="minput-wrap"><div class="minput-lbl">Over 2.5 %<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Stats › Away › col. <em>2.5+</em></div></div><select class="minput" id="o25v" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipOver()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
+        <div class="minput-wrap"><div class="minput-lbl">Over 3.5 %<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Stats › Away › col. <em>3.5+</em></div></div><select class="minput" id="o35v" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
         <div class="nm-wrap">
-            <div class="minput-lbl">Prom. goles marc.</div>
+            <div class="minput-lbl">Prom. goles marc.<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Away table › <em>GF ÷ GP</em></div></div>
             <input type="number" class="minput" id="pgmv" min="0" step="0.1" placeholder="1.2"
               oninput="nmInput(this,'pgmv');tipOver()"
               onblur="nmBlur(this,'pgmv')"
@@ -1138,8 +1179,8 @@ select.minput option{background:#080808;color:#efefef;}
       <div class="mblock-hdr"><div class="mblock-name">BTTS — Ambos Marcan</div><div class="mbadge mb-of">OFENSIVO</div></div>
       <div class="nota" style="margin-bottom:8px;font-size:10px;">📍 Fuente: SofaScore → Equipo → Últimos partidos → filtrar por Local o Visitante</div>
       <div class="minputs">
-        <div class="minput-wrap"><div class="minput-lbl">BTTS Local %</div><select class="minput" id="bttsl" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipBTTS()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
-        <div class="minput-wrap"><div class="minput-lbl">BTTS Visitante %</div><select class="minput" id="bttsv" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipBTTS()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
+        <div class="minput-wrap"><div class="minput-lbl">BTTS Local %<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Stats › Home › col. <em>BTS</em></div></div><select class="minput" id="bttsl" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipBTTS()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
+        <div class="minput-wrap"><div class="minput-lbl">BTTS Visitante %<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Stats › Away › col. <em>BTS</em></div></div><select class="minput" id="bttsv" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipBTTS()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
       </div>
       <div class="mtip" id="tip-btts"></div>
     </div>
@@ -1151,10 +1192,10 @@ select.minput option{background:#080808;color:#efefef;}
       <div class="mblock-hdr"><div class="mblock-name">Defensa</div><div class="mbadge mb-de">DEFENSIVO</div></div>
       <div class="mteam-lbl">🏠 LOCAL</div>
       <div class="minputs" style="margin-bottom:6px;">
-        <div class="minput-wrap"><div class="minput-lbl">Recibió gol %</div><select class="minput" id="gel" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipDef()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
-        <div class="minput-wrap"><div class="minput-lbl">Clean sheet %</div><select class="minput" id="csl" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipDef()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
+        <div class="minput-wrap"><div class="minput-lbl">Recibió gol %<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Stats › Home › col. <em>Failed to keep CS</em></div></div><select class="minput" id="gel" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipDef()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
+        <div class="minput-wrap"><div class="minput-lbl">Clean sheet %<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Stats › Home › col. <em>CS%</em></div></div><select class="minput" id="csl" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipDef()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
         <div class="nm-wrap">
-            <div class="minput-lbl">Prom. goles recib.</div>
+            <div class="minput-lbl">Prom. goles recib.<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Home table › <em>GA ÷ GP</em></div></div>
             <input type="number" class="minput" id="pgrl" min="0" step="0.1" placeholder="1.1"
               oninput="nmInput(this,'pgrl');tipDef()"
               onblur="nmBlur(this,'pgrl')"
@@ -1164,10 +1205,10 @@ select.minput option{background:#080808;color:#efefef;}
       </div>
       <div class="mteam-lbl">✈️ VISITANTE</div>
       <div class="minputs">
-        <div class="minput-wrap"><div class="minput-lbl">Recibió gol %</div><select class="minput" id="gev" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipDef()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
-        <div class="minput-wrap"><div class="minput-lbl">Clean sheet %</div><select class="minput" id="csv" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipDef()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
+        <div class="minput-wrap"><div class="minput-lbl">Recibió gol %<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Stats › Away › col. <em>Failed to keep CS</em></div></div><select class="minput" id="gev" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipDef()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
+        <div class="minput-wrap"><div class="minput-lbl">Clean sheet %<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Stats › Away › col. <em>CS%</em></div></div><select class="minput" id="csv" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipDef()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
         <div class="nm-wrap">
-            <div class="minput-lbl">Prom. goles recib.</div>
+            <div class="minput-lbl">Prom. goles recib.<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Away table › <em>GA ÷ GP</em></div></div>
             <input type="number" class="minput" id="pgrv" min="0" step="0.1" placeholder="1.4"
               oninput="nmInput(this,'pgrv');tipDef()"
               onblur="nmBlur(this,'pgrv')"
@@ -1186,7 +1227,7 @@ select.minput option{background:#080808;color:#efefef;}
       <div class="mteam-lbl">🏠 LOCAL</div>
       <div class="minputs" style="margin-bottom:6px;">
         <div class="nm-wrap">
-            <div class="minput-lbl">Córneres a favor / partido</div>
+            <div class="minput-lbl">Córneres a favor / partido<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Corners › Home › col. <em>For</em></div></div>
             <input type="number" class="minput" id="cafl" min="0" step="0.1" placeholder="5.2"
               oninput="nmInput(this,'cafl');tipCorn()"
               onblur="nmBlur(this,'cafl')"
@@ -1194,7 +1235,7 @@ select.minput option{background:#080808;color:#efefef;}
             <div class="nm-suggestions" id="nms-cafl"></div>
           </div>
         <div class="nm-wrap">
-            <div class="minput-lbl">Córneres en contra / partido</div>
+            <div class="minput-lbl">Córneres en contra / partido<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Corners › Home › col. <em>Against</em></div></div>
             <input type="number" class="minput" id="ccl" min="0" step="0.1" placeholder="4.8"
               oninput="nmInput(this,'ccl');tipCorn()"
               onblur="nmBlur(this,'ccl')"
@@ -1205,7 +1246,7 @@ select.minput option{background:#080808;color:#efefef;}
       <div class="mteam-lbl">✈️ VISITANTE</div>
       <div class="minputs">
         <div class="nm-wrap">
-            <div class="minput-lbl">Córneres a favor / partido</div>
+            <div class="minput-lbl">Córneres a favor / partido<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Corners › Away › col. <em>For</em></div></div>
             <input type="number" class="minput" id="cafv" min="0" step="0.1" placeholder="4.1"
               oninput="nmInput(this,'cafv');tipCorn()"
               onblur="nmBlur(this,'cafv')"
@@ -1213,7 +1254,7 @@ select.minput option{background:#080808;color:#efefef;}
             <div class="nm-suggestions" id="nms-cafv"></div>
           </div>
         <div class="nm-wrap">
-            <div class="minput-lbl">Córneres en contra / partido</div>
+            <div class="minput-lbl">Córneres en contra / partido<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Corners › Away › col. <em>Against</em></div></div>
             <input type="number" class="minput" id="ccv" min="0" step="0.1" placeholder="5.5"
               oninput="nmInput(this,'ccv');tipCorn()"
               onblur="nmBlur(this,'ccv')"
@@ -1228,12 +1269,13 @@ select.minput option{background:#080808;color:#efefef;}
       <div style="background:rgba(224,120,0,.06);border:1px solid rgba(224,120,0,.12);border-radius:6px;padding:8px 10px;">
         <div style="font-size:9px;color:var(--naranja2);font-weight:700;letter-spacing:1px;margin-bottom:6px;">AMBOS EQUIPOS COMBINADOS (Footystats)</div>
         <div class="minputs">
-          <div class="minput-wrap"><div class="minput-lbl">Over 9.5 % histórico</div><select class="minput" id="co95" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipCorn()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
-          <div class="minput-wrap"><div class="minput-lbl">Over 10.5 % histórico</div><select class="minput" id="co105" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipCorn()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
+          <div class="minput-wrap"><div class="minput-lbl">Over 9.5 % histórico<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Corners › col. <em>9.5+</em></div></div><select class="minput" id="co95" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipCorn()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
+          <div class="minput-wrap"><div class="minput-lbl">Over 10.5 % histórico<div style="font-size:9px;color:#444;margin-top:1px;font-style:italic;line-height:1.3;">Soccerstats › Corners › col. <em>10.5+</em></div></div><select class="minput" id="co105" style="padding:7px 4px;font-size:13px;-webkit-appearance:none;appearance:none;background-image:none;" onchange="tipCorn()"><option value="">—</option><option value="0">0%</option><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></div>
         </div>
       </div>
       <div class="mtip" id="tip-corn"></div>
     </div>
+
 
     <!-- BLOQUE D -->
     <div class="stitle">🧠 Bloque D — Contexto del Encuentro</div>
@@ -2151,6 +2193,7 @@ select.minput option{background:#080808;color:#efefef;}
               <option value="L3">L3 — Post Expulsión</option>
               <option value="P1">P1 — Value Ligas</option>
               <option value="P2">P2 — BTTS Over 2.5</option>
+              <option value="P3">P3 — Value + Edge</option>
               <option value="custom">➕ Nueva estrategia</option>
             </select>
           </div>
@@ -2396,8 +2439,12 @@ select.minput option{background:#080808;color:#efefef;}
       <div style="font-size:11px;color:#555;margin-bottom:10px;line-height:1.6;">SVC autocompleta estadísticas en el análisis. Importa un JSON actualizado sin redeploy.</div>
       <button onclick="svcExportarPlantilla()" style="width:100%;background:rgba(0,184,224,.08);border:1px solid rgba(0,184,224,.2);color:var(--azul);border-radius:7px;padding:9px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:7px;letter-spacing:.5px;">📋 EXPORTAR PLANTILLA JSON</button>
       <label style="display:block;margin-bottom:7px;">
-        <div style="background:rgba(0,217,110,.08);border:1px solid rgba(0,217,110,.2);color:var(--verde);border-radius:7px;padding:9px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-align:center;letter-spacing:.5px;">⬆️ IMPORTAR SVC ACTUALIZADO</div>
+        <div style="background:rgba(0,217,110,.08);border:1px solid rgba(0,217,110,.2);color:var(--verde);border-radius:7px;padding:9px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-align:center;letter-spacing:.5px;">⬆️ IMPORTAR SVC (JSON)</div>
         <input type="file" accept=".json" style="display:none;" onchange="svcImportar(this)">
+      </label>
+      <label style="display:block;margin-bottom:7px;">
+        <div style="background:rgba(255,149,0,.08);border:1px solid rgba(255,149,0,.2);color:#ff9500;border-radius:7px;padding:9px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-align:center;letter-spacing:.5px;">📊 IMPORTAR CSV (Excel/Sheets)</div>
+        <input type="file" accept=".csv,.txt" style="display:none;" onchange="svcImportarCSV(this)">
       </label>
       <button id="svc-btn-reset" onclick="svcResetear()" style="display:none;width:100%;background:none;border:1px solid rgba(200,0,0,.2);color:var(--rojo2);border-radius:7px;padding:8px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px;">🔄 VOLVER AL SVC HARDCODED</button>
       <div style="font-size:9px;color:#333;margin-top:8px;line-height:1.6;">Hardcoded siempre disponible offline. El importado se guarda en tu dispositivo.</div>
@@ -2609,6 +2656,7 @@ select.minput option{background:#080808;color:#efefef;}
             <option value="L3">L3 — Post Expulsión</option>
             <option value="P1">P1 — Value Ligas</option>
             <option value="P2">P2 — BTTS Over 2.5</option>
+            <option value="P3">P3 — Value + Edge</option>
             <option value="Propio">Análisis propio</option>
           </select>
         </div>
@@ -2934,6 +2982,47 @@ select.minput option{background:#080808;color:#efefef;}
   </div>
 </div>
 
+<!-- MODAL CAPTURA F10 -->
+<div class="modal-bg" id="modal-f10">
+  <div class="modal" style="max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;align-items:center;margin-bottom:14px;">
+      <button onclick="cModal('modal-f10')" style="background:none;border:none;color:var(--texto2);font-size:20px;cursor:pointer;padding:0 10px 0 0;">←</button>
+      <div class="modal-title" style="margin:0;flex:1;text-align:center;padding-right:30px;">⚡ ÚLTIMOS 10 PARTIDOS</div>
+    </div>
+
+    <!-- Tabs Local / Visitante -->
+    <div style="display:flex;gap:6px;margin-bottom:14px;">
+      <button id="f10-tab-local" onclick="f10Tab('local')" style="flex:1;padding:8px;border-radius:7px;border:1px solid rgba(0,217,110,.3);background:rgba(0,217,110,.1);color:var(--verde);font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">🏠 LOCAL</button>
+      <button id="f10-tab-visita" onclick="f10Tab('visita')" style="flex:1;padding:8px;border-radius:7px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#555;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✈️ VISITANTE</button>
+    </div>
+
+    <!-- Panel Local -->
+    <div id="f10-panel-local">
+      <div style="font-size:11px;color:#666;margin-bottom:10px;">Ingresa el resultado de cada partido <em>como local</em> (solo en casa, sin amistosos):</div>
+      <div id="f10-partidos-local" style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:12px;"></div>
+      <div style="font-size:10px;color:#444;margin-bottom:12px;">Toca cada partido para cambiar: <span style="color:var(--verde)">■ Over</span> / <span style="color:var(--rojo2)">■ Under</span></div>
+      <!-- Campos adicionales local -->
+      <div class="form-row" style="gap:8px;margin-bottom:10px;">
+        <div style="flex:1;"><div class="minput-lbl">Córneres a favor (prom)</div><input type="number" class="minput" id="f10-cafl-inp" min="0" step="0.1" placeholder="5.0"></div>
+        <div style="flex:1;"><div class="minput-lbl">Goles recibidos (prom)</div><input type="number" class="minput" id="f10-pgrl-inp" min="0" step="0.1" placeholder="1.0"></div>
+      </div>
+    </div>
+
+    <!-- Panel Visitante -->
+    <div id="f10-panel-visita" style="display:none;">
+      <div style="font-size:11px;color:#666;margin-bottom:10px;">Ingresa el resultado de cada partido <em>como visitante</em> (solo fuera, sin amistosos):</div>
+      <div id="f10-partidos-visita" style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:12px;"></div>
+      <div style="font-size:10px;color:#444;margin-bottom:12px;">Toca cada partido para cambiar: <span style="color:var(--verde)">■ Over</span> / <span style="color:var(--rojo2)">■ Under</span></div>
+      <div class="form-row" style="gap:8px;margin-bottom:10px;">
+        <div style="flex:1;"><div class="minput-lbl">Córneres a favor (prom)</div><input type="number" class="minput" id="f10-cafv-inp" min="0" step="0.1" placeholder="4.5"></div>
+        <div style="flex:1;"><div class="minput-lbl">Goles recibidos (prom)</div><input type="number" class="minput" id="f10-pgrv-inp" min="0" step="0.1" placeholder="1.2"></div>
+      </div>
+    </div>
+
+    <button onclick="f10Aplicar()" style="width:100%;background:rgba(0,217,110,.12);border:1px solid rgba(0,217,110,.3);color:var(--verde);border-radius:8px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.5px;">✅ CALCULAR Y APLICAR</button>
+  </div>
+</div>
+
 <script>
 // ===== DB =====
 let DB={regs:[],eqs:{},cal:[],cfg:{cap:23353,stk:5}};
@@ -2960,6 +3049,7 @@ function ir(pg){
   if(pg==='nuevo')goP1();
   if(pg==='demo'){if(!DB.demo)DB.demo={cap:100000,regs:[]};renderDemo();renderDemoStats();}
   if(pg==='ligas')renderLigas();
+  if(pg==='estrategias')renderEstrategias();
   if(pg==='perfil')setTimeout(()=>{actualizarInfoStorage();svcActualizarUI();renderCasas();},100);
 }
 
@@ -3538,7 +3628,13 @@ function renderRes(){
   // Botones de acción
   if(calLive) h+=`<button class="btn-verde" onclick="ir('live')">🔴 IR A SEGUIMIENTO LIVE →</button>`;
   h+=`<button class="btn-verde" onclick="abrirModalReg()">📝 REGISTRAR APUESTA</button>`;
+  // Botón P3 si prob>=65% O edge>=12% (condición de value real)
+  if(AA&&AA.mercadoOptimo&&(AA.mercadoOptimo.prob>=65||AA.mercadoOptimo.edge>=12)){
+    h+=`<button class="btn-sec" onclick="abrirP3DesdeAnalisis()" style="background:rgba(255,149,0,.1);border-color:rgba(255,149,0,.3);color:#ff9500;">🎯 REGISTRAR COMO P3</button>`;
+  }
   h+=`<button class="btn-sec" onclick="abrirDemoDesdeAnalisis()" style="background:rgba(0,184,224,.1);border-color:rgba(0,184,224,.3);color:var(--azul);">🧪 REGISTRAR EN DEMO</button>`;
+  h+=`<button class="btn-sec" onclick="goP2()">← VOLVER A MÉTRICAS</button>`;
+  h+=`<button onclick="reiniciarAnalisis()" style="width:100%;background:none;border:1px s184,224,.1);border-color:rgba(0,184,224,.3);color:var(--azul);">🧪 REGISTRAR EN DEMO</button>`;
   h+=`<button class="btn-sec" onclick="goP2()">← VOLVER A MÉTRICAS</button>`;
   h+=`<button onclick="reiniciarAnalisis()" style="width:100%;background:none;border:1px solid rgba(200,0,0,.2);color:var(--rojo2);border-radius:8px;padding:10px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px;margin-top:6px;">🔄 NUEVO ANÁLISIS</button>`;
   h+=`<div class="spacer"></div>`;
@@ -4507,6 +4603,24 @@ function saveDemoPick(res){
   demoTab('picks');renderDemoStats();
 }
 
+// Registrar como P3 desde análisis — pre-rellena con mercado óptimo detectado
+function abrirP3DesdeAnalisis(){
+  if(!AA) return;
+  abrirModalReg();
+  setTimeout(()=>{
+    // Setear estrategia P3
+    const estEl=document.getElementById('mr-est')||document.getElementById('casa-est');
+    if(estEl) estEl.value='P3';
+    // Pre-rellenar mercado si existe
+    if(AA.mercadoOptimo){
+      const mercEl=document.getElementById('mr-mercado')||document.getElementById('mercado-sel');
+      if(mercEl) mercEl.value=AA.mercadoOptimo.mercado||'';
+      const cuotaEl=document.getElementById('mr-cuota');
+      if(cuotaEl&&AA.mercadoOptimo.cuota) cuotaEl.value=AA.mercadoOptimo.cuota;
+    }
+  },200);
+}
+
 // Abrir Demo pre-relleno desde el análisis
 function abrirDemoDesdeAnalisis(){
   if(!AA) return;
@@ -4594,6 +4708,142 @@ function saveNuevaEstrategia(){
   sDB();document.getElementById('modal-nueva-est').style.display='none';
   renderMisEstrategias();alert('✅ Estrategia '+cod+' guardada');
 }
+
+// ===== RENDER ESTRATEGIAS =====
+function renderEstrategias(){
+  const pg = document.getElementById('pg-estrategias');
+  if(!pg) return;
+
+  // Stats reales por estrategia desde historial
+  function statsEst(cod){
+    const picks = DB.regs.filter(r=>
+      r.res!=='pendiente' && (r.ests||[]).some(e=>e===cod||e.includes(cod))
+    );
+    if(!picks.length) return null;
+    const gan = picks.filter(r=>r.res==='ganada').length;
+    const roi = picks.reduce((a,r)=>a+(r.gan||0),0);
+    const stake = picks.reduce((a,r)=>a+(r.stake||0),0);
+    return {
+      n: picks.length,
+      wr: Math.round(gan/picks.length*100),
+      roi: stake>0 ? ((roi/stake)*100).toFixed(1) : '—',
+      roiNum: stake>0 ? roi/stake*100 : null
+    };
+  }
+
+  const ESTS = [
+    {
+      cod:'L1', tipo:'LIVE', color:'var(--rojo2)', bg:'rgba(200,0,0,.08)',
+      nombre:'Córneres Over — Presión Tardía',
+      cuando:'Min 60-75. Local presionando, sin gol.',
+      criterios:['≥4 córneres en primeros 25 min','Equipo local con xG>1.0 sin marcar','Partido 0-0 o 0-1','Línea Over 9.5 o 10.5 disponible'],
+      noentrar:['Equipo visitante en bloque defensivo profundo','Lluvia intensa (reduce córneres)','Último cuarto del partido con ambos equipos satisfechos'],
+      mercado:'Córneres Over 9.5 / 10.5',
+      casas:['Betsson','Betano','Tonibet']
+    },
+    {
+      cod:'L2', tipo:'LIVE', color:'var(--azul)', bg:'rgba(0,184,224,.08)',
+      nombre:'Hándicap Asiático xG vs Marcador',
+      cuando:'Min 45-60. xG dominante no refleja el marcador.',
+      criterios:['xG local ≥1.5, marcador ≤0-1','Visitante sin remates al arco últimos 20 min','Cuota hándicap -0.5 local entre 1.70-2.10'],
+      noentrar:['Visitante con expulsado (cambia dinámica)','xG inflado por tiros lejanos','Local ya sin motivación (clasificado/descendido)'],
+      mercado:'Hándicap Asiático Local -0.5',
+      casas:['Betsson','Betano']
+    },
+    {
+      cod:'L3', tipo:'LIVE', color:'var(--verde)', bg:'rgba(0,217,110,.08)',
+      nombre:'Over Post-Expulsión — 90 segundos',
+      cuando:'Expulsión min 55-75. Ventana de 90 seg para apostar.',
+      criterios:['Expulsión en equipo que va perdiendo o empatando','Over 2.5 disponible bajo 1.50','Partido abierto antes de la expulsión'],
+      noentrar:['Expulsión en equipo que va ganando','Min >80 (poco tiempo)','Cuota Over ya muy baja (<1.25)'],
+      mercado:'Over 2.5 Goles / BTTS',
+      casas:['Betsson','Betano','Tonibet']
+    },
+    {
+      cod:'P1', tipo:'PRE', color:'var(--dorado2)', bg:'rgba(217,160,48,.08)',
+      nombre:'Value Betting Ligas Menores',
+      cuando:'Pre-partido. Ligas Tier B/C con mercado ineficiente.',
+      criterios:['Probabilidad calculada ≥65%','Cuota implícita casa <60%','Liga Tier B o C (K League, Brasileirao, Chile)','Sin noticias de última hora (lesiones, rotaciones)'],
+      noentrar:['Ligas Tier A (mercado muy eficiente)','Cuota <1.50 (value insuficiente)','Partido de Copa sin motivación clara'],
+      mercado:'1X2 / Doble oportunidad',
+      casas:['Betsson','Betano','Tonibet']
+    },
+    {
+      cod:'P2', tipo:'PRE', color:'#b060ff', bg:'rgba(176,96,255,.08)',
+      nombre:'BTTS + Over 2.5 Alta Conversión',
+      cuando:'Pre-partido. Ambos equipos con alto % gol marcado/recibido.',
+      criterios:['BTTS local ≥55% Y BTTS visita ≥55%','Over 2.5 local ≥65% Y visita ≥65%','Prom. goles marcados ambos ≥1.4/partido','Sin historial de partidos cerrados entre sí'],
+      noentrar:['Equipos con estilo muy defensivo','Partido de alta presión (final de temporada con poco que ganar)','Cuota BTTS+O2.5 <1.60'],
+      mercado:'BTTS Sí + Over 2.5',
+      casas:['Betsson','Betano','Tonibet']
+    },
+    {
+      cod:'P3', tipo:'PRE', color:'#ff9500', bg:'rgba(255,149,0,.08)',
+      nombre:'Value Betting — Edge de Mercado',
+      cuando:'Pre-partido. Detectar cuotas mal ajustadas por las casas.',
+      criterios:['Comparar 3 casas: discrepancia ≥4% en probabilidad implícita','Mercado secundario preferido (córneres, hándicap, BTTS)','No apostar en 1X2 de ligas Tier A','Stake máximo S2'],
+      noentrar:['Las 3 casas tienen cuotas similares (mercado eficiente)','Partido con mucho volumen (bookmakers atentos)','Alineaciones no confirmadas'],
+      mercado:'Mercado con mayor discrepancia entre casas',
+      casas:['Betsson','Betano','Tonibet']
+    },
+  ];
+
+  // Construir HTML
+  let h = '';
+  ESTS.forEach(e=>{
+    const st = statsEst(e.cod);
+    const badgeTipo = e.tipo==='LIVE'
+      ? `<span style="background:rgba(200,0,0,.15);color:var(--rojo2);border:1px solid rgba(200,0,0,.25);border-radius:4px;font-size:9px;font-weight:700;padding:2px 6px;letter-spacing:.5px;">🔴 LIVE</span>`
+      : `<span style="background:rgba(217,160,48,.12);color:var(--dorado2);border:1px solid rgba(217,160,48,.2);border-radius:4px;font-size:9px;font-weight:700;padding:2px 6px;letter-spacing:.5px;">📋 PRE</span>`;
+
+    const statsHtml = st
+      ? `<div style="display:flex;gap:10px;margin-top:8px;padding:8px;background:rgba(0,0,0,.3);border-radius:6px;">
+          <div style="text-align:center;flex:1;"><div style="font-size:16px;font-weight:700;color:${e.color};">${st.wr}%</div><div style="font-size:9px;color:#555;">WIN RATE</div></div>
+          <div style="text-align:center;flex:1;"><div style="font-size:16px;font-weight:700;color:${st.roiNum>0?'var(--verde)':st.roiNum<0?'var(--rojo2)':'#888'};">${st.roi}%</div><div style="font-size:9px;color:#555;">ROI</div></div>
+          <div style="text-align:center;flex:1;"><div style="font-size:16px;font-weight:700;color:#aaa;">${st.n}</div><div style="font-size:9px;color:#555;">PICKS</div></div>
+        </div>`
+      : `<div style="font-size:10px;color:#333;padding:8px;text-align:center;">Sin picks registrados aún</div>`;
+
+    h += `<div class="est-card" onclick="toggleEst('est-${e.cod}')" style="border-left:3px solid ${e.color};">
+      <div class="est-header">
+        <div style="background:${e.bg};color:${e.color};font-family:'Bebas Neue',sans-serif;font-size:18px;padding:4px 10px;border-radius:5px;letter-spacing:1px;">${e.cod}</div>
+        <div style="flex:1;padding:0 10px;">
+          <div style="font-size:12px;font-weight:700;color:#ddd;">${e.nombre}</div>
+          <div style="margin-top:4px;">${badgeTipo} <span style="font-size:10px;color:#555;margin-left:4px;">${e.mercado}</span></div>
+        </div>
+        <span class="est-chev" id="chev-est-${e.cod}">▼</span>
+      </div>
+      <div class="est-body" id="est-${e.cod}">
+        <div style="font-size:11px;color:#888;margin-bottom:10px;padding-top:6px;">${e.cuando}</div>
+        ${statsHtml}
+        <div class="est-section" style="margin-top:10px;">
+          <div class="est-section-title">✅ Criterios de entrada</div>
+          ${e.criterios.map(cr=>`<div class="est-item">› ${cr}</div>`).join('')}
+        </div>
+        <div class="est-section">
+          <div class="est-section-title">🚫 No entrar si</div>
+          ${e.noentrar.map(cr=>`<div class="est-item" style="color:#666;">› ${cr}</div>`).join('')}
+        </div>
+        <div class="est-section">
+          <div class="est-section-title">🏦 Casas recomendadas</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">${e.casas.map(ca=>`<span style="font-size:10px;background:rgba(255,255,255,.05);color:#aaa;border-radius:4px;padding:3px 8px;border:1px solid rgba(255,255,255,.07);">${ca}</span>`).join('')}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  // Mis estrategias propias al final
+  const pad = pg.querySelector('.pad');
+  if(pad){
+    pad.innerHTML = `
+      <div class="nota" style="margin-bottom:14px;">Toca para ver criterios, condiciones de entrada y tu historial real.</div>
+      ${h}
+      <div id="mis-est-cont"></div>
+      <div class="spacer"></div>`;
+    renderMisEstrategias();
+  }
+}
+
 function renderMisEstrategias(){
   let cont=document.getElementById('mis-est-cont');
   if(!cont){const pg=document.querySelector('#pg-estrategias .pad');if(!pg)return;cont=document.createElement('div');cont.id='mis-est-cont';const spacer=pg.querySelector('.spacer');if(spacer)pg.insertBefore(cont,spacer);else pg.appendChild(cont);}
@@ -4624,7 +4874,7 @@ function irDemoEst(est){
     demoTab('nuevo');
     const el=document.getElementById('demo-est');
     if(el){
-      if(['L1','L2','L3','P1','P2',''].includes(est)){el.value=est;}
+      if(['L1','L2','L3','P1','P2','P3',''].includes(est)){el.value=est;}
       else{el.value='custom';const custEl=document.getElementById('demo-est-custom');if(custEl)custEl.value=est;const wrap=document.getElementById('demo-est-custom-wrap');if(wrap)wrap.style.display='block';}
     }
   },150);
@@ -5044,25 +5294,6 @@ function loadTeamMemory(){
   banner.style.display='block';
 }
 
-function aplicarMemoria(){
-  if(!_memData)return;
-  Object.entries(_memData).forEach(([k,v])=>{
-    const el=document.getElementById(k);
-    if(el){
-      el.value=v;
-      el.dispatchEvent(new Event('input'));
-      el.dispatchEvent(new Event('change'));
-    }
-  });
-  document.getElementById('team-mem-banner').style.display='none';
-  // Trigger all tips
-  tipOver();tipBTTS();tipDef();tipCorn();calcVal();
-  // Show confirmation
-  const banner=document.getElementById('team-mem-banner');
-  banner.innerHTML='<div style="text-align:center;font-size:12px;color:var(--verde);font-weight:700;padding:4px;">✅ Datos aplicados desde memoria</div>';
-  banner.style.display='block';
-  setTimeout(()=>{banner.style.display='none';},2500);
-}
 
 function ignorarMemoria(){
   document.getElementById('team-mem-banner').style.display='none';
@@ -5268,25 +5499,28 @@ function loadTeamMemory(){
 
 let _memAvgs=null;
 function aplicarMemoria(){
-  if(!_memAvgs)return;
-  Object.entries(_memAvgs).forEach(([k,{avg}])=>{
-    const el=document.getElementById(k);if(!el)return;
-    // For dropdowns (select) round to nearest 10
-    if(el.tagName==='SELECT'){
-      const rounded=Math.round(avg/10)*10;
-      el.value=rounded;
-    } else {
-      el.value=avg.toFixed(2);
-    }
-    el.dispatchEvent(new Event('input'));el.dispatchEvent(new Event('change'));
-  });
+  const avgs=window._memAvgs||_memAvgs;
+  const legado=window._memData||(typeof _memData!=='undefined'?_memData:null);
+  if(!avgs&&!legado)return;
+  if(avgs){
+    Object.entries(avgs).forEach(([k,v])=>{
+      const el=document.getElementById(k);if(!el)return;
+      const val=typeof v==='object'?v.avg:v;
+      if(el.tagName==='SELECT'){el.value=Math.round(val/10)*10;}
+      else{el.value=parseFloat(val).toFixed(2);}
+      el.dispatchEvent(new Event('input'));el.dispatchEvent(new Event('change'));
+    });
+  } else if(legado){
+    Object.entries(legado).forEach(([k,v])=>{
+      const el=document.getElementById(k);if(!el)return;
+      el.value=v;el.dispatchEvent(new Event('input'));el.dispatchEvent(new Event('change'));
+    });
+  }
   document.getElementById('team-mem-banner').style.display='none';
   tipOver();tipBTTS();tipDef();tipCorn();calcVal();
-  // Show tick
   const b=document.getElementById('team-mem-banner');
-  b.innerHTML='<div style="text-align:center;font-size:12px;color:var(--verde);font-weight:700;padding:4px;">✅ Datos aplicados desde historial</div>';
-  b.style.display='block';
-  setTimeout(()=>b.style.display='none',2000);
+  b.innerHTML='<div style="text-align:center;font-size:12px;color:var(--verde);font-weight:700;padding:8px;">✅ Datos aplicados</div>';
+  b.style.display='block';setTimeout(()=>b.style.display='none',2000);
 }
 function ignorarMemoria(){document.getElementById('team-mem-banner').style.display='none';_memAvgs=null;}
 
@@ -6517,6 +6751,7 @@ function recalcularCapital(){
   if(typeof renderStakePreview==='function') renderStakePreview();
 }
 
+
 // ===== CASAS DE APUESTAS =====
 const CASAS_LS_KEY = 'cce-casas';
 const CASAS_DEFAULT = [
@@ -6850,6 +7085,82 @@ function svcAutocompletar(campo){
 }
 
 // Importar JSON SVC desde archivo
+
+// ===== CSV → SVC CONVERTER =====
+// Columnas esperadas: equipo, pgml, pgmv, pgrl, pgrv, o15l, o25l, o35l, o15v, o25v, o35v, bttsl, bttsv, cafl, ccl, cafv, ccv
+// Separador: coma o punto y coma. Primera fila = headers.
+function svcImportarCSV(input){
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    try{
+      const text = e.target.result;
+      // Detectar separador
+      const sep = text.indexOf(';') > text.indexOf(',') && text.indexOf(';')>0 ? ';' : ',';
+      const rows = text.trim().split('\n').map(r=>r.replace(/\r/,'')).filter(r=>r.trim());
+      if(rows.length < 2) throw new Error('El CSV debe tener al menos 2 filas (header + datos)');
+
+      // Parsear headers — normalizar
+      const headers = rows[0].split(sep).map(h=>h.trim().toLowerCase()
+        .replace(/[áàä]/g,'a').replace(/[éèë]/g,'e').replace(/[íìï]/g,'i')
+        .replace(/[óòö]/g,'o').replace(/[úùü]/g,'u').replace(/ñ/g,'n')
+        .replace(/[^a-z0-9_]/g,''));
+
+      const equipoIdx = headers.findIndex(h=>h==='equipo'||h==='team'||h==='nombre');
+      if(equipoIdx<0) throw new Error('Columna "equipo" no encontrada. Headers: '+headers.join(', '));
+
+      // Mapeo flexible de columnas
+      const CAMPOS = ['pgml','pgmv','pgrl','pgrv','o15l','o25l','o35l','o15v','o25v','o35v','bttsl','bttsv','cafl','ccl','cafv','ccv'];
+      const colIdx = {};
+      CAMPOS.forEach(campo=>{
+        const idx = headers.findIndex(h=>h===campo||h===campo.replace('l','_l').replace('v','_v'));
+        if(idx>=0) colIdx[campo]=idx;
+      });
+
+      // Parsear filas
+      const result = {};
+      let errores = 0;
+      rows.slice(1).forEach((row,ri)=>{
+        const cells = row.split(sep).map(x=>x.trim().replace(/^"|"$/g,''));
+        const nombre = cells[equipoIdx]?.trim();
+        if(!nombre) return;
+        const datos = {};
+        CAMPOS.forEach(campo=>{
+          if(colIdx[campo]!==undefined){
+            const val = parseFloat(cells[colIdx[campo]]);
+            if(!isNaN(val)) datos[campo] = val;
+          }
+        });
+        if(Object.keys(datos).length > 0){
+          result[nombre] = datos;
+        } else {
+          errores++;
+        }
+      });
+
+      const n = Object.keys(result).length;
+      if(n===0) throw new Error('No se encontraron equipos con datos válidos');
+
+      const preview = Object.keys(result).slice(0,3).join(', ');
+      if(!confirm(`✅ CSV válido: ${n} equipos encontrados.\nEjemplos: ${preview}\n\n¿Importar al SVC?`)){
+        input.value=''; return;
+      }
+
+      // Fusionar con SVC existente — los del CSV sobreescriben
+      const base = casasCargar ? JSON.parse(localStorage.getItem(SVC_LS_KEY)||'{}') : {};
+      const merged = {...(typeof SVC_LIVE!=='undefined'?SVC_LIVE:{}), ...result};
+      localStorage.setItem(SVC_LS_KEY, JSON.stringify(merged));
+      SVC_LIVE = merged;
+      input.value='';
+      alert(`✅ CSV importado: ${n} equipos añadidos/actualizados al SVC.`);
+    }catch(err){
+      input.value='';
+      alert('❌ Error CSV:\n'+err.message+'\n\nRevisa que el archivo tenga la columna "equipo" y datos numéricos.');
+    }
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
 function svcImportar(input){
   const file=input.files[0];if(!file)return;
   const reader=new FileReader();
